@@ -1,0 +1,64 @@
+package frontend.AST;
+
+import frontend.Token.TrueToken;
+
+public class PrimaryExp {
+    protected TrueToken LPARENT;
+    protected Exp exp;
+    protected TrueToken RPARENT;
+    protected LVal lVal;
+    protected TrueToken NumberToken;//IntConst
+    protected TrueToken CharacterToken;//CharConst
+    /*1:'(' Exp ')' | 2:LVal | 3:Number | 4:Character*/
+    protected int type;
+
+    public void setLPARENT(TrueToken LPARENT) {
+        this.LPARENT = LPARENT;
+    }
+
+    public void setExp(Exp exp) {
+        this.exp = exp;
+    }
+
+    public void setRPARENT(TrueToken RPARENT) {
+        this.RPARENT = RPARENT;
+    }
+
+    public void setlVal(LVal lVal) {
+        this.lVal = lVal;
+    }
+
+    public void setNumberToken(TrueToken numberToken) {
+        NumberToken = numberToken;
+    }
+
+    public void setCharacterToken(TrueToken characterToken) {
+        CharacterToken = characterToken;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public String outputPrimaryExp() {
+        StringBuilder a=new StringBuilder();
+        if(LPARENT!=null){
+            a.append(LPARENT.toString());
+            a.append(exp.outputExp());
+            a.append(RPARENT.toString());
+        }
+        if(lVal!=null){
+            a.append(lVal.outputLVal());
+        }
+        if(NumberToken !=null){
+            a.append(NumberToken.toString());
+            a.append("<Number>\n");
+        }
+        if(CharacterToken !=null){
+            a.append(CharacterToken.toString());
+            a.append("<Character>\n");
+        }
+        a.append("<PrimaryExp>\n");
+        return a.toString();
+    }
+}
