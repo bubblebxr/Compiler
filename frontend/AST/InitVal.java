@@ -56,4 +56,8 @@ public class InitVal {
         a.append("<InitVal>\n");
         return a.toString();
     }
+
+    public List<Exp> getExpList() {
+        return expList;
+    }
 }

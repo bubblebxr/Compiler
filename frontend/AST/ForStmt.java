@@ -27,4 +27,12 @@ public class ForStmt {
         a.append("<ForStmt>\n");
         return a.toString();
     }
+
+    public LVal getlVal() {
+        return lVal;
+    }
+
+    public Exp getExp() {
+        return exp;
+    }
 }

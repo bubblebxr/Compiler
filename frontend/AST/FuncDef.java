@@ -42,4 +42,20 @@ public class FuncDef {
         a.append("<FuncDef>\n");
         return a.toString();
     }
+
+    public TrueToken getIdent() {
+        return Ident;
+    }
+
+    public TrueToken getFuncType() {
+        return FuncType;
+    }
+
+    public FuncFParams getFuncFParams() {
+        return funcFParams;
+    }
+
+    public Block getBlock() {
+        return block;
+    }
 }

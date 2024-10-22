@@ -33,4 +33,8 @@ public class FuncFParams {
         a.append("<FuncFParams>\n");
         return a.toString();
     }
+
+    public List<FuncFParam> getFuncFParamList() {
+        return funcFParamList;
+    }
 }

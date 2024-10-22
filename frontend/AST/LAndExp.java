@@ -42,4 +42,8 @@ public class LAndExp {
         a.append("<LAndExp>\n");
         return a.toString();
     }
+
+    public List<EqExp> getEqExpList() {
+        return eqExpList;
+    }
 }

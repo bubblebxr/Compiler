@@ -43,5 +43,9 @@ public class AddExp {
         a.append("<AddExp>\n");
         return a.toString();
     }
+
+    public List<MulExp> getMulExpList() {
+        return mulExpList;
+    }
 }
 //addExp +mulExp +mulExp

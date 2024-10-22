@@ -36,4 +36,12 @@ public class Block {
         a.append("<Block>\n");
         return a.toString();
     }
+
+    public List<BlockItem> getBlockItemList() {
+        return blockItemList;
+    }
+
+    public TrueToken getRBRACE() {
+        return RBRACE;
+    }
 }

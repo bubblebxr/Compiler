@@ -42,4 +42,8 @@ public class LOrExp {
         a.append("<LOrExp>\n");
         return a.toString();
     }
+
+    public List<LAndExp> getlAndExpList() {
+        return lAndExpList;
+    }
 }

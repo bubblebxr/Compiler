@@ -49,4 +49,20 @@ public class VarDef {
         a.append("<VarDef>\n");
         return a.toString();
     }
+
+    public TrueToken getLBRACK() {
+        return LBRACK;
+    }
+
+    public TrueToken getIdent() {
+        return Ident;
+    }
+
+    public ConstExp getConstExp() {
+        return constExp;
+    }
+
+    public InitVal getInitVal() {
+        return initVal;
+    }
 }

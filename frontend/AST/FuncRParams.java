@@ -32,4 +32,8 @@ public class FuncRParams {
         a.append("<FuncRParams>\n");
         return a.toString();
     }
+
+    public List<Exp> getExpList() {
+        return expList;
+    }
 }

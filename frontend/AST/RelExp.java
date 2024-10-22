@@ -42,4 +42,8 @@ public class RelExp {
         a.append("<RelExp>\n");
         return a.toString();
     }
+
+    public List<AddExp> getAddExpList() {
+        return addExpList;
+    }
 }

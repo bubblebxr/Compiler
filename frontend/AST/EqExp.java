@@ -42,4 +42,8 @@ public class EqExp {
         a.append("<EqExp>\n");
         return a.toString();
     }
+
+    public List<RelExp> getRelExpList() {
+        return relExpList;
+    }
 }

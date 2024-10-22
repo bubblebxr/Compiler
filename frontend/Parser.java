@@ -8,6 +8,7 @@ import frontend.Token.TrueType;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public class Parser {
 
@@ -17,15 +18,22 @@ public class Parser {
     /*正确输出列表*/
     protected List<TrueToken> TokenList;
 
+    protected Set<Integer> ErrorLineNumber;
+
     protected int present;
 
     protected ASTNode AST;
 
-    public Parser(List<ErrorToken> errorList,List<TrueToken> TokenList){
+    public Parser(List<ErrorToken> errorList, List<TrueToken> TokenList, Set<Integer> ErrorLineNumber){
         this.errorList=errorList;
         this.TokenList=TokenList;
         AST=new ASTNode();
         this.present=0;
+        this.ErrorLineNumber=ErrorLineNumber;
+    }
+
+    public ASTNode getASTNode(){
+        return AST;
     }
 
     public TrueType nowType(){
@@ -100,6 +108,7 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.i);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
 
             Decl decl=new Decl();
@@ -127,6 +136,7 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.k);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
         }else{
             constDef.setType(1);
@@ -229,6 +239,7 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.j);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
         }else if(nowType()==TrueType.PLUS||nowType()==TrueType.MINU||nowType()==TrueType.NOT){
             //UnaryOp UnaryExp
@@ -283,6 +294,7 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.k);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
         }
         return funcFParam;
@@ -302,16 +314,20 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.j);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
         }else if(nowType()==TrueType.IDENFR){
             //LVal
+            primaryExp.setType(2);
             primaryExp.setlVal(createLVal());
         }else if(nowType()==TrueType.INTCON){
             //Number
+            primaryExp.setType(3);
             primaryExp.setNumberToken(now());
             present++;
         }else if(nowType()==TrueType.CHRCON){
             //Character
+            primaryExp.setType(3);
             primaryExp.setCharacterToken(now());
             present++;
         }
@@ -332,6 +348,7 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.k);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
         }
         return lVal;
@@ -361,6 +378,7 @@ public class Parser {
         }else{
             ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.i);
             errorList.add(token);
+            ErrorLineNumber.add(beforeLineNum());
         }
         Decl decl=new Decl();
         decl.setVarDecl(varDecl);
@@ -383,6 +401,7 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.k);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
         }
         if(nowType()==TrueType.ASSIGN){
@@ -422,7 +441,7 @@ public class Parser {
     public void createFuncDef(){
         FuncDef funcDef=new FuncDef(now(),preRead(),prePreRead());
         present+=3;
-        if(nowType()!=TrueType.RPARENT){
+        if(nowType()!=TrueType.RPARENT&&nowType()!=TrueType.LBRACE){
             funcDef.setFuncFParams(createFuncFParams());
         }
         if(nowType()==TrueType.RPARENT){
@@ -431,6 +450,7 @@ public class Parser {
         }else{
             ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.j);
             errorList.add(token);
+            ErrorLineNumber.add(beforeLineNum());
         }
         funcDef.setBlock(createBlock());
         AST.insertFuncDefList(funcDef);
@@ -475,6 +495,7 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.j);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
 
             stmt.setStmt(createStmt());
@@ -500,6 +521,7 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.i);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
             if(nowType() == TrueType.IDENFR ||
                     nowType() == TrueType.PLUS ||
@@ -516,6 +538,7 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.i);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
             if(nowType()==TrueType.IDENFR){
                 stmt.setForStmt2(createForStmt());
@@ -526,6 +549,7 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.j);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
             stmt.setStmt(createStmt());
             return stmt;
@@ -540,6 +564,7 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.i);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
             return stmt;
         }else if(nowType()==TrueType.RETURNTK){
@@ -562,6 +587,7 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.i);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
             return stmt;
         }else if(nowType()==TrueType.PRINTFTK){
@@ -579,6 +605,7 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.j);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
             if(nowType()==TrueType.SEMICN){
                 stmt.setSEMICN(now());
@@ -586,11 +613,12 @@ public class Parser {
             }else{
                 ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.i);
                 errorList.add(token);
+                ErrorLineNumber.add(beforeLineNum());
             }
             return  stmt;
         }else if(nowType()==TrueType.IDENFR){
-            int flag=0;
-            for(int j=present;j<TokenList.size()&&TokenList.get(j).getType()!=TrueType.SEMICN;j++){
+            int flag=0,line=now().getLineNumber();
+            for(int j=present;j<TokenList.size()&&TokenList.get(j).getType()!=TrueType.SEMICN&&TokenList.get(j).getLineNumber()==line;j++){
                 if (TokenList.get(j).getType() == TrueType.ASSIGN) {
                     flag = 1;
                     break;
@@ -614,6 +642,7 @@ public class Parser {
                     }else{
                         ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.j);
                         errorList.add(token);
+                        ErrorLineNumber.add(beforeLineNum());
                     }
                     if(nowType()==TrueType.SEMICN){
                         stmt.setSEMICN(now());
@@ -621,6 +650,7 @@ public class Parser {
                     }else{
                         ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.i);
                         errorList.add(token);
+                        ErrorLineNumber.add(beforeLineNum());
                     }
                 }else if(nowType()==TrueType.GETCHARTK){
                     stmt.setType(9);
@@ -634,6 +664,7 @@ public class Parser {
                     }else{
                         ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.j);
                         errorList.add(token);
+                        ErrorLineNumber.add(beforeLineNum());
                     }
                     if(nowType()==TrueType.SEMICN){
                         stmt.setSEMICN(now());
@@ -641,6 +672,7 @@ public class Parser {
                     }else{
                         ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.i);
                         errorList.add(token);
+                        ErrorLineNumber.add(beforeLineNum());
                     }
                 }else{
                     stmt.setType(1);
@@ -651,6 +683,7 @@ public class Parser {
                     }else{
                         ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.i);
                         errorList.add(token);
+                        ErrorLineNumber.add(beforeLineNum());
                     }
                 }
                 return stmt;
@@ -663,27 +696,28 @@ public class Parser {
         }
 
         Stmt stmt=new Stmt(2);
-        stmt.setExp(createExp());
-//        if(nowType() == TrueType.IDENFR ||
-//                nowType() == TrueType.PLUS ||
-//                nowType() == TrueType.MINU ||
-//                nowType()== TrueType.NOT ||
-//                nowType() == TrueType.LPARENT ||
-//                nowType()==TrueType.CHRCON||
-//                nowType() == TrueType.INTCON){
-//
-//        }
+        if(nowType() == TrueType.IDENFR ||
+                nowType() == TrueType.PLUS ||
+                nowType() == TrueType.MINU ||
+                nowType()== TrueType.NOT ||
+                nowType() == TrueType.LPARENT ||
+                nowType()==TrueType.CHRCON||
+                nowType() == TrueType.INTCON){
+
+        }{
+            stmt.setExp(createExp());
+        }
         if(nowType()==TrueType.SEMICN){
             stmt.setSEMICN(now());
             present++;
         }else{
             ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.i);
             errorList.add(token);
+            ErrorLineNumber.add(beforeLineNum());
         }
 //        stmt.setSEMICN(now());
 //        System.out.println(nowType());
 //        present++;
-        //TODO
         return stmt;
 
     }
@@ -769,6 +803,7 @@ public class Parser {
         }else{
             ErrorToken token=new ErrorToken(beforeLineNum(), ErrorType.j);
             errorList.add(token);
+            ErrorLineNumber.add(beforeLineNum());
         }
         mainFuncDef.setBlock(createBlock());
         return mainFuncDef;
@@ -794,5 +829,9 @@ public class Parser {
 
     public String outTrueParser() {
         return AST.outputASTNode();
+    }
+
+    public Set<Integer> getErrorLineNumber() {
+        return ErrorLineNumber;
     }
 }

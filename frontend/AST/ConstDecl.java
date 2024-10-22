@@ -46,4 +46,12 @@ public class ConstDecl {
         a.append("<ConstDecl>\n");
         return a.toString();
     }
+
+    public List<ConstDef> getConstDefList() {
+        return constDefList;
+    }
+
+    public TrueToken getBType() {
+        return BType;
+    }
 }

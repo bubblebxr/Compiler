@@ -34,4 +34,10 @@ public class MainFuncDef {
         a.append("<MainFuncDef>\n");
         return a.toString();
     }
+
+    public Block getBlock() {
+        return block;
+    }
+
+
 }

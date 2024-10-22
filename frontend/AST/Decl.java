@@ -21,4 +21,12 @@ public class Decl {
         }
         return a.toString();
     }
+
+    public ConstDecl getConstDecl() {
+        return constDecl;
+    }
+
+    public VarDecl getVarDecl() {
+        return varDecl;
+    }
 }

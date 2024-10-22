@@ -12,4 +12,8 @@ public class ConstExp {
         a.append("<ConstExp>\n");
         return a.toString();
     }
+
+    public AddExp getAddExp() {
+        return addExp;
+    }
 }

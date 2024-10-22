@@ -13,4 +13,8 @@ public class Exp {
         a.append("<Exp>\n");
         return a.toString();
     }
+
+    public AddExp getAddExp() {
+        return addExp;
+    }
 }

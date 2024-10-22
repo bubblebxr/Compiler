@@ -1,4 +1,5 @@
 import frontend.Parser;
+import Visitor.SymbolManager;
 
 import java.io.*;
 
@@ -7,13 +8,12 @@ import static frontend.Lexer.*;
 public class Compiler {
     public static void main(String[] args){
         String filePath = "testfile.txt";
-        String TrueResultPath="parser.txt";
+        String TrueResultPath="symbol.txt";
         String ErrorResultPath="error.txt";
         String TrueAnswer="ans.txt";
         int lineCount=1; //记录行数
         boolean isError=false; //是否存在错误
         Boolean isInAnnotation=false;
-
         //词法分析
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -26,27 +26,47 @@ public class Compiler {
         }
 
         //语法分析
-        Parser parser=new Parser(getErrorList(),getTokenList());
+        Parser parser=new Parser(getErrorList(),getTokenList(),getErrorLineNumber());
         parser.CompUnit();
 
 
-        if(!parser.getParserErrorList().isEmpty())isError=true;
+//        if(!parser.getParserErrorList().isEmpty())isError=true;
+//
+//        if(!isError){
+//            try (BufferedWriter writer = new BufferedWriter(new FileWriter(TrueResultPath))) {
+//                writer.write(parser.outTrueParser());
+//            } catch (IOException e) {
+//                System.out.println(e);
+//            }
+//        }else{
+//            try (BufferedWriter writer = new BufferedWriter(new FileWriter(ErrorResultPath))) {
+//                writer.write(parser.outFalseParser());
+//            } catch (IOException e) {
+//                System.out.println(e);
+//            }
+//        }
+
+        //语义分析：符号表
+        SymbolManager symbolManager=new SymbolManager(parser.getASTNode(),parser.getParserErrorList(),parser.getErrorLineNumber());
+        symbolManager.CompUnitSymbol();
+
+        if(!symbolManager.getSymbolErrorList().isEmpty())isError=true;
 
         if(!isError){
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(TrueResultPath))) {
-                writer.write(parser.outTrueParser());
+                writer.write(symbolManager.outTrueSymbol());
             } catch (IOException e) {
                 System.out.println(e);
             }
         }else{
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(ErrorResultPath))) {
-                writer.write(parser.outFalseParser());
+                writer.write(symbolManager.outFalseVisitor());
             } catch (IOException e) {
                 System.out.println(e);
             }
         }
 
-//        compareFiles(TrueResultPath, TrueAnswer);
+//        compareFiles(isError?ErrorResultPath:TrueResultPath, TrueAnswer);
 
     }
 

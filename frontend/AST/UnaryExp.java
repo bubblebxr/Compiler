@@ -60,4 +60,20 @@ public class UnaryExp {
         a.append("<UnaryExp>\n");
         return a.toString();
     }
+
+    public PrimaryExp getPrimaryExp() {
+        return primaryExp;
+    }
+
+    public UnaryExp getUnaryExp() {
+        return unaryExp;
+    }
+
+    public TrueToken getIdent() {
+        return Ident;
+    }
+
+    public FuncRParams getFuncRParams() {
+        return funcRParams;
+    }
 }

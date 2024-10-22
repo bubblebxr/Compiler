@@ -45,4 +45,12 @@ public class VarDecl{
         a.append("<VarDecl>\n");
         return a.toString();
     }
+
+    public List<VarDef> getVarDefList() {
+        return varDefList;
+    }
+
+    public TrueToken getBType() {
+        return BType;
+    }
 }

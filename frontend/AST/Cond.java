@@ -13,4 +13,8 @@ public class Cond {
     public void setlOrExp(LOrExp lOrExp) {
         this.lOrExp = lOrExp;
     }
+
+    public LOrExp getlOrExp() {
+        return lOrExp;
+    }
 }

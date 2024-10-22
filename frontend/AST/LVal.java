@@ -35,4 +35,12 @@ public class LVal {
         a.append("<LVal>\n");
         return a.toString();
     }
+
+    public TrueToken getIdent() {
+        return Ident;
+    }
+
+    public Exp getExp() {
+        return exp;
+    }
 }

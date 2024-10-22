@@ -5,7 +5,9 @@ import frontend.Token.ErrorType;
 import frontend.Token.TrueType;
 import frontend.Token.TrueToken;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static frontend.Token.TrueToken.checkToken;
 
@@ -26,7 +28,13 @@ public class Lexer{
         return errorList;
     }
 
-    public static Boolean analyze(String line,Boolean isInAnnotation,int lineNumber){
+    private static Set<Integer> ErrorLineNumber=new HashSet<>();
+
+    public static Set<Integer> getErrorLineNumber() {
+        return ErrorLineNumber;
+    }
+
+    public static Boolean analyze(String line, Boolean isInAnnotation, int lineNumber){
         int lineLength=line.length();
 
         for(int i=0;i<lineLength;i++){
@@ -61,6 +69,7 @@ public class Lexer{
                     errorList.add(token);
                     TrueToken token1=new TrueToken("&&", TrueType.AND,lineNumber);
                     TokenList.add(token1);
+                    ErrorLineNumber.add(lineNumber);
                 }
             }else if(temp=='|'){
                 if(next=='|'){
@@ -72,6 +81,7 @@ public class Lexer{
                     errorList.add(token);
                     TrueToken token1=new TrueToken("||", TrueType.OR,lineNumber);
                     TokenList.add(token1);
+                    ErrorLineNumber.add(lineNumber);
                 }
             }else if(temp=='+'){
                 TrueToken token=new TrueToken("+", TrueType.PLUS,lineNumber);
@@ -177,14 +187,19 @@ public class Lexer{
                 TokenList.add(token);
             }else if(Character.isDigit(temp)) {//数字IntConst
                 StringBuilder save= new StringBuilder();
-                for(int j=i;j<lineLength;j++){
+                int j,flag=0;
+                for(j=i;j<lineLength;j++){
                     char b=line.charAt(j);
                     if(Character.isDigit(b)){
                         save.append(b);
                     }else{
                         i=j-1;
+                        flag=1;
                         break;
                     }
+                }
+                if(flag==0){
+                    i=j;
                 }
                 TrueToken token=new TrueToken(save.toString(), TrueType.INTCON,lineNumber);
                 TokenList.add(token);

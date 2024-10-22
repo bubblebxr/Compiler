@@ -1,6 +1,8 @@
 package frontend.AST;
 
+import Visitor.Symbol.SymbolType;
 import frontend.Token.TrueToken;
+import frontend.Token.TrueType;
 
 public class FuncFParam {
     protected TrueToken BType;
@@ -34,5 +36,21 @@ public class FuncFParam {
         }
         a.append("<FuncFParam>\n");
         return a.toString();
+    }
+
+    public TrueToken getIdent() {
+        return Ident;
+    }
+
+    public SymbolType handleSymbolType() {
+        if(BType.getType()== TrueType.INTTK&&LBRACK!=null){
+            return SymbolType.IntArray;
+        }else if(BType.getType()== TrueType.INTTK&&LBRACK==null){
+            return SymbolType.Int;
+        }else if(BType.getType()== TrueType.CHARTK&&LBRACK!=null){
+            return SymbolType.CharArray;
+        }else{
+            return SymbolType.Char;
+        }
     }
 }

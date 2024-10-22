@@ -65,4 +65,8 @@ public class ConstInitVal {
         a.append("<ConstInitVal>\n");
         return a.toString();
     }
+
+    public List<ConstExp> getConstExpList() {
+        return constExpList;
+    }
 }

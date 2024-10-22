@@ -35,4 +35,16 @@ public class ASTNode {
         a.append("<CompUnit>\n");
         return a.toString();
     }
+
+    public List<Decl> getDeclList() {
+        return declList;
+    }
+
+    public List<FuncDef> getFuncDefList() {
+        return funcDefList;
+    }
+
+    public MainFuncDef getMainFuncDef() {
+        return mainFuncDef;
+    }
 }

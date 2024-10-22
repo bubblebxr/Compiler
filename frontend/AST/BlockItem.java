@@ -26,4 +26,12 @@ public class BlockItem {
         }
         return a.toString();
     }
+
+    public Decl getDecl() {
+        return decl;
+    }
+
+    public Stmt getStmt() {
+        return stmt;
+    }
 }

@@ -57,4 +57,16 @@ public class ConstDef {
         a.append("<ConstDef>\n");
         return a.toString();
     }
+
+    public TrueToken getIdent() {
+        return Ident;
+    }
+
+    public ConstExp getConstExp() {
+        return constExp;
+    }
+
+    public ConstInitVal getConstInitVal() {
+        return constInitVal;
+    }
 }

@@ -43,4 +43,8 @@ public class MulExp {
         a.append("<MulExp>\n");
         return a.toString();
     }
+
+    public List<UnaryExp> getUnaryExpList() {
+        return unaryExpList;
+    }
 }

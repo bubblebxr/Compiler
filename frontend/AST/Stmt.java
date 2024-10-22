@@ -267,4 +267,60 @@ public class Stmt {
         a.append("<Stmt>\n");
         return a.toString();
     }
+
+    public TrueToken getRETURN() {
+        return RETURN;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public LVal getlVal() {
+        return lVal;
+    }
+
+    public ForStmt getForStmt1() {
+        return forStmt1;
+    }
+
+    public ForStmt getForStmt2() {
+        return forStmt2;
+    }
+
+    public TrueToken getBreakOrContinue() {
+        return breakOrContinue;
+    }
+
+    public Stmt getStmt() {
+        return stmt;
+    }
+
+    public Block getBlock() {
+        return block;
+    }
+
+    public Cond getCond() {
+        return cond;
+    }
+
+    public Exp getExp() {
+        return exp;
+    }
+
+    public List<Exp> getExpList() {
+        return expList;
+    }
+
+    public Stmt getElseStmt() {
+        return elseStmt;
+    }
+
+    public TrueToken getStringConst() {
+        return StringConst;
+    }
+
+    public TrueToken getPRINTF() {
+        return PRINTF;
+    }
 }

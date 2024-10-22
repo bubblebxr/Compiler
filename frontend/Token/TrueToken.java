@@ -55,4 +55,8 @@ public class TrueToken {
     public int getLineNumber() {
         return lineNumber;
     }
+
+    public String getName() {
+        return name;
+    }
 }

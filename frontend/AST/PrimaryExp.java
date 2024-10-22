@@ -61,4 +61,16 @@ public class PrimaryExp {
         a.append("<PrimaryExp>\n");
         return a.toString();
     }
+
+    public Exp getExp() {
+        return exp;
+    }
+
+    public LVal getlVal() {
+        return lVal;
+    }
+
+    public int getType() {
+        return type;
+    }
 }
