@@ -1,4 +1,17 @@
-int main(){
-a[3] = 100
+char func1(char b[]) {
+    return 'c';
+}
 
+int func2(char c) {
+    return 1;
+}
+
+int func3(int a) {
+    return a;
+}
+
+int main(){
+    char b[6];
+    func2( s() );
+    return 0;
 }

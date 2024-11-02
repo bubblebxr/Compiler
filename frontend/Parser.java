@@ -696,17 +696,17 @@ public class Parser {
         }
 
         Stmt stmt=new Stmt(2);
-        if(nowType() == TrueType.IDENFR ||
-                nowType() == TrueType.PLUS ||
-                nowType() == TrueType.MINU ||
-                nowType()== TrueType.NOT ||
-                nowType() == TrueType.LPARENT ||
-                nowType()==TrueType.CHRCON||
-                nowType() == TrueType.INTCON){
-
-        }{
+//        if(nowType() == TrueType.IDENFR ||
+//                nowType() == TrueType.PLUS ||
+//                nowType() == TrueType.MINU ||
+//                nowType()== TrueType.NOT ||
+//                nowType() == TrueType.LPARENT ||
+//                nowType()==TrueType.CHRCON||
+//                nowType() == TrueType.INTCON){
+//
+//        }{
             stmt.setExp(createExp());
-        }
+//        }
         if(nowType()==TrueType.SEMICN){
             stmt.setSEMICN(now());
             present++;

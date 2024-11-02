@@ -1,4 +1,4 @@
-package Visitor.Symbol;
+package Symbol.Symbol;
 
 import java.util.ArrayList;
 import java.util.List;

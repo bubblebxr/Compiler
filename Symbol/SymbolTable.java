@@ -1,7 +1,7 @@
-package Visitor;
+package Symbol;
 
 
-import Visitor.Symbol.Symbol;
+import Symbol.Symbol.Symbol;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

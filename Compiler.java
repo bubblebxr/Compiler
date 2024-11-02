@@ -1,5 +1,5 @@
 import frontend.Parser;
-import Visitor.SymbolManager;
+import Symbol.SymbolManager;
 
 import java.io.*;
 

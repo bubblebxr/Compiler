@@ -1,6 +1,6 @@
-package Visitor;
+package Symbol;
 
-import Visitor.Symbol.*;
+import Symbol.Symbol.*;
 import frontend.AST.*;
 import frontend.Token.ErrorToken;
 import frontend.Token.ErrorType;

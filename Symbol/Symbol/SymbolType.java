@@ -1,4 +1,4 @@
-package Visitor.Symbol;
+package Symbol.Symbol;
 
 public enum SymbolType {
     ConstChar,
