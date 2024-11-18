@@ -1,3 +1,4 @@
+import LLVM.LLVMManager;
 import frontend.Parser;
 import Symbol.SymbolManager;
 
@@ -8,7 +9,7 @@ import static frontend.Lexer.*;
 public class Compiler {
     public static void main(String[] args){
         String filePath = "testfile.txt";
-        String TrueResultPath="symbol.txt";
+        String TrueResultPath="llvm_ir.txt";
         String ErrorResultPath="error.txt";
         String TrueAnswer="ans.txt";
         int lineCount=1; //记录行数
@@ -53,8 +54,10 @@ public class Compiler {
         if(!symbolManager.getSymbolErrorList().isEmpty())isError=true;
 
         if(!isError){
+            LLVMManager llvmManager=new LLVMManager(parser.getASTNode());
+            llvmManager.CompUnitToLLVM();
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(TrueResultPath))) {
-                writer.write(symbolManager.outTrueSymbol());
+                writer.write(llvmManager.outputLLVM());
             } catch (IOException e) {
                 System.out.println(e);
             }
@@ -65,6 +68,8 @@ public class Compiler {
                 System.out.println(e);
             }
         }
+
+
 
 //        compareFiles(isError?ErrorResultPath:TrueResultPath, TrueAnswer);
 

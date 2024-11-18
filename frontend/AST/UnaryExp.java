@@ -1,6 +1,7 @@
 package frontend.AST;
 
 import frontend.Token.TrueToken;
+import frontend.Token.TrueType;
 
 public class UnaryExp {
     protected PrimaryExp primaryExp;
@@ -75,5 +76,23 @@ public class UnaryExp {
 
     public FuncRParams getFuncRParams() {
         return funcRParams;
+    }
+
+    public int getUnaryExpValue() {
+        if(primaryExp!=null){
+            return primaryExp.getPrimaryExpValue();
+        }else if(unaryExp!=null){
+            TrueType type=UnaryOp.getType();
+            if(type==TrueType.PLUS){
+                return unaryExp.getUnaryExpValue();
+            }else if(type==TrueType.MINU){
+                return -unaryExp.getUnaryExpValue();
+            }
+        }
+        return 0;
+    }
+
+    public TrueToken getUnaryOp() {
+        return UnaryOp;
     }
 }

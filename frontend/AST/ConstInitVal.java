@@ -69,4 +69,12 @@ public class ConstInitVal {
     public List<ConstExp> getConstExpList() {
         return constExpList;
     }
+
+    public int getValue() {
+        return constExpList.get(0).getValue();
+    }
+
+    public TrueToken getStringConst() {
+        return StringConst;
+    }
 }

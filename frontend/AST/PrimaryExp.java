@@ -73,4 +73,24 @@ public class PrimaryExp {
     public int getType() {
         return type;
     }
+
+    public int getPrimaryExpValue() {
+        if(LPARENT!=null){
+            return exp.getExpValue();
+        }else if(lVal!=null){
+            return lVal.getLValValue();
+        }else if(NumberToken!=null){
+            return Integer.parseInt(NumberToken.getName());
+        }else{
+            return CharacterToken.getName().charAt(1);
+        }
+    }
+
+    public TrueToken getNumberToken() {
+        return NumberToken;
+    }
+
+    public TrueToken getCharacterToken() {
+        return CharacterToken;
+    }
 }

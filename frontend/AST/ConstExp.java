@@ -16,4 +16,8 @@ public class ConstExp {
     public AddExp getAddExp() {
         return addExp;
     }
+
+    public int getValue() {
+        return addExp.getAddExpValue();
+    }
 }

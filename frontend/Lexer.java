@@ -204,21 +204,8 @@ public class Lexer{
                 TrueToken token=new TrueToken(save.toString(), TrueType.INTCON,lineNumber);
                 TokenList.add(token);
             }else if(temp=='\''){//字符CharConst
-                //TODO:字符读入
                 StringBuilder save = new StringBuilder("'");
                 if(next!='\0'){
-//                    for(int j=i+1;j<lineLength;j++){
-//                        char d=line.charAt(j);
-//                        if(d=='\''){
-//                            save.append('\'');
-//                            TrueToken token=new TrueToken(save.toString(), TrueType.CHRCON);
-//                            TokenList.add(token);
-//                            i=j;
-//                            break;
-//                        }else{
-//                            save.append(d);
-//                        }
-//                    }
                     if(next=='\\'){
                         if(i+2<lineLength){
                             char d=line.charAt(i+2);

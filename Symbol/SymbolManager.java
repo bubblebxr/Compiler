@@ -162,7 +162,7 @@ public class SymbolManager {
                     ErrorLineNumber.add(unaryExp.getIdent().getLineNumber());
                     return;
                 }
-                //TODO:ERROR:函数参数类型 不匹配
+                //函数参数类型 不匹配
                 for(int i=0;i<symbol.getFuncParams().size();i++){
                     int dimension=symbol.getFuncParams().get(i).getDimension();
                     SymbolType type=symbol.getFuncParams().get(i).getType();

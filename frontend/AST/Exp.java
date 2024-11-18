@@ -17,4 +17,8 @@ public class Exp {
     public AddExp getAddExp() {
         return addExp;
     }
+
+    public int getExpValue(){
+        return addExp.getAddExpValue();
+    }
 }

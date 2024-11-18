@@ -60,4 +60,8 @@ public class InitVal {
     public List<Exp> getExpList() {
         return expList;
     }
+
+    public TrueToken getSTRCON() {
+        return STRCON;
+    }
 }

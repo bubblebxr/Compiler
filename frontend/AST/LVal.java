@@ -1,6 +1,9 @@
 package frontend.AST;
 
+import LLVM.LLVMManager;
 import frontend.Token.TrueToken;
+
+import static LLVM.LLVMManager.*;
 
 public class LVal {
     protected TrueToken Ident;
@@ -42,5 +45,12 @@ public class LVal {
 
     public Exp getExp() {
         return exp;
+    }
+
+    public int getLValValue() {
+        if(exp!=null){
+            return getArrayValue(Ident,exp.getExpValue(),presentId);
+        }
+        return getVarValue(Ident, presentId);
     }
 }

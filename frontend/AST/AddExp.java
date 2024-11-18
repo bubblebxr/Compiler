@@ -1,6 +1,7 @@
 package frontend.AST;
 
 import frontend.Token.TrueToken;
+import frontend.Token.TrueType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,25 @@ public class AddExp {
 
     public List<MulExp> getMulExpList() {
         return mulExpList;
+    }
+
+    public int getAddExpValue() {
+        int temp=mulExpList.get(0).getMulExpValue();
+        for(int i=1;i<mulExpList.size();i++){
+            TrueType type=tokenList.get(i-1).getType();
+            if(type==TrueType.PLUS){
+                //+
+                temp+=mulExpList.get(i).getMulExpValue();
+            }else{
+                //-
+                temp-=mulExpList.get(i).getMulExpValue();
+            }
+        }
+        return temp;
+    }
+
+    public List<TrueToken> getTokenList() {
+        return tokenList;
     }
 }
 //addExp +mulExp +mulExp
