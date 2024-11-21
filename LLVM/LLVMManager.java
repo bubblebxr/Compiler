@@ -179,7 +179,7 @@ public class LLVMManager {
         ArrayList<Value> firstOperators=new ArrayList<>();
         firstOperators.add(new Value("%"+arrayBasicAddress,new PointerType(type)));
         firstOperators.add(new Value("0",new IntegerType()));
-        firstOperators.add(new Value("0",type.getType()));
+        firstOperators.add(new Value("0",new IntegerType()));
         getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type,firstOperators));
         if(constExpList!=null){
             for (int i=0;i<constExpList.size();i++) {
@@ -208,7 +208,7 @@ public class LLVMManager {
         if(!isFirst){
             ArrayList<Value> temp=new ArrayList<>();
             temp.add(new Value("%"+ (variableId - 1),new PointerType(type)));
-            temp.add(new Value("1",type));
+            temp.add(new Value("1",new IntegerType()));
             getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type,temp));
         }
         ArrayList<Value> storeList=new ArrayList<>();
@@ -405,7 +405,7 @@ public class LLVMManager {
         ArrayList<Value> firstOperators=new ArrayList<>();
         firstOperators.add(new Value("%"+arrayBasicAddress,new PointerType(type)));
         firstOperators.add(new Value("0",new IntegerType()));
-        firstOperators.add(new Value("0",type.getType()));
+        firstOperators.add(new Value("0",new IntegerType()));
         getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type,firstOperators));
         String lastElementId="%"+(variableId-1);
         if(expList!=null){
@@ -413,7 +413,7 @@ public class LLVMManager {
                 if(i!=0){
                     ArrayList<Value> temp=new ArrayList<>();
                     temp.add(new Value(lastElementId,new PointerType(type.getType())));
-                    temp.add(new Value("1",type.getType()));
+                    temp.add(new Value("1",new IntegerType()));
                     getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type.getType(),temp));
                     lastElementId="%"+(variableId-1);
                 }
@@ -429,7 +429,7 @@ public class LLVMManager {
             for(int i=expList.size();i<elementNum;i++){
                 ArrayList<Value> temp=new ArrayList<>();
                 temp.add(new Value(lastElementId,new PointerType(type.getType())));
-                temp.add(new Value("1",type.getType()));
+                temp.add(new Value("1",new IntegerType()));
                 getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type.getType(),temp));
                 lastElementId="%"+(variableId-1);
                 temp=new ArrayList<>();
@@ -442,7 +442,7 @@ public class LLVMManager {
                 if(i!=1){
                     ArrayList<Value> temp=new ArrayList<>();
                     temp.add(new Value(lastElementId,new PointerType(type.getType())));
-                    temp.add(new Value("1",type.getType()));
+                    temp.add(new Value("1",new IntegerType()));
                     getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type.getType(),temp));
                     lastElementId="%"+(variableId-1);
                 }
@@ -454,7 +454,7 @@ public class LLVMManager {
             for(int i=StringConst.length()-2;i<elementNum;i++){
                 ArrayList<Value> temp=new ArrayList<>();
                 temp.add(new Value(lastElementId,new PointerType(type.getType())));
-                temp.add(new Value("1",type.getType()));
+                temp.add(new Value("1",new IntegerType()));
                 getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type.getType(),temp));
                 lastElementId="%"+(variableId-1);
                 temp=new ArrayList<>();
@@ -1204,7 +1204,7 @@ public class LLVMManager {
                 ArrayList<Value> temp=new ArrayList<>();
                 temp.add(new Value(id,new PointerType(type)));
                 temp.add(new Value("0",new IntegerType()));
-                temp.add(new Value("0",type.getType()));
+                temp.add(new Value("0",new IntegerType()));
                 getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type,temp));
                 id="%"+(variableId-1);
                 type=new PointerType(new IntegerType());
@@ -1213,7 +1213,7 @@ public class LLVMManager {
                 ArrayList<Value> temp=new ArrayList<>();
                 temp.add(new Value(id,new PointerType(type)));
                 temp.add(new Value("0",new IntegerType()));
-                temp.add(new Value("0",type.getType()));
+                temp.add(new Value("0",new IntegerType()));
                 getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type,temp));
                 id="%"+(variableId-1);
                 type=new PointerType(new CharType());
@@ -1242,7 +1242,7 @@ public class LLVMManager {
             if(symbol instanceof FuncParamSymbol&&type instanceof PointerType){
                 ArrayList<Value> temp=new ArrayList<>();
                 temp.add(new Value(id,type));
-                temp.add(new Value("0",type.getType()));
+                temp.add(new Value("0",new IntegerType()));
                 getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type.getType(),temp));
                 id="%"+(variableId-1);
             }
@@ -1264,7 +1264,7 @@ public class LLVMManager {
                 loadPointer(id,new PointerType(type));
                 temp = new ArrayList<>();
                 temp.add(new Value("%"+(variableId-1),new PointerType(type)));
-                temp.add(new Value(pair.id,type));
+                temp.add(new Value(pair.id,new IntegerType()));
                 getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++), type, temp));
                 temp=new ArrayList<>();
                 temp.add(new Value("%"+(variableId-1),new PointerType(type)));
@@ -1276,7 +1276,7 @@ public class LLVMManager {
                 getCurBasicBlock().addInstruction(new Load("%"+(variableId++),new PointerType(type),temp));
                 temp=new ArrayList<>();
                 temp.add(new Value("%"+(variableId-1),new PointerType(type)));
-                temp.add(new Value(pair.id,type));
+                temp.add(new Value(pair.id,new IntegerType()));
                 getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type,temp));
                 if(isRight){
                     temp=new ArrayList<>();
@@ -1288,7 +1288,7 @@ public class LLVMManager {
             ArrayList<Value> temp=new ArrayList<>();
             temp.add(new Value(symbol.getId(),new PointerType(new ArrayType(type,symbol.getElementNum()))));
             temp.add(new Value("0",new IntegerType()));
-            temp.add(new Value(pair.id,type));
+            temp.add(new Value(pair.id,new IntegerType()));
             getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),
                     new ArrayType(type,symbol.getElementNum()),
                     temp
