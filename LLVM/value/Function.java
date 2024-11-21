@@ -2,6 +2,7 @@ package LLVM.value;
 
 import LLVM.Type;
 import LLVM.Value;
+import LLVM.value.Instruction.Jump.Br;
 import LLVM.value.Instruction.Jump.Ret;
 
 import java.util.ArrayList;
@@ -55,8 +56,42 @@ public class Function extends Value {
         }else{
             if(basicBlockList.size()==1){
                 getCurBasicBlock().addInstruction(new Ret(null,null,new ArrayList<>()));
-            } else if(basicBlockList.size()>=2&&basicBlockList.get(basicBlockList.size()-2).checkReturn()){
-                basicBlockList.get(basicBlockList.size()-2).addInstruction(new Ret(null,null,new ArrayList<>()));
+            } else if(basicBlockList.size()>=2&&basicBlockList.get(basicBlockList.size()-1).checkReturn()){
+                basicBlockList.get(basicBlockList.size()-1).addInstruction(new Ret(null,null,new ArrayList<>()));
+            }
+        }
+    }
+
+    public void fillContinueLabel(int startIndex, int endIndex,String continueBlockLabel) {
+        for(int i=startIndex;i<endIndex;i++){
+            for(int j=0;j<basicBlockList.get(i).getInstructionList().size();j++){
+                if(basicBlockList.get(i).getInstructionList().get(j) instanceof Br &&basicBlockList.get(i).getInstructionList().get(j).getLabel1().equals("continueBlockId")){
+                    basicBlockList.get(i).getInstructionList().get(j).setLabel1(continueBlockLabel);
+                }
+            }
+        }
+    }
+
+    public void fillBreakLabel(int startIndex, int endIndex, String breakBlockId) {
+        for(int i=startIndex;i<endIndex;i++){
+            for(int j=0;j<basicBlockList.get(i).getInstructionList().size();j++){
+                if(basicBlockList.get(i).getInstructionList().get(j) instanceof Br &&basicBlockList.get(i).getInstructionList().get(j).getLabel1().equals("breakBlockId")){
+                    basicBlockList.get(i).getInstructionList().get(j).setLabel1(breakBlockId);
+                }
+            }
+        }
+    }
+
+    public int getBasicBlockNum(){
+        return basicBlockList.size();
+    }
+
+    public void fillUnCondNextBlock(int startId, int endId, BasicBlock nextBlock) {
+        for(int i=startId;i<endId;i++){
+            for(int j=0;j<basicBlockList.get(i).getInstructionList().size();j++){
+                if(basicBlockList.get(i).getInstructionList().get(j) instanceof Br &&basicBlockList.get(i).getInstructionList().get(j).getLabel1().equals("nextBlock")){
+                    basicBlockList.get(i).getInstructionList().get(j).setLabel1(nextBlock.getName());
+                }
             }
         }
     }

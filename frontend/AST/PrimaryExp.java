@@ -2,6 +2,8 @@ package frontend.AST;
 
 import frontend.Token.TrueToken;
 
+import static LLVM.LLVMManager.CharacterToAscii;
+
 public class PrimaryExp {
     protected TrueToken LPARENT;
     protected Exp exp;
@@ -82,7 +84,12 @@ public class PrimaryExp {
         }else if(NumberToken!=null){
             return Integer.parseInt(NumberToken.getName());
         }else{
-            return CharacterToken.getName().charAt(1);
+            if(CharacterToken.getName().length()==3){
+                return CharacterToken.getName().charAt(1);
+            }else{
+                return Integer.parseInt(CharacterToAscii(CharacterToken.getName().substring(1,CharacterToken.getName().length()-1)));
+            }
+
         }
     }
 

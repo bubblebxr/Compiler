@@ -4,6 +4,7 @@ import LLVM.type.FunctionType;
 import LLVM.value.BasicBlock;
 import LLVM.value.Function;
 import LLVM.value.GlobalVariable;
+import LLVM.value.Instruction.Instruction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,11 +48,19 @@ public class Module {
         return FunctionList.get(FunctionList.size()-1).getCurBasicBlock();
     }
 
-    public void addNewBasicBlock(){
-        FunctionList.get(FunctionList.size()-1).addBasicBlock(new BasicBlock(null,null));
+    public void addNewBasicBlock(BasicBlock basicBlock){
+        FunctionList.get(FunctionList.size()-1).addBasicBlock(basicBlock);
     }
 
     public String getCurFunctionName() {
         return FunctionList.get(FunctionList.size()-1).getName().substring(1);
+    }
+
+    public Instruction getLastInstruction(){
+        return getCurBasicBlock().getLastInstruction();
+    }
+
+    public Function getCurFunction(){
+        return FunctionList.get(FunctionList.size()-1);
     }
 }

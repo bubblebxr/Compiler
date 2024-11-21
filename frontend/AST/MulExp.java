@@ -55,10 +55,10 @@ public class MulExp {
             TrueType type=tokenList.get(i-1).getType();
             if(type==TrueType.MULT){
                 //*
-                temp+=unaryExpList.get(i).getUnaryExpValue();
+                temp*=unaryExpList.get(i).getUnaryExpValue();
             }else if(type==TrueType.DIV){
                 // /
-                temp-=unaryExpList.get(i).getUnaryExpValue();
+                temp/=unaryExpList.get(i).getUnaryExpValue();
             }else{
                 // %
                 temp%=unaryExpList.get(i).getUnaryExpValue();

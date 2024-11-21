@@ -13,4 +13,18 @@ public class User extends Value{
         super(name, type);
         this.operators=operators;
     }
+
+    public String getLabel1(){
+        return null;
+    }
+
+    public void setLabel1(String name){
+    }
+
+    public String getLabel2(){
+        return null;
+    }
+
+    public void setLabel2(String name){
+    }
 }

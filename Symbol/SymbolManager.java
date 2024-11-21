@@ -171,7 +171,7 @@ public class SymbolManager {
                         //传递数组
                         if(type==SymbolType.CharArray){
                             //char array
-                            if(ExpType!=SymbolType.CharArray){
+                            if(ExpType!=SymbolType.CharArray&&ExpType!=SymbolType.ConstCharArray){
                                 ErrorToken errorToken=new ErrorToken(unaryExp.getIdent().getLineNumber(),ErrorType.e);
                                 errorList.add(errorToken);
                                 ErrorLineNumber.add(unaryExp.getIdent().getLineNumber());
@@ -180,7 +180,7 @@ public class SymbolManager {
 
                         }else{
                             //int array
-                            if(ExpType!=SymbolType.IntArray){
+                            if(ExpType!=SymbolType.IntArray&&ExpType!=SymbolType.ConstIntArray){
                                 ErrorToken errorToken=new ErrorToken(unaryExp.getIdent().getLineNumber(),ErrorType.e);
                                 errorList.add(errorToken);
                                 ErrorLineNumber.add(unaryExp.getIdent().getLineNumber());
@@ -189,7 +189,7 @@ public class SymbolManager {
                         }
                     }else{
                         //传递变量
-                        if(ExpType==SymbolType.CharArray||ExpType==SymbolType.IntArray){
+                        if(ExpType==SymbolType.CharArray||ExpType==SymbolType.IntArray||ExpType==SymbolType.ConstCharArray||ExpType==SymbolType.ConstIntArray){
                             ErrorToken errorToken=new ErrorToken(unaryExp.getIdent().getLineNumber(),ErrorType.e);
                             errorList.add(errorToken);
                             ErrorLineNumber.add(unaryExp.getIdent().getLineNumber());

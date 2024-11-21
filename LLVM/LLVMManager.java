@@ -7,7 +7,7 @@ import LLVM.value.Function;
 import LLVM.value.GlobalVariable;
 import LLVM.value.Instruction.ConversionType.Trunc;
 import LLVM.value.Instruction.ConversionType.Zext;
-import LLVM.value.Instruction.Instruction;
+import LLVM.value.Instruction.Jump.Br;
 import LLVM.value.Instruction.Jump.Call;
 import LLVM.value.Instruction.Jump.Ret;
 import LLVM.value.Instruction.Memory.Alloca;
@@ -30,9 +30,11 @@ public class LLVMManager {
     protected int id;  //作用域记录，只增不减
     public static int presentId;  //当前作用域
     public static int variableId; //变量id
+    public static int labelId;   //标签id
     protected Stack<Integer> stackId=new Stack<>();
     protected int strId;
     protected Set<String> pointerSet;
+    protected static Boolean breakOrContinue=false;
 
 
     public LLVMManager(ASTNode AST){
@@ -41,6 +43,7 @@ public class LLVMManager {
         presentId=1;
         id=1;
         strId=0;
+        labelId=0;
         this.pointerSet=new HashSet<>();
     }
 
@@ -112,10 +115,14 @@ public class LLVMManager {
                 symbol.setId((presentId==1)?"@"+constDef.getIdent().getName():"%"+variableId);
                 addSymbol(constDef.getIdent().getName(),symbol);
                 if(presentId==1){
-                    module.addGlobalVariableList(new GlobalVariable("@"+constDef.getIdent().getName(),new ArrayType(new IntegerType(),constDef.getConstExp().getValue()),getConstExpListValue(constDef.getConstInitVal().getConstExpList()),constDef.getConstExp().getValue(),true));
+                    ArrayList<Integer> temp=getConstExpListValue(constDef.getConstInitVal().getConstExpList());
+                    module.addGlobalVariableList(new GlobalVariable("@"+constDef.getIdent().getName(),new ArrayType(new IntegerType(),constDef.getConstExp().getValue()),temp,constDef.getConstExp().getValue(),true));
+                    symbol.setValue(temp);
                 }else{
                     pointerSet.add(presentId+"%"+variableId);
+                    ArrayList<Integer> temp=getConstExpListValue(constDef.getConstInitVal().getConstExpList());
                     addConstArray(constDef.getConstInitVal().getConstExpList(),constDef.getConstExp().getValue(),new ArrayType(new IntegerType(),constDef.getConstExp().getValue()),null);
+                    symbol.setValue(temp);
                 }
             }else{
                 //普通变量
@@ -171,16 +178,27 @@ public class LLVMManager {
         //first element
         ArrayList<Value> firstOperators=new ArrayList<>();
         firstOperators.add(new Value("%"+arrayBasicAddress,new PointerType(type)));
-        firstOperators.add(new Value("0",type.getType()));
+        firstOperators.add(new Value("0",new IntegerType()));
         firstOperators.add(new Value("0",type.getType()));
         getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type,firstOperators));
         if(constExpList!=null){
             for (int i=0;i<constExpList.size();i++) {
                 addConstArrayElement(constExpList.get(i).getValue(), i == 0, type.getType());
             }
+            for(int i=constExpList.size();i<elementNum;i++){
+                addConstArrayElement(0, i == 0, type.getType());
+            }
         }else{
-            for (int i=0;i<StringConst.length()-1;i++) {
-                addConstArrayElement(StringConst.charAt(i+1), i == 0, type.getType());
+            for (int i=1;i<StringConst.length()-1;i++) {
+                if(StringConst.charAt(i)=='\\'&&i<StringConst.length()-2&&StringConst.charAt(i+1)=='n'){
+                    addConstArrayElement(10,i==1,type.getType());
+                    i++;
+                    continue;
+                }
+                addConstArrayElement(StringConst.charAt(i), i == 1, type.getType());
+            }
+            for(int i=StringConst.length()-2;i<elementNum;i++){
+                addConstArrayElement(0, false, type.getType());
             }
         }
 
@@ -289,7 +307,9 @@ public class LLVMManager {
                 addSymbol(varDef.getIdent().getName(),symbol);
                 if(presentId==1){
                     if(varDef.getInitVal()!=null){
-                        module.addGlobalVariableList(new GlobalVariable("@"+varDef.getIdent().getName(),new IntegerType(),varDef.getInitVal().getExpList().get(0).getExpValue(),false));
+                        int value=varDef.getInitVal().getExpList().get(0).getExpValue();
+                        module.addGlobalVariableList(new GlobalVariable("@"+varDef.getIdent().getName(),new IntegerType(),value,false));
+                        symbol.addValue(value);
                     }else{
                         module.addGlobalVariableList(new GlobalVariable("@"+varDef.getIdent().getName(),new IntegerType(),0,false));
                     }
@@ -378,12 +398,13 @@ public class LLVMManager {
     }
 
     public void addArray(List<Exp> expList, int elementNum, Type type,String StringConst){
+        //TODO:剩余初始化
         getCurBasicBlock().addInstruction(new Alloca("%"+variableId,type,elementNum));
         int arrayBasicAddress=variableId++;
         //first element
         ArrayList<Value> firstOperators=new ArrayList<>();
         firstOperators.add(new Value("%"+arrayBasicAddress,new PointerType(type)));
-        firstOperators.add(new Value("0",type.getType()));
+        firstOperators.add(new Value("0",new IntegerType()));
         firstOperators.add(new Value("0",type.getType()));
         getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type,firstOperators));
         String lastElementId="%"+(variableId-1);
@@ -405,9 +426,20 @@ public class LLVMManager {
                 temp.add(new Value(lastElementId,new PointerType(type.getType())));
                 getCurBasicBlock().addInstruction(new Store(null,null,temp));
             }
+            for(int i=expList.size();i<elementNum;i++){
+                ArrayList<Value> temp=new ArrayList<>();
+                temp.add(new Value(lastElementId,new PointerType(type.getType())));
+                temp.add(new Value("1",type.getType()));
+                getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type.getType(),temp));
+                lastElementId="%"+(variableId-1);
+                temp=new ArrayList<>();
+                temp.add(new Value("0",type.getType()));
+                temp.add(new Value(lastElementId,new PointerType(type.getType())));
+                getCurBasicBlock().addInstruction(new Store(null,null,temp));
+            }
         }else{
-            for (int i=0;i<StringConst.length()-1;i++) {
-                if(i!=0){
+            for (int i=1;i<StringConst.length()-1;i++) {
+                if(i!=1){
                     ArrayList<Value> temp=new ArrayList<>();
                     temp.add(new Value(lastElementId,new PointerType(type.getType())));
                     temp.add(new Value("1",type.getType()));
@@ -416,6 +448,17 @@ public class LLVMManager {
                 }
                 ArrayList<Value> temp=new ArrayList<>();
                 temp.add(new Value(String.format("%d",(int)StringConst.charAt(i)),type.getType()));
+                temp.add(new Value(lastElementId,new PointerType(type.getType())));
+                getCurBasicBlock().addInstruction(new Store(null,null,temp));
+            }
+            for(int i=StringConst.length()-2;i<elementNum;i++){
+                ArrayList<Value> temp=new ArrayList<>();
+                temp.add(new Value(lastElementId,new PointerType(type.getType())));
+                temp.add(new Value("1",type.getType()));
+                getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type.getType(),temp));
+                lastElementId="%"+(variableId-1);
+                temp=new ArrayList<>();
+                temp.add(new Value("0",type.getType()));
                 temp.add(new Value(lastElementId,new PointerType(type.getType())));
                 getCurBasicBlock().addInstruction(new Store(null,null,temp));
             }
@@ -528,13 +571,14 @@ public class LLVMManager {
             temp.add(new Value("0",new IntegerType()));
             temp.add(new Value(pair.id,new IntegerType()));
             if(unaryExp.getUnaryOp().getType()==TrueType.PLUS){
-                getCurBasicBlock().addInstruction(new Add("%"+variableId,new IntegerType(),temp));
+                getCurBasicBlock().addInstruction(new Add("%"+(variableId++),new IntegerType(),temp));
             }else if(unaryExp.getUnaryOp().getType()==TrueType.MINU){
-                getCurBasicBlock().addInstruction(new Sub("%"+variableId,new IntegerType(),temp));
+                getCurBasicBlock().addInstruction(new Sub("%"+(variableId++),new IntegerType(),temp));
             }else if(unaryExp.getUnaryOp().getType()==TrueType.NOT){
-                getCurBasicBlock().addInstruction(new Icmp("%"+variableId,new IntegerType(),temp,IcmpType.ne));
+                getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new BooleanType(),temp,IcmpType.eq));
+                typeConversion(new BooleanType(),"%"+(variableId-1),new IntegerType());
             }
-            return new Pair("%"+(variableId++),new IntegerType());
+            return new Pair("%"+(variableId-1),new IntegerType());
         }
     }
 
@@ -582,7 +626,7 @@ public class LLVMManager {
         }
     }
 
-    public String CharacterToAscii(String name){
+    public static String CharacterToAscii(String name){
         if(name.length()==1){
             return String.valueOf((int)name.charAt(0));
         }else{
@@ -604,11 +648,10 @@ public class LLVMManager {
                 return "39";
             }else if(name.equals("\\\\")){
                 return "92";
-            }else if(name.equals("\\0")){
+            }else{
                 return "0";
             }
         }
-        return null;
     }
 
 
@@ -655,6 +698,10 @@ public class LLVMManager {
         module.addFunctionList(function);
         function.addBasicBlock(new BasicBlock(null,null));
         stackId.add(temp);
+        for(FuncParamSymbol funcParamSymbol:symbol.getFuncParams()){
+            FuncParamsLoad(funcParamSymbol);
+            setFuncParamsIdAndLoad(funcParamSymbol.getIdent(),presentId);
+        }
         BlockToLLVM(funcDef.getBlock(),false, type == SymbolType.VoidFunc);
         if(type==SymbolType.VoidFunc){
             function.checkReturn();
@@ -663,10 +710,42 @@ public class LLVMManager {
         presentId=stackId.peek();
     }
 
-    public void BlockToLLVM(Block block,boolean inFor,boolean isVoid){
-        for(BlockItem blockItem:block.getBlockItemList()){
-            BlockItemToLLVM(blockItem,inFor,isVoid);
+    public void FuncParamsLoad(FuncParamSymbol funcParamSymbol) {
+        int dimension=funcParamSymbol.getDimension();
+        SymbolType type=funcParamSymbol.getType();
+        if(dimension==0){
+            Type paramType=type==SymbolType.Char?new CharType():new IntegerType();
+            getCurBasicBlock().addInstruction(new Alloca("%"+(variableId++),paramType));
+            ArrayList<Value> temp=new ArrayList<>();
+            temp.add(new Value(funcParamSymbol.getId(),paramType));
+            temp.add(new Value("%"+(variableId-1),new PointerType(paramType)));
+            getCurBasicBlock().addInstruction(new Store(null,null,temp));
+            String id="%"+(variableId-1);
+            pointerSet.add(presentId+id);
+        }else{
+            Type paramType=(funcParamSymbol.getType()==SymbolType.Int||funcParamSymbol.getType()==SymbolType.IntArray||funcParamSymbol.getType()==SymbolType.ConstIntArray||funcParamSymbol.getType()==SymbolType.ConstInt)?new IntegerType():new CharType();
+            getCurBasicBlock().addInstruction(new Alloca("%"+(variableId++),new PointerType(paramType)));
+            ArrayList<Value> temp=new ArrayList<>();
+            temp.add(new Value(funcParamSymbol.getId(),new PointerType(paramType)));
+            temp.add(new Value("%"+(variableId-1),new PointerType(new PointerType(paramType))));
+            getCurBasicBlock().addInstruction(new Store(null,null,temp));
+            String id="%"+(variableId-1);
+            pointerSet.add(presentId+id);
         }
+    }
+
+    public void BlockToLLVM(Block block,boolean inFor,boolean isVoid){
+        for(int i=0;i<block.getBlockItemList().size();i++){
+            if(breakOrContinue){
+                breakOrContinue=false;
+                break;
+            }
+            BlockItemToLLVM(block.getBlockItemList().get(i),inFor,isVoid);
+        }
+        if(breakOrContinue)breakOrContinue=false;
+//        if(getCurBasicBlock().getInstructionList().isEmpty()){
+//            getCurBasicBlock().addInstruction(new Br(null,null,"%b"+(labelId)));
+//        }
     }
 
     public void BlockItemToLLVM(BlockItem blockItem,boolean inFor,boolean isVoid){
@@ -701,23 +780,122 @@ public class LLVMManager {
                 BlockToLLVM(stmt.getBlock(),inFor,isVoid);
                 break;
             case 4:
-                //TODO:if else
-
+                //if else
+                getCurBasicBlock().addInstruction(new Br(null,null,"%b"+labelId));
+                BasicBlock curBlock=getCurBasicBlock();
+                CondToLLVM(stmt.getCond());
+                BasicBlock thenStmt=new BasicBlock("%b"+(labelId++),null);
+                int startId= module.getCurFunction().getBasicBlockNum();
+                curBlock.fillThenStmt(thenStmt);
+                module.addNewBasicBlock(thenStmt);
+                StmtToLLVM(stmt.getStmt(),inFor,isVoid);
+                if(stmt.getStmt().getType()!=3){
+                    breakOrContinue=false;
+                }
+                if(getCurBasicBlock().getInstructionList().isEmpty()||!(getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Br||getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Ret)){
+                    getCurBasicBlock().addInstruction(new Br(null,null,"nextBlock"));
+                }
+                int endId=module.getCurFunction().getBasicBlockNum();
+                int start = 0,end=0;
+                BasicBlock elseStmt=null;
+                if(stmt.getElseStmt()!=null){
+                    elseStmt=new BasicBlock("%b"+(labelId++),null);
+                    start= module.getCurFunction().getBasicBlockNum();
+                    curBlock.fillElseStmt(elseStmt);
+                    module.addNewBasicBlock(elseStmt);
+                    StmtToLLVM(stmt.getElseStmt(),inFor,isVoid);
+                    if(getCurBasicBlock().getInstructionList().isEmpty()||!(getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Br||getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Ret)){
+                        getCurBasicBlock().addInstruction(new Br(null,null,"nextBlock"));
+                    }
+                    end= module.getCurFunction().getBasicBlockNum();
+                }else{
+                    curBlock.fillElseStmtToNextBlock();
+                }
+                BasicBlock nextBlock=new BasicBlock("%b"+(labelId++),null);
+                module.addNewBasicBlock(nextBlock);
+                curBlock.fillNextBlock(nextBlock);
+                module.getCurFunction().fillUnCondNextBlock(startId,endId,nextBlock);
+                if(elseStmt!=null)module.getCurFunction().fillUnCondNextBlock(start,end,nextBlock);
                 break;
             case 5:
-                //TODO:for
+                //for
                 if(stmt.getForStmt1()!=null){
                     ForStmtToLLVM(stmt.getForStmt1());
                 }
+                BasicBlock lastBlock=getCurBasicBlock();
+                BasicBlock condBlock=getCurBasicBlock();
+                String continueBlockId=null,breakBlockId;
                 if(stmt.getCond()!=null){
-
+                    if(condBlock.getInstructionList().isEmpty()||!(condBlock.getInstructionList().get(condBlock.getInstructionList().size()-1) instanceof Br||condBlock.getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Ret)){
+                        condBlock.addInstruction(new Br(null,null,"%b"+(labelId)));
+                    }
+                    CondToLLVM(stmt.getCond());
+                    condBlock=getCurBasicBlock();
+                    continueBlockId=condBlock.getName();
+                }else{
+                    if(getCurBasicBlock().getInstructionList().isEmpty()||!(getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Br||getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Ret)){
+                        getCurBasicBlock().addInstruction(new Br(null,null,"%b"+(labelId)));
+                    }
                 }
+                BasicBlock forStmt=new BasicBlock("%b"+(labelId++),null);
+                int startIndex= module.getCurFunction().getBasicBlockNum();
+                if(condBlock!=null){
+                    condBlock.fillForStmt(forStmt);
+                }
+                module.addNewBasicBlock(forStmt);
+                StmtToLLVM(stmt.getStmt(),true,isVoid);
+                if(continueBlockId==null)continueBlockId=forStmt.getName();
                 if(stmt.getForStmt2()!=null){
-
+                    if(getCurBasicBlock().getInstructionList().isEmpty()||!(getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Br||getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Ret)){
+                        getCurBasicBlock().addInstruction(new Br(null,null,"%b"+labelId));
+                    }
+                    BasicBlock forStmt2=new BasicBlock("%b"+(labelId++),null);
+                    module.addNewBasicBlock(forStmt2);
+                    continueBlockId=forStmt2.getName();
+                    ForStmtToLLVM(stmt.getForStmt2());
+                    if(stmt.getCond()!=null){
+                        if(getCurBasicBlock().getInstructionList().isEmpty()||!(getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Br||getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Ret)){
+                            getCurBasicBlock().addInstruction(new Br(null,null,condBlock.getName()));
+                        }
+                    }else{
+                        if(getCurBasicBlock().getInstructionList().isEmpty()||!(getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Br||getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Ret)){
+                            getCurBasicBlock().addInstruction(new Br(null,null,forStmt.getName()));
+                        }
+                    }
+                }else{
+                    if(stmt.getCond()!=null){
+                        if(getCurBasicBlock().getInstructionList().isEmpty()||!(getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Br||getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Ret)){
+                            getCurBasicBlock().addInstruction(new Br(null,null,condBlock.getName()));
+                        }
+                    }else{
+                        if(getCurBasicBlock().getInstructionList().isEmpty()||!(getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Br||getCurBasicBlock().getInstructionList().get(getCurBasicBlock().getInstructionList().size()-1) instanceof Ret)){
+                            getCurBasicBlock().addInstruction(new Br(null,null,forStmt.getName()));
+                        }
+                    }
+                }
+                int endIndex=module.getCurFunction().getBasicBlockNum();
+                BasicBlock nextForBlock=new BasicBlock("%b"+(labelId++),null);
+                //先出现break，再填值,continue同理
+                breakBlockId=nextForBlock.getName();
+                module.getCurFunction().fillContinueLabel(startIndex,endIndex,continueBlockId);
+                module.getCurFunction().fillBreakLabel(startIndex,endIndex,breakBlockId);
+                module.addNewBasicBlock(nextForBlock);
+                if(stmt.getCond()!=null){
+                    lastBlock.fillThenStmt(forStmt);
+                    lastBlock.fillNextForBlockStmt(nextForBlock);
                 }
                 break;
             case 6:
-                //TODO:break continue
+                //break continue
+                if(stmt.getBreakOrContinue().getType()==TrueType.BREAKTK){
+                    getCurBasicBlock().addInstruction(new Br(null,null,"breakBlockId"));
+                    breakOrContinue=true;
+//                    module.addNewBasicBlock(new BasicBlock("%b"+(labelId++),null));
+                }else{
+                    getCurBasicBlock().addInstruction(new Br(null,null,"continueBlockId"));
+                    breakOrContinue=true;
+//                    module.addNewBasicBlock(new BasicBlock("%b"+(labelId++),null));
+                }
                 break;
             case 7:
                 //return
@@ -757,6 +935,141 @@ public class LLVMManager {
                 PrintfToLLVM(stmt.getStringConst().getName(),stmt.getExpList());
                 break;
         }
+    }
+
+    public void CondToLLVM(Cond cond) {
+        LOrExpToLLVM(cond.getlOrExp());
+    }
+
+    /**
+     * @description:
+     * 1.是最后一个LOrExp，正确跳转到thenStmt，错误跳转到elseStmt
+     * 2.不是最后一个LOrExp，正确跳转到下一个thenStmt，错误跳转到下一个or中的第一个AndLabel
+     **/
+    public void LOrExpToLLVM(LOrExp lOrExp){
+        BasicBlock curBlock=getCurBasicBlock();
+        for(int i=0;i<lOrExp.getlAndExpList().size();i++){
+           BasicBlock firstLAndExpBlock=new BasicBlock("%b"+(labelId++),null);
+            if(i!=0)curBlock.fillNextOrFirstAndLabel(firstLAndExpBlock.getName());
+           curBlock.addLAndExpList(firstLAndExpBlock);
+           module.addNewBasicBlock(firstLAndExpBlock);
+           LAndExpToLLVM(lOrExp.getlAndExpList().get(i),curBlock);
+        }
+        curBlock.fillNextOrFirstAndLabelToElseStmt();
+
+    }
+
+    /**
+     * @description:
+     * 1.是最后一个AndExp，正确跳转到thenStmt，错误跳转到下一个or中的第一个AndLabel
+     * 2.不是最后一个AndExp，正确跳转到下一个AndExp，错误跳转到下一个or中的第一个AndLabel
+     **/
+    public void LAndExpToLLVM(LAndExp lAndExp,BasicBlock curBlock) {
+        for(int i=0;i<lAndExp.getEqExpList().size();i++){
+            String trueLabel="nextAndLabel";
+            String falseLabel="nextOrFirstAndLabel";
+            BasicBlock newLAndBlock = null;
+            if(i!=0){
+                newLAndBlock=new BasicBlock("%b"+(labelId++),null);
+                curBlock.addLAndExpList(newLAndBlock);
+                module.addNewBasicBlock(newLAndBlock);
+            }
+            Pair pair=EqExpToLLVM(lAndExp.getEqExpList().get(i));
+            if(typeConversion(pair.type,pair.id,new IntegerType())){
+                pair.id="%"+(variableId-1);
+            }
+            ArrayList<Value> temp=new ArrayList<>();
+            temp.add(new Value("0",new IntegerType()));
+            temp.add(new Value(pair.id,new IntegerType()));
+            getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),temp,IcmpType.ne));
+            if(i==lAndExp.getEqExpList().size()-1){
+                trueLabel="thenStmt";
+            }
+            if(i!=0)curBlock.fillNextAndLabel(newLAndBlock.getName());
+            getCurBasicBlock().addInstruction(new Br(null,new BooleanType(),"%"+(variableId-1),trueLabel,falseLabel));
+        }
+    }
+
+    public Pair EqExpToLLVM(EqExp eqExp) {
+        if(eqExp.getRelExpList().size()==1){
+            return RelExpToLLVM(eqExp.getRelExpList().get(0));
+        }
+        ArrayList<Value> temp=new ArrayList<>();
+        Pair pair1=RelExpToLLVM(eqExp.getRelExpList().get(0));
+        Pair pair2=RelExpToLLVM(eqExp.getRelExpList().get(1));
+        if(typeConversion(pair1.type,pair1.id,new IntegerType())){
+            pair1.id="%"+(variableId-1);
+        }
+        if(typeConversion(pair2.type,pair2.id,new IntegerType())){
+            pair2.id="%"+(variableId-1);
+        }
+        temp.add(new Value(pair1.id,new IntegerType()));
+        temp.add(new Value(pair2.id,new IntegerType()));
+        if(eqExp.getTokenList().get(0).getType()==TrueType.EQL){
+            getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),temp,IcmpType.eq));
+        }else{
+            getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),temp,IcmpType.ne));
+        }
+        for(int i=2;i<eqExp.getRelExpList().size();i++){
+            ArrayList<Value> tempList=new ArrayList<>();
+            tempList.add(new Value("%"+(variableId-1),new IntegerType()));
+            Pair pair3=RelExpToLLVM(eqExp.getRelExpList().get(i));
+            if(typeConversion(pair3.type,pair3.id,new IntegerType())){
+                pair3.id="%"+(variableId-1);
+            }
+            tempList.add(new Value(pair3.id,new IntegerType()));
+            if(eqExp.getTokenList().get(i-1).getType()==TrueType.EQL){
+                getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),tempList,IcmpType.eq));
+            }else{
+                getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),tempList,IcmpType.ne));
+            }
+        }
+        return new Pair("%"+(variableId-1),new BooleanType());
+    }
+
+    public Pair RelExpToLLVM(RelExp relExp){
+        if(relExp.getAddExpList().size()==1){
+            return AddExpToLLVM(relExp.getAddExpList().get(0));
+        }
+        ArrayList<Value> temp=new ArrayList<>();
+        Pair pair1=AddExpToLLVM(relExp.getAddExpList().get(0));
+        Pair pair2=AddExpToLLVM(relExp.getAddExpList().get(1));
+        if(typeConversion(pair1.type,pair1.id,new IntegerType())){
+            pair1.id="%"+(variableId-1);
+        }
+        if(typeConversion(pair2.type,pair2.id,new IntegerType())){
+            pair2.id="%"+(variableId-1);
+        }
+        temp.add(new Value(pair1.id,new IntegerType()));
+        temp.add(new Value(pair2.id,new IntegerType()));
+        if(relExp.getTokenList().get(0).getType()==TrueType.LSS){
+            getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),temp,IcmpType.slt));
+        }else if(relExp.getTokenList().get(0).getType()==TrueType.LEQ){
+            getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),temp,IcmpType.sle));
+        }else if(relExp.getTokenList().get(0).getType()==TrueType.GRE){
+            getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),temp,IcmpType.sgt));
+        }else{
+            getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),temp,IcmpType.sge));
+        }
+        for(int i=2;i<relExp.getAddExpList().size();i++){
+            ArrayList<Value> tempList=new ArrayList<>();
+            tempList.add(new Value("%"+(variableId-1),new IntegerType()));
+            Pair pair3=AddExpToLLVM(relExp.getAddExpList().get(i));
+            if(typeConversion(pair3.type,pair3.id,new IntegerType())){
+                pair3.id="%"+(variableId-1);
+            }
+            tempList.add(new Value(pair3.id,new IntegerType()));
+            if(relExp.getTokenList().get(i-1).getType()==TrueType.LSS){
+                getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),tempList,IcmpType.slt));
+            }else if(relExp.getTokenList().get(i-1).getType()==TrueType.LEQ){
+                getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),tempList,IcmpType.sle));
+            }else if(relExp.getTokenList().get(i-1).getType()==TrueType.GRE){
+                getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),tempList,IcmpType.sgt));
+            }else{
+                getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),tempList,IcmpType.sge));
+            }
+        }
+        return new Pair("%"+(variableId-1),new BooleanType());
     }
 
     public void ForStmtToLLVM(ForStmt forStmt1) {
@@ -859,8 +1172,8 @@ public class LLVMManager {
     public Boolean typeConversion(Type type1,String id1,Type type2){
         if(type1.getClass()==type2.getClass()){
             return false;
-        }else if(type1 instanceof CharType){
-            //char - > int : zext
+        }else if(type1 instanceof CharType||type1 instanceof BooleanType){
+            //char - > int : zext || i1 - >int : zext
             ArrayList<Value> temp=new ArrayList<>();
             temp.add(new Value(id1,type1));
             temp.add(new Value(null,type2));
@@ -868,6 +1181,9 @@ public class LLVMManager {
         }else{
             //int - > char : trunc
             ArrayList<Value> temp=new ArrayList<>();
+            if(id1.charAt(0)!='%'){
+                id1= String.valueOf(Integer.parseInt(id1)&0x7f);
+            }
             temp.add(new Value(id1,type1));
             temp.add(new Value(null,type2));
             getCurBasicBlock().addInstruction(new Trunc("%"+(variableId++),null,temp));
@@ -883,42 +1199,52 @@ public class LLVMManager {
             Type type;
             if(symbol.getType()==SymbolType.Int||symbol.getType()==SymbolType.ConstInt){
                 type=new IntegerType();
-            }else if(symbol.getType()==SymbolType.IntArray||symbol.getType()==SymbolType.ConstIntArray){
+            }else if(!(symbol instanceof FuncParamSymbol) &&(symbol.getType()==SymbolType.IntArray||symbol.getType()==SymbolType.ConstIntArray)){
                 type=new ArrayType(new IntegerType(), symbol.getElementNum());
                 ArrayList<Value> temp=new ArrayList<>();
                 temp.add(new Value(id,new PointerType(type)));
-                temp.add(new Value("0",type.getType()));
+                temp.add(new Value("0",new IntegerType()));
                 temp.add(new Value("0",type.getType()));
                 getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type,temp));
                 id="%"+(variableId-1);
                 type=new PointerType(new IntegerType());
-            }else if(symbol.getType()==SymbolType.CharArray||symbol.getType()==SymbolType.ConstCharArray){
+            }else if(!(symbol instanceof FuncParamSymbol) &&(symbol.getType()==SymbolType.CharArray||symbol.getType()==SymbolType.ConstCharArray)){
                 type=new ArrayType(new CharType(), symbol.getElementNum());
                 ArrayList<Value> temp=new ArrayList<>();
                 temp.add(new Value(id,new PointerType(type)));
-                temp.add(new Value("0",type.getType()));
+                temp.add(new Value("0",new IntegerType()));
                 temp.add(new Value("0",type.getType()));
                 getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type,temp));
                 id="%"+(variableId-1);
                 type=new PointerType(new CharType());
-            }else{
+            }else if(symbol.getType()==SymbolType.Char||symbol.getType()==SymbolType.ConstChar){
                 type=new CharType();
+            }else{
+                if(symbol.getDimension()==1){
+                    //数组
+                    if(symbol.getType()==SymbolType.IntArray||symbol.getType()==SymbolType.ConstIntArray){
+                        type=new PointerType(new IntegerType());
+                    }else{
+                        type=new PointerType(new CharType());
+                    }
+                }else{
+                    //变量
+                    if(symbol.getType()==SymbolType.Int||symbol.getType()==SymbolType.ConstInt){
+                        type=new IntegerType();
+                    }else{
+                        type=new CharType();
+                    }
+                }
             }
             if(isRight&&loadPointer(id,type)){
                 id="%"+(variableId-1);
             }
-            if(symbol instanceof FuncParamSymbol&&!((FuncParamSymbol) symbol).getIsLoad()){
-                getCurBasicBlock().addInstruction(new Alloca("%"+(variableId++),type));
+            if(symbol instanceof FuncParamSymbol&&type instanceof PointerType){
                 ArrayList<Value> temp=new ArrayList<>();
-                temp.add(new Value(symbol.getId(),type));
-                temp.add(new Value("%"+(variableId-1),new PointerType(type)));
-                getCurBasicBlock().addInstruction(new Store(null,null,temp));
-                setFuncParamsIdAndLoad(lVal.getIdent().getName(),presentId);
+                temp.add(new Value(id,type));
+                temp.add(new Value("0",type.getType()));
+                getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type.getType(),temp));
                 id="%"+(variableId-1);
-                pointerSet.add(presentId+id);
-                if(isRight&&loadPointer(id,type)){
-                    id="%"+(variableId-1);
-                }
             }
             return new Pair(id,type);
         }else{
@@ -961,7 +1287,7 @@ public class LLVMManager {
             }
             ArrayList<Value> temp=new ArrayList<>();
             temp.add(new Value(symbol.getId(),new PointerType(new ArrayType(type,symbol.getElementNum()))));
-            temp.add(new Value("0",type));
+            temp.add(new Value("0",new IntegerType()));
             temp.add(new Value(pair.id,type));
             getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),
                     new ArrayType(type,symbol.getElementNum()),
@@ -975,19 +1301,6 @@ public class LLVMManager {
             return new Pair("%"+(variableId-1),type);
         }
     }
-
-    /**
-     * @description:
-     * @author: bxr
-     * @date: 2024/11/16 11:57
-     * @param: [symbol, isCharArray：charArray or IntArray]
-     * @return: LLVM.Pair
-     **/
-    public Pair callArrayToLLVM(Symbol symbol, boolean isCharArray) {
-        return new Pair(null,null);
-    }
-
-
 
     public void setFuncParamsIdAndLoad(String name, int presentId) {
         for(Symbol symbol:SymbolTables.get(presentId-1).getDirectory().values()){
@@ -1056,12 +1369,14 @@ public class LLVMManager {
         int dimension;
         if(type==SymbolType.Char||type==SymbolType.Int){
             dimension=0;
-        }else
+        }else{
             dimension=1;
+            }
         Symbol symbol=new FuncParamSymbol(type,funcFParam.getIdent().getName(),dimension,"%"+(variableId++));
         addSymbol(funcFParam.getIdent().getName(),symbol);
         return symbol;
     }
+
 
     public void MainFuncDefToLLVM(MainFuncDef mainFuncDef) {
         SymbolTables.add(new SymbolTable(id,presentId));

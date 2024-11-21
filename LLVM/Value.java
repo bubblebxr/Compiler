@@ -24,4 +24,7 @@ public class Value {
         return type.toString()+" "+name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 }

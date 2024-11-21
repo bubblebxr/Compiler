@@ -1,5 +1,6 @@
 package Symbol.Symbol;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Symbol {
@@ -60,5 +61,13 @@ public class Symbol {
     }
 
     public void setLoad() {
+    }
+
+    public void setValue(ArrayList<Integer> value){}
+
+    public void addValue(int value){    }
+
+    public int getDimension() {
+        return 0;
     }
 }

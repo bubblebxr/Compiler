@@ -59,5 +59,11 @@ public class VariableSymbol extends Symbol {
         return elementNum;
     }
 
+    public void setValue(ArrayList<Integer> value) {
+        this.value = value;
+    }
 
+    public void addValue(int value){
+        this.value.add(value);
+    }
 }

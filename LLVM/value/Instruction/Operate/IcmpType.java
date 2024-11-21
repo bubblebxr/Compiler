@@ -9,7 +9,7 @@ package LLVM.value.Instruction.Operate;
  */
 
 public enum IcmpType {
-    eq,  // =
+    eq,  // ==
     ne,  // !=
     sgt,  // >
     sge,  // >=

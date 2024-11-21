@@ -46,4 +46,8 @@ public class EqExp {
     public List<RelExp> getRelExpList() {
         return relExpList;
     }
+
+    public List<TrueToken> getTokenList() {
+        return tokenList;
+    }
 }

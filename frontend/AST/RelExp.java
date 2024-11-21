@@ -46,4 +46,8 @@ public class RelExp {
     public List<AddExp> getAddExpList() {
         return addExpList;
     }
+
+    public List<TrueToken> getTokenList() {
+        return tokenList;
+    }
 }

@@ -22,4 +22,5 @@ public class Instruction extends User {
     public Instruction(String name, Type type, ArrayList<Value> operators) {
         super(name,type,operators);
     }
+
 }

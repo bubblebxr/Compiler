@@ -33,6 +33,8 @@ public class Icmp extends Instruction {
                 "icmp " +
                 icmpType +
                 " " +
+                operators.get(0).getType().toString() +
+                " " +
                 operators.get(0).getName() +
                 "," +
                 operators.get(1).getName() +

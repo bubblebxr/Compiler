@@ -12,4 +12,6 @@ public class PointerType extends Type {
     public String toString(){
         return PointingType.toString()+"*";
     }
+
+    public Type getType(){return PointingType;}
 }
