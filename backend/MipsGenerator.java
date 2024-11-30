@@ -75,5 +75,6 @@ public class MipsGenerator {
     }
 
     public void generateMipsModule() {
+
     }
 }
