@@ -36,6 +36,9 @@ public class LLVMManager {
     protected Set<String> pointerSet;
     protected static Boolean breakOrContinue=false;
 
+    public Module getModule() {
+        return module;
+    }
 
     public LLVMManager(ASTNode AST){
         this.AST=AST;
@@ -398,7 +401,7 @@ public class LLVMManager {
     }
 
     public void addArray(List<Exp> expList, int elementNum, Type type,String StringConst){
-        //TODO:剩余初始化
+        //剩余初始化
         getCurBasicBlock().addInstruction(new Alloca("%"+variableId,type,elementNum));
         int arrayBasicAddress=variableId++;
         //first element

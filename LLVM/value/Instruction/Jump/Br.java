@@ -4,6 +4,10 @@ package LLVM.value.Instruction.Jump;
 import LLVM.Type;
 import LLVM.Value;
 import LLVM.value.Instruction.Instruction;
+import MIPS.Instruction.MipsInstruction;
+import MIPS.Instruction.Jump.J;
+import MIPS.Instruction.Operate.Compare;
+import MIPS.Instruction.Operate.CompareType;
 
 import java.util.ArrayList;
 
@@ -18,6 +22,7 @@ public class Br extends Instruction {
     protected String cond;
     protected String label1;
     protected String label2;
+    protected Boolean hasCond;
     public Br(String name, Type type) {
         super(name, type);
     }
@@ -39,6 +44,7 @@ public class Br extends Instruction {
         this.cond=null;
         this.label1=label1;
         this.label2=null;
+        hasCond=false;
     }
 
     /**
@@ -53,6 +59,7 @@ public class Br extends Instruction {
         this.cond=cond;
         this.label1=label1;
         this.label2=label2;
+        hasCond=true;
     }
 
     @Override
@@ -82,5 +89,19 @@ public class Br extends Instruction {
 
     public void setLabel2(String name){
         label2=name;
+    }
+
+    public ArrayList<MipsInstruction> generateMips() {
+        ArrayList<MipsInstruction> list=new ArrayList<>();
+        if(hasCond){
+            //有条件跳转
+            list.add(new Compare(CompareType.bne,"$t0","$zero",label1.substring(1)));
+            list.add(new Compare(CompareType.beq,"$t0","$zero",label2.substring(1)));
+            return list;
+        }else{
+            //无条件跳转
+            list.add(new J(label1));
+            return list;
+        }
     }
 }

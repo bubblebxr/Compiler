@@ -5,6 +5,11 @@ import LLVM.Type;
 import LLVM.Value;
 import LLVM.type.ArrayType;
 import LLVM.value.Instruction.Instruction;
+import MIPS.Instruction.Jump.J;
+import MIPS.Instruction.Memory.La;
+import MIPS.Instruction.MipsInstruction;
+import MIPS.Instruction.Operate.Compare;
+import MIPS.Instruction.Operate.CompareType;
 
 import java.util.ArrayList;
 
@@ -45,5 +50,13 @@ public class Getelementptr extends Instruction {
             a.append("\n");
         }
         return a.toString();
+    }
+
+    public ArrayList<MipsInstruction> generateMips() {
+        ArrayList<MipsInstruction> list=new ArrayList<>();
+        if(operators.get(0).getName().startsWith("@.str.")){
+            list.add(new La("$a0",operators.get(0).getName().substring(1)));
+        }
+        return list;
     }
 }

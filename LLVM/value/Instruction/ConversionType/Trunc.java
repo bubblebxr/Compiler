@@ -4,6 +4,8 @@ package LLVM.value.Instruction.ConversionType;
 import LLVM.Type;
 import LLVM.Value;
 import LLVM.value.Instruction.Instruction;
+import MIPS.Instruction.MipsInstruction;
+import MIPS.MIPSGenerator;
 
 import java.util.ArrayList;
 
@@ -33,5 +35,14 @@ public class Trunc extends Instruction {
                 " to " +
                 operators.get(1).getType().toString() +
                 "\n";
+    }
+
+    public ArrayList<MipsInstruction> generateMips() {
+        if(MIPSGenerator.irToMips.containsKey(operators.get(0).getName())){
+            String mipsReg=MIPSGenerator.irToMips.get(operators.get(0).getName());
+            MIPSGenerator.irToMips.remove(operators.get(0).getName());
+            MIPSGenerator.irToMips.put(name,mipsReg);
+        }
+        return new ArrayList<>();
     }
 }

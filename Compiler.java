@@ -1,4 +1,5 @@
 import LLVM.LLVMManager;
+import MIPS.MIPSGenerator;
 import frontend.Parser;
 import Symbol.SymbolManager;
 
@@ -9,7 +10,8 @@ import static frontend.Lexer.*;
 public class Compiler {
     public static void main(String[] args){
         String filePath = "testfile.txt";
-        String TrueResultPath="llvm_ir.txt";
+        String llvmPath="llvm_ir.txt";
+        String mipsPath="mips.txt";
         String ErrorResultPath="error.txt";
         String TrueAnswer="ans.txt";
         int lineCount=1; //记录行数
@@ -34,7 +36,7 @@ public class Compiler {
 //        if(!parser.getParserErrorList().isEmpty())isError=true;
 //
 //        if(!isError){
-//            try (BufferedWriter writer = new BufferedWriter(new FileWriter(TrueResultPath))) {
+//            try (BufferedWriter writer = new BufferedWriter(new FileWriter(llvmPath))) {
 //                writer.write(parser.outTrueParser());
 //            } catch (IOException e) {
 //                System.out.println(e);
@@ -54,10 +56,20 @@ public class Compiler {
         if(!symbolManager.getSymbolErrorList().isEmpty())isError=true;
 
         if(!isError){
+            //生成llvm
             LLVMManager llvmManager=new LLVMManager(parser.getASTNode());
             llvmManager.CompUnitToLLVM();
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(TrueResultPath))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(llvmPath))) {
                 writer.write(llvmManager.outputLLVM());
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+
+            //生成mips
+            MIPSGenerator mipsGenerator=new MIPSGenerator(llvmManager.getModule());
+            mipsGenerator.generateMipsModule();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(mipsPath))) {
+                writer.write(mipsGenerator.outputMips());
             } catch (IOException e) {
                 System.out.println(e);
             }
@@ -71,7 +83,7 @@ public class Compiler {
 
 
 
-//        compareFiles(isError?ErrorResultPath:TrueResultPath, TrueAnswer);
+//        compareFiles(isError?ErrorResultPath:llvmPath, TrueAnswer);
 
     }
 

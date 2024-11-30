@@ -2,9 +2,19 @@ package LLVM.value;
 
 import LLVM.Type;
 import LLVM.Value;
+import LLVM.type.IntegerType;
+import LLVM.value.Instruction.Instruction;
 import LLVM.value.Instruction.Jump.Br;
 import LLVM.value.Instruction.Jump.Ret;
+import LLVM.value.Instruction.Memory.Alloca;
+import MIPS.Instruction.Memory.Li;
+import MIPS.Instruction.MipsInstruction;
+import MIPS.Instruction.Operate.Addu;
+import MIPS.Instruction.Operate.Move;
+import MIPS.MIPSGenerator;
+import MIPS.value.MipsFunction;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class Function extends Value {
@@ -94,5 +104,55 @@ public class Function extends Value {
                 }
             }
         }
+    }
+
+    public Boolean getDeclare() {
+        return isDeclare;
+    }
+
+    public MipsFunction generateMipsFunction() {
+        MIPSGenerator.mipsModule.addSymbolTable(name);
+        MipsFunction function=new MipsFunction(name);
+        for(BasicBlock block:basicBlockList){
+            function.addMipsBasicBlockList(block.generateMipsBlock());
+        }
+        if(name.equals("@main")){
+            function.removeLastInstruction();
+            ArrayList<MipsInstruction> list=new ArrayList<>();
+            list.add(new Li(10,true));
+            function.getLastBlock().addInstruction(list);
+
+            //如果是main函数，需要提前计算开辟多少sp
+            int spNum=getAllocaSp();
+            MipsInstruction instruction=new Addu("$sp","$sp",String.valueOf(-spNum));
+            function.getFirstBlock().getInstructionList().add(0,instruction);
+            instruction=new Move("$fp","$sp");
+            function.getFirstBlock().getInstructionList().add(0,instruction);
+        }
+        return function;
+    }
+
+    /**
+     * @description: 对于main函数，提前计算需要sp栈空间并提前开辟出来
+     * @date: 2024/11/29 14:23
+     **/
+    public int getAllocaSp() {
+        int cnt=0;
+        for(BasicBlock block:basicBlockList){
+            for(Instruction instruction:block.getInstructionList()){
+                if(instruction instanceof Alloca){
+                    if(instruction.getElementNum()==0){
+                        cnt+=4;
+                    }else{
+                        if(instruction.getType().getType() instanceof IntegerType){
+                            cnt+= instruction.getElementNum()*4;
+                        }else{
+                            cnt+=(int) Math.ceil((double) instruction.getElementNum() / 8) * 8;
+                        }
+                    }
+                }
+            }
+        }
+        return cnt;
     }
 }

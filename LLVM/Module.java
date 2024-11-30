@@ -63,4 +63,12 @@ public class Module {
     public Function getCurFunction(){
         return FunctionList.get(FunctionList.size()-1);
     }
+
+    public List<GlobalVariable> getGlobalVariableList() {
+        return GlobalVariableList;
+    }
+
+    public List<Function> getFunctionList() {
+        return FunctionList;
+    }
 }

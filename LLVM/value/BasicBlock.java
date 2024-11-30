@@ -6,9 +6,9 @@ import LLVM.Value;
 import LLVM.value.Instruction.Instruction;
 import LLVM.value.Instruction.Jump.Br;
 import LLVM.value.Instruction.Jump.Ret;
+import MIPS.value.MipsBasicBlock;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  * @className: BasicBlock
@@ -145,5 +145,13 @@ public class BasicBlock extends Value {
         for (BasicBlock basicBlock : LAndExpList) {
             basicBlock.fillNextForBlockStmt(nextForBlock);
         }
+    }
+
+    public MipsBasicBlock generateMipsBlock() {
+        MipsBasicBlock block=new MipsBasicBlock(name);
+        for(Instruction instruction:instructionList){
+            block.addInstruction(instruction.generateMips());
+        }
+        return block;
     }
 }

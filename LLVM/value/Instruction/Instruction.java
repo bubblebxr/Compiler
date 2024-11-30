@@ -4,6 +4,7 @@ package LLVM.value.Instruction;
 import LLVM.Type;
 import LLVM.User;
 import LLVM.Value;
+import MIPS.Instruction.MipsInstruction;
 
 import java.util.ArrayList;
 
@@ -23,4 +24,11 @@ public class Instruction extends User {
         super(name,type,operators);
     }
 
+    public ArrayList<MipsInstruction> generateMips() {
+        return null;
+    }
+
+    public int getElementNum() {
+        return 0;
+    }
 }
