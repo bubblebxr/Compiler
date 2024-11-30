@@ -1,6 +1,6 @@
 package frontend.AST;
 
-import Symbol.Symbol.SymbolType;
+import symbol.Symbol.SymbolType;
 import frontend.Token.TrueToken;
 import frontend.Token.TrueType;
 
