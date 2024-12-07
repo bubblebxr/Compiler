@@ -101,8 +101,8 @@ public class Call extends Instruction {
             returnReg(mipsMem.RegName);
             list.add(new Li(11,true));
         }else{
-            //TODO
-            list.add(new Sw("$ra",0,"$gp"));
+            // 调用自己定义的函数
+            list.add(new Sw("$ra",32,"$gp"));
             ArrayList<String> regList=new ArrayList<>();
             regList.add("$a0");
             regList.add("$a1");
@@ -110,15 +110,15 @@ public class Call extends Instruction {
             regList.add("$a3");
             for(int i=0;i<operators.size();i++){
                 String label1 = "";
-                if(operators.get(0).getName().equals("0")){
+                if(operators.get(i).getName().equals("0")){
                     label1="$zero";
                     list.add(new Move(regList.get(i),label1));
-                }else if(operators.get(0).getName().charAt(0)!='%'){
+                }else if(operators.get(i).getName().charAt(0)!='%'){
                     list.add(new Li(Integer.parseInt(operators.get(i).getName()),false));
                     label1= "$v1";
                     list.add(new Move(regList.get(i),label1));
                 }else{
-                    MipsMem mipsMem=getRel(operators.get(0).getName());
+                    MipsMem mipsMem=getRel(operators.get(i).getName());
                     if(mipsMem!=null){
                         if(mipsMem.isInReg){
                             label1=mipsMem.RegName;
@@ -138,7 +138,7 @@ public class Call extends Instruction {
             }
             list.addAll(storeGlobal());
             list.add(new Jal(functionName));
-            list.add(new Lw("$ra",0,"$gp"));
+            list.add(new Lw("$ra",32,"$gp"));
             list.addAll(loadGlobal());
 ;            if(name!=null){
                 MipsMem mipsMem=getEmptyLocalReg(type instanceof CharType);

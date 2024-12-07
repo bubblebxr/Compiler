@@ -27,14 +27,14 @@ public class GlobalRegister {
     public static Map<String,Integer> registerAlready=new HashMap<>();
 
     static {
-        registerAlready.put("$s0",4);
-        registerAlready.put("$s1",8);
-        registerAlready.put("$s2",12);
-        registerAlready.put("$s3",16);
-        registerAlready.put("$s4",20);
-        registerAlready.put("$s5",24);
-        registerAlready.put("$s6",28);
-        registerAlready.put("$s7",32);
+        registerAlready.put("$s0",0);
+        registerAlready.put("$s1",4);
+        registerAlready.put("$s2",8);
+        registerAlready.put("$s3",12);
+        registerAlready.put("$s4",16);
+        registerAlready.put("$s5",20);
+        registerAlready.put("$s6",24);
+        registerAlready.put("$s7",28);
     }
 
     public GlobalRegister(){

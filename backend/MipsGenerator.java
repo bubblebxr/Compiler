@@ -27,6 +27,7 @@ public class MipsGenerator {
     public static int curFuncIndex;
     public static int curBlockIndex;
     public static int spNum=0;
+    public static int gpNum=32;
 
     public MipsGenerator(Module irModule){
         this.irModule=irModule;

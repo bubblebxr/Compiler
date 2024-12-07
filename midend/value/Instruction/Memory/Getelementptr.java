@@ -60,6 +60,7 @@ public class Getelementptr extends Instruction {
         if(operators.get(0).getName().startsWith("@.str.")){
             list.add(new La("$a0",operators.get(0).getName().substring(1)));
         }else{
+            // 真正的数组
             String label1="",label2="";
             MipsMem mipsMem1=getRel(operators.get(0).getName());
             if(mipsMem1!=null){
