@@ -1,12 +1,23 @@
 # 编译器总体架构设计
 
+> 班级：222111
+>
+> 学号：22371001
+>
+> 姓名：卜欣然
+
 ## 参考编译器介绍
 
+参考了LLVM官方文档，链接如下：
 
+- https://llvm.org/
+- value：https://llvm.org/doxygen/classllvm_1_1Value.html
+- type：https://llvm.org/doxygen/classllvm_1_1Type.html
+- doc：https://llvm.org/docs/LangRef.html#instruction-reference
 
 ## 编译器总体设计
 
-
+编译器主要由词法分析，语法分析，错误处理，中间代码，
 
 ## 词法分析设计
 
@@ -451,7 +462,7 @@ public String outputAddExp() {
          ├──Lexer.java
          └── Parser.java
 └──Vistor
-	├──symbol
+	├──Symbol
 	├──SymbolManager
 	└──SymbolTable
 ```
@@ -463,7 +474,7 @@ public String outputAddExp() {
 首先，符号应该如何储存。我的想法是建立一个Symbol类，其中存储Symbol的类型和名字。
 
 ```java
-public symbol{
+public Symbol{
     protected SymbolType type;
     protected String Ident;
 }
@@ -475,7 +486,7 @@ public symbol{
 
 - 对于`FunctionSymbol`，应该额外存储函数参数的变量的列表，以`FuncParamSymbol`为元素。
 
-然后，建立符号表。应包含当前符号表的id，外层符号表id，存储所有的在本作用域中的符号`Map<String, symbol> directory`。这样，将所有符号表按id顺序存储到以`SymbolTable`为元素的列表中。
+然后，建立符号表。应包含当前符号表的id，外层符号表id，存储所有的在本作用域中的符号`Map<String, Symbol> directory`。这样，将所有符号表按id顺序存储到以`SymbolTable`为元素的列表中。
 
 以上均为对于符号表的前置存储工作。现在开始描述如何维护符号表的列表。我们首先定义一个`presentId`作为指针指向当前作用域编号，然后对词法分析生成的AST进行前序遍历，如果进入到了一个新的作用域中，就将当前作用域id压入栈中，同时为这个新的作用域编号；当出某个作用域时，则将最后一个作用域id弹出栈作为当前作用域id。当遇见新的符号时，就将该符号加入到该作用域id对应的符号表中。
 
@@ -525,7 +536,7 @@ public Boolean checkNameOverload(TrueToken Ident){
 
 ```java
 public boolean isNotDefine(String Ident, int presentId){
-    for(symbol symbol:SymbolTables.get(presentId-1).getDirectory().values()){
+    for(Symbol symbol:SymbolTables.get(presentId-1).getDirectory().values()){
         if(symbol.getIdent().equals(Ident)){
             return false;
         }
@@ -587,7 +598,7 @@ if(i==block.getBlockItemList().size()-1&&(type==SymbolType.CharFunc||type==Symbo
 ```java
 public Boolean isConst(String Ident,int presentId){
         //判断是否是常量，如果是返回True
-    for(symbol symbol:SymbolTables.get(presentId-1).getDirectory().values()){
+    for(Symbol symbol:SymbolTables.get(presentId-1).getDirectory().values()){
         if(symbol.getIdent().equals(Ident)){
             return symbol.getType() == SymbolType.ConstChar ||
                 symbol.getType() == SymbolType.ConstInt ||
@@ -661,13 +672,294 @@ for(int i=0;i<symbol.getFuncParams().size();i++){
 
 > 小问题：
 >
-> - 其实应该在创建一个`symbol`的子类`ArraySymbol`，因为错误处理中出现了很多次需要比较是变量还是数组的问题。
+> - 其实应该在创建一个`Symbol`的子类`ArraySymbol`，因为错误处理中出现了很多次需要比较是变量还是数组的问题。
 > - 词法分析中一行中最后是`IntConst`就会导致指针没有改变返回处理数字，所以应该特判一下。
 > - 语法分析中解析Stmt时，对于[exp];是以最后的分号作为应不应该解析exp的，这导致出现了没有;就解析失败的问题。
 
-## 代码生成设计
+## 中间代码生成设计
 
+> 生成了`midend`
 
+```
+.
+├── Compiler.java
+├── config.json
+└── LLVM
+         ├──value
+         	└── Instruction
+         ├──type
+         └──LLVMGenerator.java
+```
+
+### 编码前的设计
+
+在阅读了`midend`的官网文档后，对于寄存器分配，我设置了全局`static`变量`variableId`用于记录变量的id，然后每进入到一个新的函数中，将此id重置。
+
+对于内存的分配，我在符号表中增添了一些值来记录内存的分配，在`Symbol`中，我增加了局部变量的id，用于保存变量的id：
+
+```java
+public class Symbol {
+    protected SymbolType type;
+    protected String Ident;
+    protected String id;//局部变量的id
+}
+```
+
+基于`midend`一切皆`value`的特点，创建了value类，然后根据每条指令实质都是一个`User`，创建了`User`类，用于记录用到的operators。
+
+```java
+package LLVM;
+
+import java.util.ArrayList;
+
+public class User extends Value{
+    protected ArrayList<Value> operators;//该user使用的value
+}
+```
+
+然后逐步针对不同指令，每个都新建了一个类，并所有的指令都继承自`instruction`类。
+
+构建中间代码的过程就是构建`Module`的过程，然后将该`Module`输出即可得到中间代码。对于一个`Module`而言，其构造如下所示：
+
+```java
+public class Module {
+    protected List<GlobalVariable> GlobalVariableList;
+    protected List<Function> FunctionList;
+}
+```
+
+其中，`GlobalVariable`代表全局变量，在此之中会存储所有的全局变量和全局常量和`printf`输出中的字符串常量，结构如下所示，记录是否是常量，是否是数组，维度和初始值。
+
+```java
+public class GlobalVariable extends User {
+    protected Boolean isConst;//是否是常量
+
+    protected int dimensions;
+    protected ArrayList<Integer> valueList;
+    protected Boolean isArray;
+}
+```
+
+`Function`代表函数，其中主要记录了基本块list，参数list和是否是declare的函数（为了在开头输出`getint`，`getchar`，`putint`，`putch`，`putstr`开头的声明函数），结构如下所示：
+
+```java
+public class Function extends Value {
+    protected ArrayList<Argument> argumentList;
+    protected ArrayList<BasicBlock> basicBlockList;
+    protected Boolean isDeclare;
+}
+```
+
+对于`argument`，只记录id即可，对于`BasicBlock`，需要记录其中的指令集合。
+
+```java
+public class BasicBlock extends Value {
+    protected ArrayList<Instruction> instructionList;
+}
+```
+
+以上便是module的整体结构。
+
+### 编码后的设计
+
+![image-20241130210322626](https://gitee.com/bxrbxr/images/raw/master/imgs/202411302104119.png)
+
+在`Complier.java`主函数中，如果确定了语义分析没有错误，则创建`llvmManager`对象用于生成llvm：
+
+```java
+if(!isError){
+    LLVMManager llvmManager=new LLVMManager(parser.getASTNode());
+    llvmManager.CompUnitToLLVM();
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(TrueResultPath))) {
+        writer.write(llvmManager.outputLLVM());
+    } catch (IOException e) {
+        System.out.println(e);
+    }
+}else{
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(ErrorResultPath))) {
+        writer.write(symbolManager.outFalseVisitor());
+    } catch (IOException e) {
+        System.out.println(e);
+    }
+}
+```
+
+在`llvmManager`中调用`CompUnitToLLVM`函数用于遍历AST树，从而构建`Module`。
+
+#### 函数参数
+
+​	对于函数参数相比较于一般的局部变量需要特殊处理，它不能直接调用，必须要在进入函数之后先为他们分配内存，传参过来的指针中的内容存储到分配的内存中。**这里一定要注意，这里最开始出于懒惰选择在用到参数的时候才为其分配内存，但显然不适用于直接返回参数本身等情况！**
+
+​	为此，我在`FuncToLLVM`函数中做了特殊的处理，
+
+```java
+//将函数参数加入到符号表中
+if(funcDef.getFuncFParams()!=null&&funcDef.getFuncFParams().getFuncFParamList()!=null){
+    for(FuncFParam funcFParam:funcDef.getFuncFParams().getFuncFParamList()){
+        symbol.addFuncParams((FuncParamSymbol) FuncFParamToLLVM(funcFParam));
+    }
+}
+variableId++;
+int temp=stackId.pop();
+addSymbolFunc(funcDef.getIdent().getName(),symbol,stackId.peek());
+Function function=new Function("@"+funcDef.getIdent().getName(),new FunctionType(getFuncParamsType(symbol.getFuncParams()),returnType,false),getArgumentList(symbol.getFuncParams()));
+module.addFunctionList(function);
+function.addBasicBlock(new BasicBlock(null,null));
+//将function加入到Module中，并初始化第一个BasicBlock
+stackId.add(temp);
+//为每个函数参数分配内存
+for(FuncParamSymbol funcParamSymbol:symbol.getFuncParams()){
+    FuncParamsLoad(funcParamSymbol);
+    setFuncParamsIdAndLoad(funcParamSymbol.getIdent(),presentId);
+}
+```
+
+具体实现分配内存的方法如下，通过根据其是数组或变量分配不同的内存。
+
+```java
+public void FuncParamsLoad(FuncParamSymbol funcParamSymbol) {
+    int dimension=funcParamSymbol.getDimension();
+    SymbolType type=funcParamSymbol.getType();
+    if(dimension==0){
+        Type paramType=type==SymbolType.Char?new CharType():new IntegerType();
+        getCurBasicBlock().addInstruction(new Alloca("%"+(variableId++),paramType));
+        ArrayList<Value> temp=new ArrayList<>();
+        temp.add(new Value(funcParamSymbol.getId(),paramType));
+        temp.add(new Value("%"+(variableId-1),new PointerType(paramType)));
+        getCurBasicBlock().addInstruction(new Store(null,null,temp));
+        String id="%"+(variableId-1);
+        pointerSet.add(presentId+id);
+    }else{
+        Type paramType=(funcParamSymbol.getType()==SymbolType.Int||funcParamSymbol.getType()==SymbolType.IntArray||funcParamSymbol.getType()==SymbolType.ConstIntArray||funcParamSymbol.getType()==SymbolType.ConstInt)?new IntegerType():new CharType();
+        getCurBasicBlock().addInstruction(new Alloca("%"+(variableId++),new PointerType(paramType)));
+        ArrayList<Value> temp=new ArrayList<>();
+        temp.add(new Value(funcParamSymbol.getId(),new PointerType(paramType)));
+        temp.add(new Value("%"+(variableId-1),new PointerType(new PointerType(paramType))));
+        getCurBasicBlock().addInstruction(new Store(null,null,temp));
+        String id="%"+(variableId-1);
+        pointerSet.add(presentId+id);
+    }
+}
+```
+
+接下来就是将已经分配好的内存逐一记录下来，并储存在对应的符号表中确保下一次调用时能找到分配内存的寄存器。
+
+### 短路求值
+
+​	if else实质和for循环同理。以if else为例，首先，我们需要构建出三个block，分别为`thenStmt`，`elseStmt`，`nextStmt`，分别代表条件为真执行的基本块、条件为假执行的基本块和跳出判断语句后的代码块。
+
+​	首先，我们需要分析Cond中的结构，其实也就是`LOrExp`的结构，对于此，
+
+- 是最后一个`LOrExp`，正确跳转到`thenStmt`，错误跳转到`elseStmt`
+- 不是最后一个`LOrExp`，正确跳转到下一个`thenStmt`，错误跳转到下一个or中的第一个`AndLabel`
+
+```java
+public void LOrExpToLLVM(LOrExp lOrExp){
+    BasicBlock curBlock=getCurBasicBlock();
+    for(int i=0;i<lOrExp.getlAndExpList().size();i++){
+        BasicBlock firstLAndExpBlock=new BasicBlock("%b"+(labelId++),null);
+        if(i!=0)curBlock.fillNextOrFirstAndLabel(firstLAndExpBlock.getName());
+        curBlock.addLAndExpList(firstLAndExpBlock);
+        module.addNewBasicBlock(firstLAndExpBlock);
+        LAndExpToLLVM(lOrExp.getlAndExpList().get(i),curBlock);
+    }
+    curBlock.fillNextOrFirstAndLabelToElseStmt();
+
+}
+```
+
+对于跳转标签，我们预先肯定不知道要跳转的部分是什么，所以，我们采用先填写后修改的办法，对于不知道的标签值，比如`nextAndLabel`，`nextOrFirstAndLabel`，`thenStmt`，所以先将其填上，等到其block初始化时立即将他们替代。对于if else中肯呢个缺少的成分，比如可能缺少`elseStmt`，在判断`elseStmt`为空时统一将所有`elseStmt`转换为`nextBlock`。
+
+对于`LAndExp`，
+
+- 是最后一个`AndExp`，正确跳转到`thenStmt`，错误跳转到下一个or中的第一个`AndLabel`
+- 不是最后一个`AndExp`，正确跳转到下一个`AndExp`，错误跳转到下一个or中的第一个`AndLabel`
+
+```java
+public void LAndExpToLLVM(LAndExp lAndExp,BasicBlock curBlock) {
+    for(int i=0;i<lAndExp.getEqExpList().size();i++){
+        String trueLabel="nextAndLabel";
+        String falseLabel="nextOrFirstAndLabel";
+        BasicBlock newLAndBlock = null;
+        if(i!=0){
+            newLAndBlock=new BasicBlock("%b"+(labelId++),null);
+            curBlock.addLAndExpList(newLAndBlock);
+            module.addNewBasicBlock(newLAndBlock);
+        }
+        Pair pair=EqExpToLLVM(lAndExp.getEqExpList().get(i));
+        if(typeConversion(pair.type,pair.id,new IntegerType())){
+            pair.id="%"+(variableId-1);
+        }
+        ArrayList<Value> temp=new ArrayList<>();
+        temp.add(new Value("0",new IntegerType()));
+        temp.add(new Value(pair.id,new IntegerType()));
+        getCurBasicBlock().addInstruction(new Icmp("%"+(variableId++),new IntegerType(),temp,IcmpType.ne));
+        if(i==lAndExp.getEqExpList().size()-1){
+            trueLabel="thenStmt";
+        }
+        if(i!=0)curBlock.fillNextAndLabel(newLAndBlock.getName());
+        getCurBasicBlock().addInstruction(new Br(null,new BooleanType(),"%"+(variableId-1),trueLabel,falseLabel));
+    }
+}
+```
+
+为了更好的在之后填充标签，需要将所有的`LAndBlock`保存到`BasicBlock`中：
+
+```java
+public class BasicBlock extends Value {
+
+    protected ArrayList<Instruction> instructionList;
+
+    protected ArrayList<BasicBlock> LAndExpList;  // if无条件跳转块中包含的所有的LAnd块
+}
+```
+
+直接遍历list从而更好的重填标签。
+
+### break or continue
+
+break和continue处理的道理是一致的，无非是一个跳转到`nextBlock`，一个跳转到`forStmt2`。所以，我定义了一个全局变量`breakOrContinue`用于记录是否出现了跳转标签，
+
+```java
+case 6:
+    //break continue
+    if(stmt.getBreakOrContinue().getType()==TrueType.BREAKTK){
+        getCurBasicBlock().addInstruction(new Br(null,null,"breakBlockId"));
+        breakOrContinue=true;
+        //                    module.addNewBasicBlock(new BasicBlock("%b"+(labelId++),null));
+    }else{
+        getCurBasicBlock().addInstruction(new Br(null,null,"continueBlockId"));
+        breakOrContinue=true;
+        //                    module.addNewBasicBlock(new BasicBlock("%b"+(labelId++),null));
+    }
+    break;
+```
+
+然后当我们处理`Block`语法块时，如果出现了`breakOrContinue`为true的情况，则可以忽略之后的所有，具体解决方案如下所示：
+
+```java
+public void BlockToLLVM(Block block,boolean inFor,boolean isVoid){
+    for(int i=0;i<block.getBlockItemList().size();i++){
+        if(breakOrContinue){
+            breakOrContinue=false;
+            break;
+        }
+        BlockItemToLLVM(block.getBlockItemList().get(i),inFor,isVoid);
+    }
+    if(breakOrContinue)breakOrContinue=false;
+    //        if(getCurBasicBlock().getInstructionList().isEmpty()){
+    //            getCurBasicBlock().addInstruction(new Br(null,null,"%b"+(labelId)));
+    //        }
+}
+```
+
+此处需要处理一些特殊情况，比如for循环中的`stmt`并非是`Block`语法块，不能在相关函数中修改全局变量的值，所以需要在处理for循环时特殊处理：
+
+```java
+if(stmt.getStmt().getType()!=3){
+    breakOrContinue=false;
+}
+```
 
 ## 代码优化设计
 

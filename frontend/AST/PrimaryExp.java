@@ -2,7 +2,7 @@ package frontend.AST;
 
 import frontend.Token.TrueToken;
 
-import static llvm.LLVMManager.CharacterToAscii;
+import static midend.LLVMManager.CharacterToAscii;
 
 public class PrimaryExp {
     protected TrueToken LPARENT;

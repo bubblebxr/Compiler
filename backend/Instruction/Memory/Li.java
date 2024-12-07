@@ -30,7 +30,7 @@ public class Li extends MipsInstruction {
     @Override
     public String toString(){
         if(isOI){
-            return "li $v0, " + type +"\n  syscall";
+            return "li $v0, " + type +"\n    syscall";
         }else{
             return "li $v1, " + type;
         }

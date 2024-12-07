@@ -17,4 +17,6 @@ public enum CompareType {
     seq, //==
     sgt, //>
     sge, //>=
+    beqz,// ==0跳转
+    bnez, //!=0跳转
 }

@@ -2,7 +2,7 @@ package frontend.AST;
 
 import frontend.Token.TrueToken;
 
-import static llvm.LLVMManager.*;
+import static midend.LLVMManager.*;
 
 public class LVal {
     protected TrueToken Ident;

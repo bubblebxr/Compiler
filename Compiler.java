@@ -1,4 +1,4 @@
-import llvm.LLVMManager;
+import midend.LLVMManager;
 import backend.MipsGenerator;
 import frontend.Parser;
 import symbol.SymbolManager;
@@ -8,9 +8,10 @@ import java.io.*;
 import static frontend.Lexer.*;
 
 public class Compiler {
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException {
         String filePath = "testfile.txt";
-        String llvmPath="llvm_ir.txt";
+        String llvmPath="llvm_ir_优化前.txt";
+        String llvmAfterOptimizePath="llvm_ir_优化后.txt";
         String mipsPath="mips.txt";
         String ErrorResultPath="error.txt";
         String TrueAnswer="ans.txt";
@@ -64,6 +65,11 @@ public class Compiler {
             } catch (IOException e) {
                 System.out.println(e);
             }
+
+            // 优化llvm
+            llvmManager.optimize();
+            BufferedWriter writerOP = new BufferedWriter(new FileWriter(llvmAfterOptimizePath));
+            writerOP.write(llvmManager.outputLLVM());
 
             //生成mips
             MipsGenerator mipsGenerator=new MipsGenerator(llvmManager.getModule());

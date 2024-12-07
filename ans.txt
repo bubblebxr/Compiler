@@ -1,9 +1,402 @@
-what you enter in is:12308760
-_a=5
-array_c[0] is:1
-array_d[0] is:1
-array_d[1] is:2
-_a=10
-_a=103
-2 2 2 3 3 3 3 5 29 131
-Over
+.data
+ZERO: .word 0
+ONE: .word 1
+var2: .word 2
+var3: .word 3
+vv: .word 1, 2, 3
+
+.text
+	la $ra end.end
+	j main
+fun:
+	addiu  $sp, $sp, -36
+fun.b0:
+	li     $t7, 1
+	move   $s0, $t7
+	li     $t7, 1
+	move   $s1, $t7
+fun.b3:
+	li     $t7, 1000
+	slt    $t1, $s1, $t7
+	beqz   $t1, fun.b7
+fun.b6:
+	li     $t7, 2
+	mul    $t1, $s1, $t7
+	la     $s4, vv
+	move   $t6, $s4
+	lw     $t0, 0($t6)
+	addu   $s2, $t1, $t0
+	move   $s1, $s2
+fun.b14:
+	j      fun.b3
+fun.b7:
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 10
+	syscall 
+	move   $a0, $t7
+	li     $v0, 1
+	move   $t7, $a0
+	move   $a0, $s1
+	syscall 
+	move   $a0, $t7
+	addiu  $sp, $sp, 36
+	jr     $ra
+main:
+	addiu  $sp, $sp, -84
+main.b16:
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 50
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 49
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 51
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 55
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 51
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 52
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 53
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 55
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 10
+	syscall 
+	move   $a0, $t7
+	lw     $t1, var2
+	lw     $s4, var3
+	li     $t7, 1
+	subu   $s1, $s4, $t7
+	seq    $t6, $t1, $s1
+	beqz   $t6, main.b22
+main.b21:
+	li     $t1, 0
+	li     $t7, 1
+	sne    $t1, $t1, $t7
+	beqz   $t1, main.b22
+main.b24:
+	li     $t1, 0
+	li     $t7, 0
+	sne    $t1, $t1, $t7
+	bnez   $t1, main.b26
+main.b27:
+	li     $t1, 0
+	li     $t7, 0
+	seq    $t1, $t1, $t7
+	beqz   $t1, main.b30
+main.b29:
+	lw     $t1, var2
+	li     $s4, 2
+	addu   $s4, $s4, $t1
+	li     $t7, 0
+	slt    $s1, $s4, $t7
+	beqz   $s1, main.b30
+main.b26:
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 69
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 82
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 82
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 79
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 82
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 33
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 10
+	syscall 
+	move   $a0, $t7
+	j      main.b34
+main.b30:
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 65
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 110
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 100
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 32
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 115
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 117
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 99
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 99
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 101
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 115
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 115
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 33
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 10
+	syscall 
+	move   $a0, $t7
+main.b34:
+main.b22:
+	lw     $t1, var3
+	li     $t7, 3
+	sne    $s4, $t1, $t7
+	bnez   $s4, main.b37
+main.b38:
+	lw     $t1, var2
+	li     $t7, 22
+	subu   $s4, $t1, $t7
+	li     $t7, -20
+	seq    $s1, $s4, $t7
+	beqz   $s1, main.b42
+main.b37:
+	lw     $t1, var3
+	li     $s4, -4
+	addu   $s4, $s4, $t1
+	lw     $s1, var2
+	addu   $t6, $s4, $s1
+	li     $t7, 100
+	sle    $t0, $t6, $t7
+	bnez   $t0, main.b48
+main.b49:
+	li     $t1, 0
+	li     $t7, 1
+	sne    $t1, $t1, $t7
+	beqz   $t1, main.b51
+main.b48:
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 79
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 114
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 32
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 112
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 97
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 115
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 115
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 33
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 10
+	syscall 
+	move   $a0, $t7
+main.b51:
+main.b42:
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 84
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 101
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 115
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 116
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 49
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 32
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 83
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 117
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 99
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 99
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 101
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 115
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 115
+	syscall 
+	move   $a0, $t7
+	li     $v0, 11
+	move   $t7, $a0
+	li     $a0, 33
+	syscall 
+	move   $a0, $t7
+	addiu  $sp, $sp, -4
+	sw     $ra, 0($sp)
+	jal    fun
+	lw     $ra, 0($sp)
+	addiu  $sp, $sp, 4
+	addiu  $sp, $sp, -4
+	sw     $ra, 0($sp)
+	jal    fun
+	lw     $ra, 0($sp)
+	addiu  $sp, $sp, 4
+	addiu  $sp, $sp, -4
+	sw     $ra, 0($sp)
+	jal    fun
+	lw     $ra, 0($sp)
+	addiu  $sp, $sp, 4
+	addiu  $sp, $sp, -4
+	sw     $ra, 0($sp)
+	jal    fun
+	lw     $ra, 0($sp)
+	addiu  $sp, $sp, 4
+	addiu  $sp, $sp, -4
+	sw     $ra, 0($sp)
+	jal    fun
+	lw     $ra, 0($sp)
+	addiu  $sp, $sp, 4
+	addiu  $sp, $sp, -4
+	sw     $ra, 0($sp)
+	jal    fun
+	lw     $ra, 0($sp)
+	addiu  $sp, $sp, 4
+	li     $v0, 0
+	addiu  $sp, $sp, 84
+	jr     $ra
+end.end:

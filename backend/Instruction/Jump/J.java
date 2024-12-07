@@ -19,6 +19,6 @@ public class J extends MipsInstruction {
 
     @Override
     public String toString(){
-        return "j "+name+"\n";
+        return "j ."+name+"\n";
     }
 }

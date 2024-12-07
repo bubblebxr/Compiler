@@ -678,7 +678,7 @@ for(int i=0;i<symbol.getFuncParams().size();i++){
 
 ## 中间代码生成设计
 
-> 生成了`llvm`
+> 生成了`midend`
 
 ```
 .
@@ -693,7 +693,7 @@ for(int i=0;i<symbol.getFuncParams().size();i++){
 
 ### 编码前的设计
 
-在阅读了`llvm`的官网文档后，对于寄存器分配，我设置了全局`static`变量`variableId`用于记录变量的id，然后每进入到一个新的函数中，将此id重置。
+在阅读了`midend`的官网文档后，对于寄存器分配，我设置了全局`static`变量`variableId`用于记录变量的id，然后每进入到一个新的函数中，将此id重置。
 
 对于内存的分配，我在符号表中增添了一些值来记录内存的分配，在`Symbol`中，我增加了局部变量的id，用于保存变量的id：
 
@@ -705,7 +705,7 @@ public class Symbol {
 }
 ```
 
-基于`llvm`一切皆`value`的特点，创建了value类，然后根据每条指令实质都是一个`User`，创建了`User`类，用于记录用到的operators。
+基于`midend`一切皆`value`的特点，创建了value类，然后根据每条指令实质都是一个`User`，创建了`User`类，用于记录用到的operators。
 
 ```java
 package LLVM;

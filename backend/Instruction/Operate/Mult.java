@@ -25,6 +25,6 @@ public class Mult extends MipsInstruction {
 
     @Override
     public String toString(){
-        return "mult "+label1+", "+label2+"\n  mflo "+register;
+        return "mult "+label1+", "+label2+"\n    mflo "+register;
     }
 }

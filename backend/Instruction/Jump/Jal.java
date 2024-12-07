@@ -14,7 +14,7 @@ public class Jal extends MipsInstruction {
     String name;
 
     public Jal(String name){
-        this.name=name;
+        this.name=name.substring(1);
     }
 
     @Override

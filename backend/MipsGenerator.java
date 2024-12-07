@@ -1,9 +1,16 @@
 package backend;
-import llvm.Module;
+import backend.Instruction.MipsInstruction;
+import backend.Instruction.Operate.Addi;
+import backend.reg.MipsMem;
+import backend.value.MipsConstGlobalVariable;
+import backend.value.MipsFunction;
+import backend.value.MipsGlobalVariable;
+import backend.value.MipsStr;
+import midend.Module;
+import midend.value.Function;
+import midend.value.GlobalVariable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.ArrayList;
 
 
 /**
@@ -17,33 +24,9 @@ public class MipsGenerator {
 
     protected Module irModule;
     public static MipsModule mipsModule=new MipsModule();
-    protected static int presentId=1;
-    //存储可以使用的寄存器
-    public static Stack<String> registerStack=new Stack<>();
-    //存储ir寄存器对应的mips寄存器
-    public static Map<String,String> irToMips=new HashMap<>();
-
-    static{
-        registerStack.add("$t1");
-        registerStack.add("$t2");
-        registerStack.add("$t3");
-        registerStack.add("$t4");
-        registerStack.add("$t5");
-        registerStack.add("$t6");
-        registerStack.add("$t7");
-        registerStack.add("$t8");
-        registerStack.add("$t9");
-        registerStack.add("$s0");
-        registerStack.add("$s1");
-        registerStack.add("$s2");
-        registerStack.add("$s3");
-        registerStack.add("$s4");
-        registerStack.add("$s5");
-        registerStack.add("$s6");
-        registerStack.add("$s7");
-        registerStack.add("$k0");
-        registerStack.add("$k1");
-    }
+    public static int curFuncIndex;
+    public static int curBlockIndex;
+    public static int spNum=0;
 
     public MipsGenerator(Module irModule){
         this.irModule=irModule;
@@ -75,6 +58,188 @@ public class MipsGenerator {
     }
 
     public void generateMipsModule() {
+        // 添加print部分中str
+        addPrintStr();
 
+        // 添加全局常量到list中，用到时直接查找而不选择存放在.data中
+        addConstGlobal();
+
+        //添加全局变量到varList中
+        addGlobalVariable();
+
+        // 初始化各个function
+        initFunction();
+
+        // 通过function中的ir生成mips
+        genMipsFromIr();
+
+        //  增加对sp整体栈减少的控制
+        addSpControl();
+    }
+
+    /**
+     * @description: 增加对sp整体栈减少的控制
+     * @date: 2024/12/6 13:36
+     **/
+    public void addSpControl() {
+        if(spNum!=0){
+            MipsInstruction instruction=new Addi("$sp","$sp",String.valueOf(-spNum));
+            mipsModule.addInstruction(instruction);
+        }
+    }
+
+    /**
+     * @description: 根据生成的llvm代码翻译为mips
+     * @date: 2024/12/3 20:30
+     **/
+    public void genMipsFromIr() {
+        int i=0;
+        for(MipsFunction function:mipsModule.functionList){
+            curFuncIndex=i++;
+            function.genMipsFromIr();
+        }
+    }
+
+    /**
+     * @description: 增加全局变量到.data段中
+     * @date: 2024/12/3 20:30
+     **/
+    public void addGlobalVariable() {
+        for(GlobalVariable variable: irModule.getGlobalVariableList()){
+            MipsGlobalVariable str=variable.genMipsGlobalVariable();
+            if(str!=null){
+                mipsModule.addGlobalVariable(str);
+            }
+        }
+    }
+
+    /**
+     * @description: 为了便于优化，现将function初始化
+     * @date: 2024/12/3 20:30
+     **/
+    public void initFunction() {
+        for(Function function:irModule.getFunctionList()){
+            if(!function.getDeclare()){
+                mipsModule.addFunction(new MipsFunction(function));
+            }
+        }
+    }
+
+    /**
+     * @description: 添加所有的print str
+     * @date: 2024/12/3 17:13
+     **/
+    public void addPrintStr() {
+        for(GlobalVariable variable: irModule.getGlobalVariableList()){
+            MipsStr str=variable.genMipsStr();
+            if(str!=null){
+                mipsModule.addPrintStr(str);
+            }
+        }
+    }
+
+    /**
+     * @description: 添加所有const global到list中
+     * @date: 2024/12/3 17:47
+     **/
+    public void addConstGlobal(){
+        for(GlobalVariable variable: irModule.getGlobalVariableList()){
+            MipsConstGlobalVariable str=variable.genMipsConstGlobal();
+            if(str!=null){
+                mipsModule.addConstGlobal(str);
+            }
+        }
+    }
+
+    /**
+     * @description: 获取局部mips寄存器
+     * @date: 2024/12/4 9:15
+     **/
+    public static MipsMem getEmptyLocalReg(Boolean isChar){
+        return mipsModule.getEmptyLocalReg(isChar);
+    }
+
+    /**
+     * @description: 获取全局mips寄存器
+     * @date: 2024/12/4 9:17
+     **/
+    public static MipsMem getEmptyGlobalReg(Boolean isChar){
+        return mipsModule.getEmptyGlobalReg(isChar);
+    }
+
+    /**
+     * @description: 为数组开辟sp栈空间
+     * @date: 2024/12/6 13:28
+     **/
+    public static MipsMem getArrayMem(Boolean isChar,int elementNum){
+        return mipsModule.getArrayMem(isChar,elementNum);
+    }
+
+    /**
+     * @description: 将全局寄存器的对应关系存入
+     * @date: 2024/12/4 10:41
+     **/
+    public static void putGlobalRel(String RegName,MipsMem mipsMem){
+        mipsModule.putGlobalRel(RegName,mipsMem);
+    }
+
+    /**
+     * @description: 将局部寄存器的对应关系存入
+     * @date: 2024/12/4 10:41
+     **/
+    public static void putLocalRel(String RegName,MipsMem mipsMem){
+        mipsModule.putLocalRel(RegName,mipsMem);
+    }
+
+    /**
+     * @description: 获取ir寄存器和mips or 栈之间的关系
+     * @date: 2024/12/4 17:46
+     **/
+    public static MipsMem getRel(String irRegName){
+        return mipsModule.getRel(irRegName);
+    }
+
+    /**
+     * @description: 回收寄存器
+     * @date: 2024/12/5 10:53
+     **/
+    public static void returnReg(String name){
+        mipsModule.returnReg(name);
+    }
+
+    /**
+     * @description: 检查当前函数是否是main函数
+     * @date: 2024/12/5 11:09
+     **/
+    public static Boolean checkAtMain(){
+        return mipsModule.chekcAtMain();
+    }
+
+    public static Integer getConstGlobalValue(String name){
+        return mipsModule.getConstGlobalValue(name);
+    }
+
+    /**
+     * @description: 获取全局变量的值
+     * @date: 2024/12/6 13:04
+     **/
+    public static Integer getGlobalVariableValue(String name,int index){
+        return mipsModule.getGlobalVariableValue(name.substring(1),index);
+    }
+
+    /**
+     * @description: 在调用函数时，将所有正在使用的全局寄存器都保存在sp栈中
+     * @date: 2024/12/6 22:40
+     **/
+    public static ArrayList<MipsInstruction> storeGlobal(){
+        return mipsModule.storeGlobal();
+    }
+
+    /**
+     * @description: 在调用函数结束后，将之前正在使用的全局寄存器都load出来
+     * @date: 2024/12/6 22:43
+     **/
+    public static ArrayList<MipsInstruction> loadGlobal(){
+        return mipsModule.loadGlobal();
     }
 }
