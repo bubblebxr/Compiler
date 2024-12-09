@@ -401,7 +401,7 @@ public class LLVMManager {
     }
 
     public void addArray(List<Exp> expList, int elementNum, Type type,String StringConst){
-        //TODO:剩余初始化
+        //剩余初始化
         getCurBasicBlock().addInstruction(new Alloca("%"+variableId,type,elementNum));
         int arrayBasicAddress=variableId++;
         //first element

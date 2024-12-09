@@ -83,7 +83,7 @@ public class MipsModule {
      * @date: 2024/12/4 9:15
      **/
     public MipsMem getEmptyLocalReg(Boolean isChar){
-        return functionList.get(curFuncIndex).getBlockList().get(curBlockIndex).getReg().getEmptyReg(isChar);
+        return functionList.get(curFuncIndex).getBlockList().get(curBlockIndex).getReg().getEmptyReg(isChar,functionList.get(curFuncIndex).spNumForFunc);
     }
 
     /**
@@ -91,7 +91,7 @@ public class MipsModule {
      * @date: 2024/12/4 9:17
      **/
     public MipsMem getEmptyGlobalReg(Boolean isChar){
-        return functionList.get(curFuncIndex).getReg().getEmptyReg(isChar);
+        return functionList.get(curFuncIndex).getReg().getEmptyReg(isChar,functionList.get(curFuncIndex).spNumForFunc);
     }
 
     /**
@@ -99,7 +99,7 @@ public class MipsModule {
      * @date: 2024/12/6 13:27
      **/
     public MipsMem getArrayMem(Boolean isChar,int elementNum){
-        return functionList.get(curFuncIndex).getReg().getArrayMem(isChar,elementNum);
+        return functionList.get(curFuncIndex).getReg().getArrayMem(isChar,elementNum,functionList.get(curFuncIndex).spNumForFunc);
     }
 
     /**
@@ -140,7 +140,7 @@ public class MipsModule {
         functionList.get(curFuncIndex).getBlockList().get(curBlockIndex).getReg().returnReg(name);
     }
 
-    public Boolean chekcAtMain() {
+    public Boolean checkAtMain() {
         return functionList.get(curFuncIndex).getMain();
     }
 
@@ -167,5 +167,9 @@ public class MipsModule {
 
     public ArrayList<MipsInstruction> loadGlobal() {
         return functionList.get(curFuncIndex).getReg().loadGlobal();
+    }
+
+    public void updateSp(int offset){
+        functionList.get(curFuncIndex).updateSp(offset);
     }
 }

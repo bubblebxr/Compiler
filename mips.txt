@@ -14,26 +14,39 @@
     .str.12: .asciiz "\n"
     ig1: .word 0
 .text:
-    addi $sp, $sp, -145
 main:
+    addi $sp, $sp, -372
     li $v1, 1
     move $s7, $v1
     li $v1, 1
     move $s6, $v1
     li $v1, 1
     move $s5, $v1
-    lw $v0, 0($sp)
-    lw $v0, 0($sp)
+    addi $t9, $sp, 0
     li $v1, 1
+    sw $v1, 0($t9)
+    addi $t8, $t9, 1
     li $v1, 2
+    sw $v1, 0($t8)
+    addi $t7, $t8, 1
     li $v1, 3
+    sw $v1, 0($t7)
+    addi $t6, $t7, 1
     li $v1, 4
+    sw $v1, 0($t6)
+    addi $t5, $t6, 1
     li $v1, 5
-    lw $v0, 20($sp)
-    lw $v0, 20($sp)
+    sw $v1, 0($t5)
+    addi $v0, $sp, 20
+    addi $t4, $v0, 0
     li $v1, 1
+    sw $v1, 0($t4)
+    addi $t3, $t4, 1
     li $v1, 2
+    sw $v1, 0($t3)
+    addi $t2, $t3, 1
     li $v1, 3
+    sw $v1, 0($t2)
     li $v1, 2
     move $s4, $v1
     li $v1, 97
@@ -42,281 +55,414 @@ main:
     move $s2, $v1
     li $v1, 98
     move $s1, $v1
-    lw $v0, 32($sp)
-    lw $v0, 32($sp)
+    addi $v0, $sp, 32
+    addi $t1, $v0, 0
     li $v1, 97
+    sw $v1, 0($t1)
+    addi $k1, $t1, 1
     li $v1, 98
+    sw $v1, 0($k1)
+    addi $k0, $k1, 1
     li $v1, 99
+    sw $v1, 0($k0)
+    addi $t0, $k0, 1
+    sw $t0, 40($sp)
     li $v1, 100
-    lw $v0, 37($sp)
-    lw $v0, 37($sp)
+    sw $v1, 0($t0)
+    addi $v0, $sp, 40
+    addi $t0, $v0, 1
+    sw $t0, 44($sp)
+    sw $zero, 0($t0)
+    addi $v0, $sp, 48
+    addi $t0, $v0, 0
+    sb $t0, 56($sp)
     li $v1, 97
+    sw $v1, 0($t0)
+    addi $v0, $sp, 56
+    addi $t0, $v0, 1
+    sw $t0, 60($sp)
     li $v1, 98
+    sw $v1, 0($t0)
+    addi $v0, $sp, 60
+    addi $t0, $v0, 1
+    sw $t0, 64($sp)
     li $v1, 99
+    sw $v1, 0($t0)
+    addi $v0, $sp, 64
+    addi $t0, $v0, 1
+    sw $t0, 68($sp)
     li $v1, 100
+    sw $v1, 0($t0)
+    addi $v0, $sp, 68
+    addi $t0, $v0, 1
+    sw $t0, 72($sp)
+    sw $zero, 0($t0)
     li $v1, 97
     move $s0, $v1
     li $v1, 1
-    sw $v1, 74($sp)
-    lw $v0, 78($sp)
-    lw $v0, 78($sp)
+    sw $v1, 108($sp)
+    addi $v0, $sp, 112
+    addi $t0, $v0, 0
+    sw $t0, 132($sp)
     li $v1, 1
+    sw $v1, 0($t0)
+    addi $v0, $sp, 132
+    addi $t0, $v0, 1
+    sw $t0, 136($sp)
     li $v1, 2
+    sw $v1, 0($t0)
+    addi $v0, $sp, 136
+    addi $t0, $v0, 1
+    sw $t0, 140($sp)
     li $v1, 3
+    sw $v1, 0($t0)
+    addi $v0, $sp, 140
+    addi $t0, $v0, 1
+    sw $t0, 144($sp)
     li $v1, 4
+    sw $v1, 0($t0)
+    addi $v0, $sp, 144
+    addi $t0, $v0, 1
+    sw $t0, 148($sp)
     li $v1, 5
+    sw $v1, 0($t0)
     li $v1, 97
-    sb $v1, 99($sp)
+    sb $v1, 156($sp)
     li $v1, 97
-    sb $v1, 101($sp)
-    lw $v0, 107($sp)
-    lw $v0, 107($sp)
+    sb $v1, 164($sp)
+    addi $v0, $sp, 176
+    addi $t0, $v0, 0
+    sb $t0, 184($sp)
     li $v1, 97
+    sw $v1, 0($t0)
+    addi $v0, $sp, 184
+    addi $t0, $v0, 1
+    sw $t0, 188($sp)
     li $v1, 98
+    sw $v1, 0($t0)
+    addi $v0, $sp, 188
+    addi $t0, $v0, 1
+    sw $t0, 192($sp)
     li $v1, 99
+    sw $v1, 0($t0)
+    addi $v0, $sp, 192
+    addi $t0, $v0, 1
+    sw $t0, 196($sp)
     li $v1, 100
+    sw $v1, 0($t0)
+    addi $v0, $sp, 196
+    addi $t0, $v0, 1
+    sw $t0, 200($sp)
+    sw $zero, 0($t0)
     la $a0, .str.0
     li $v0, 4
     syscall
-    sw $zero, 112($sp)
-    sb , 116($sp)
+    sw $zero, 204($sp)
+    sb , 208($sp)
     li $v0, 5
     syscall
-    move $t9, $v0
-    sw $t9, 112($sp)
+    sw $v0, 212($sp)
+    lw $v0, 212($sp)
+    sw $v0, 204($sp)
     li $v0, 12
     syscall
-    move $t9, $v0
-    sw $t9, 116($sp)
+    sb $v0, 216($sp)
+    lw $v0, 216($sp)
+    sw $v0, 208($sp)
     li $v1, 2
-    addi $t9, $v1, 1
-    addi $t8, $t9, 3
-    sw $t8, 117($sp)
+    addi $t0, $v1, 1
+    sw $t0, 224($sp)
+    lw $v0, 224($sp)
+    addi $t0, $v0, 3
+    sw $t0, 228($sp)
+    lw $v0, 228($sp)
+    sw $v0, 220($sp)
     li $v1, 2
-    sll $t8, $v1, 0
+    sll $t0, $v1, 0
+    sw $t0, 236($sp)
     li $v1, 1
-    sll $t9, $v1, 1
-    addu $t7, $t8, $t9
-    sw $t7, 121($sp)
+    sll $t0, $v1, 1
+    sw $t0, 240($sp)
+    lw $v0, 236($sp)
+    lw $v1, 240($sp)
+    addu $t0, $v0, $v1
+    sw $t0, 244($sp)
+    lw $v0, 244($sp)
+    sw $v0, 232($sp)
     li $v1, 2
-    sll $t7, $v1, 0
-    addi $t9, $t7, 1
-    addi $t7, $t9, 1
-    sw $t7, 125($sp)
+    sll $t0, $v1, 0
+    sw $t0, 252($sp)
+    lw $v1, 252($sp)
+    addi $t0, $v1, 1
+    sw $t0, 256($sp)
+    lw $v0, 256($sp)
+    addi $t0, $v0, 1
+    sw $t0, 260($sp)
+    lw $v0, 260($sp)
+    sw $v0, 248($sp)
     li $v1, 2
-    addi $t7, $v1, 1
+    addi $t0, $v1, 1
+    sw $t0, 268($sp)
     li $v1, 3
-    mult $v1, $t7
-    mflo $t9
-    sw $t9, 129($sp)
-    lw $a0, 117($sp)
+    lw $v1, 268($sp)
+    mult $v1, $v1
+    mflo $t0
+    sw $t0, 272($sp)
+    lw $v0, 272($sp)
+    sw $v0, 264($sp)
+    lw $a0, 220($sp)
     li $v0, 1
     syscall
     la $a0, .str.1
     li $v0, 4
     syscall
-    lw $a0, 121($sp)
+    lw $a0, 232($sp)
     li $v0, 1
     syscall
     la $a0, .str.2
     li $v0, 4
     syscall
-    lw $a0, 125($sp)
+    lw $a0, 248($sp)
     li $v0, 1
     syscall
     la $a0, .str.3
     li $v0, 4
     syscall
-    lw $a0, 129($sp)
+    lw $a0, 264($sp)
     li $v0, 1
     syscall
     la $a0, .str.4
     li $v0, 4
     syscall
     li $v1, 1
-    sw $v1, 133($sp)
+    sw $v1, 276($sp)
     li $v1, 1
-    sw $v1, 137($sp)
+    sw $v1, 280($sp)
     li $v1, 1
-    sw $v1, 141($sp)
-    lw $v0, 133($sp)
-    lw $v1, 137($sp)
-    addu $t9, $v0, $v1
-    lw $v1, 141($sp)
-    subu $t7, $t9, $v1
-    sw $t7, 117($sp)
-    lw $v0, 133($sp)
-    lw $v1, 137($sp)
+    sw $v1, 284($sp)
+    lw $v0, 276($sp)
+    lw $v1, 280($sp)
+    addu $t0, $v0, $v1
+    sw $t0, 288($sp)
+    lw $v0, 288($sp)
+    lw $v1, 284($sp)
+    subu $t0, $v0, $v1
+    sw $t0, 292($sp)
+    lw $v0, 292($sp)
+    sw $v0, 220($sp)
+    lw $v0, 276($sp)
+    lw $v1, 280($sp)
     mult $v0, $v1
-    mflo $t7
-    lw $v1, 141($sp)
-    addu $t9, $t7, $v1
-    sw $t9, 121($sp)
-    lw $v0, 133($sp)
-    lw $v1, 137($sp)
+    mflo $t0
+    sw $t0, 296($sp)
+    lw $v0, 296($sp)
+    lw $v1, 284($sp)
+    addu $t0, $v0, $v1
+    sw $t0, 300($sp)
+    lw $v0, 300($sp)
+    sw $v0, 232($sp)
+    lw $v0, 276($sp)
+    lw $v1, 280($sp)
     mult $v0, $v1
-    mflo $t9
-    lw $v0, 141($sp)
-    addu $t7, $v0, $t9
-    sw $t7, 125($sp)
-    lw $a0, 117($sp)
+    mflo $t0
+    sw $t0, 304($sp)
+    lw $v0, 284($sp)
+    lw $v1, 304($sp)
+    addu $t0, $v0, $v1
+    sw $t0, 308($sp)
+    lw $v0, 308($sp)
+    sw $v0, 248($sp)
+    lw $a0, 220($sp)
     li $v0, 1
     syscall
     la $a0, .str.5
     li $v0, 4
     syscall
-    lw $a0, 121($sp)
+    lw $a0, 232($sp)
     li $v0, 1
     syscall
     la $a0, .str.6
     li $v0, 4
     syscall
-    lw $a0, 125($sp)
+    lw $a0, 248($sp)
     li $v0, 1
     syscall
     la $a0, .str.7
     li $v0, 4
     syscall
-    lw $a0, 129($sp)
+    lw $a0, 264($sp)
     li $v0, 1
     syscall
     la $a0, .str.8
     li $v0, 4
     syscall
-    lw $v0, 133($sp)
+    lw $v0, 276($sp)
     li $v1, 4
     div $v0, $v1
-    mfhi $t7
-    addi $t9, $t7, 1
-    sw $t9, 117($sp)
-    lw $v0, 133($sp)
+    mfhi $t0
+    sw $t0, 312($sp)
+    lw $v0, 312($sp)
+    addi $t0, $v0, 1
+    sw $t0, 316($sp)
+    lw $v0, 316($sp)
+    sw $v0, 220($sp)
+    lw $v0, 276($sp)
     li $v1, 1
     div $v0, $v1
-    mflo $t9
-    addu $t7, $t9, $zero
-    sw $t7, 121($sp)
-    lw $v0, 133($sp)
-    lw $v1, 137($sp)
+    mflo $t0
+    sw $t0, 320($sp)
+    lw $v0, 320($sp)
+    addu $t0, $v0, $zero
+    sw $t0, 324($sp)
+    lw $v0, 324($sp)
+    sw $v0, 232($sp)
+    lw $v0, 276($sp)
+    lw $v1, 280($sp)
     mult $v0, $v1
-    mflo $t7
-    lw $v1, 141($sp)
-    div $t7, $v1
-    mflo $t9
-    sw $t9, 125($sp)
-    lw $v0, 137($sp)
-    lw $v1, 141($sp)
-    addu $t9, $v0, $v1
-    lw $v0, 133($sp)
-    mult $v0, $t9
-    mflo $t7
-    sw $t7, 129($sp)
-    lw $a0, 117($sp)
+    mflo $t0
+    sw $t0, 328($sp)
+    lw $v0, 328($sp)
+    lw $v1, 284($sp)
+    div $v0, $v1
+    mflo $t0
+    sw $t0, 332($sp)
+    lw $v0, 332($sp)
+    sw $v0, 248($sp)
+    lw $v0, 280($sp)
+    lw $v1, 284($sp)
+    addu $t0, $v0, $v1
+    sw $t0, 336($sp)
+    lw $v0, 276($sp)
+    lw $v1, 336($sp)
+    mult $v0, $v1
+    mflo $t0
+    sw $t0, 340($sp)
+    lw $v0, 340($sp)
+    sw $v0, 264($sp)
+    lw $a0, 220($sp)
     li $v0, 1
     syscall
     la $a0, .str.9
     li $v0, 4
     syscall
-    lw $a0, 121($sp)
+    lw $a0, 232($sp)
     li $v0, 1
     syscall
     la $a0, .str.10
     li $v0, 4
     syscall
-    lw $a0, 125($sp)
+    lw $a0, 248($sp)
     li $v0, 1
     syscall
     la $a0, .str.11
     li $v0, 4
     syscall
-    lw $a0, 129($sp)
+    lw $a0, 264($sp)
     li $v0, 1
     syscall
     la $a0, .str.12
     li $v0, 4
     syscall
-    lw $v1, 117($sp)
-    addu $t7, $zero, $v1
-    sw $t7, 117($sp)
-    sw $ra, 32($gp)
-    lw $a0, 121($sp)
-    sw $s0, 0($gp)
-    sw $s1, 4($gp)
-    sw $s2, 8($gp)
-    sw $s3, 12($gp)
-    sw $s4, 16($gp)
-    sw $s5, 20($gp)
-    sw $s6, 24($gp)
-    sw $s7, 28($gp)
+    lw $v1, 220($sp)
+    addu $t0, $zero, $v1
+    sw $t0, 344($sp)
+    lw $v0, 344($sp)
+    sw $v0, 220($sp)
+    lw $a0, 232($sp)
+    addi $sp, $sp, -36
+    sw $ra, 0($sp)
+    sw $s0, 4($sp)
+    sw $s1, 8($sp)
+    sw $s2, 12($sp)
+    sw $s3, 16($sp)
+    sw $s4, 20($sp)
+    sw $s5, 24($sp)
+    sw $s6, 28($sp)
+    sw $s7, 32($sp)
     jal fuc4
-    lw $ra, 32($gp)
-    lw $s0, 0($gp)
-    lw $s1, 4($gp)
-    lw $s2, 8($gp)
-    lw $s3, 12($gp)
-    lw $s4, 16($gp)
-    lw $s5, 20($gp)
-    lw $s6, 24($gp)
-    lw $s7, 28($gp)
-    move $t7, $v0
-    sw $t7, 117($sp)
-    sw $ra, 32($gp)
-    lw $a0, 117($sp)
-    lw $a1, 121($sp)
-    sw $s0, 0($gp)
-    sw $s1, 4($gp)
-    sw $s2, 8($gp)
-    sw $s3, 12($gp)
-    sw $s4, 16($gp)
-    sw $s5, 20($gp)
-    sw $s6, 24($gp)
-    sw $s7, 28($gp)
+    lw $ra, 0($sp)
+    lw $s0, 4($sp)
+    lw $s1, 8($sp)
+    lw $s2, 12($sp)
+    lw $s3, 16($sp)
+    lw $s4, 20($sp)
+    lw $s5, 24($sp)
+    lw $s6, 28($sp)
+    lw $s7, 32($sp)
+    addi $sp, $sp, 36
+    sw $v0, 348($sp)
+    lw $v0, 348($sp)
+    sw $v0, 220($sp)
+    lw $a0, 220($sp)
+    lw $a1, 232($sp)
+    addi $sp, $sp, -36
+    sw $ra, 0($sp)
+    sw $s0, 4($sp)
+    sw $s1, 8($sp)
+    sw $s2, 12($sp)
+    sw $s3, 16($sp)
+    sw $s4, 20($sp)
+    sw $s5, 24($sp)
+    sw $s6, 28($sp)
+    sw $s7, 32($sp)
     jal fuc5
-    lw $ra, 32($gp)
-    lw $s0, 0($gp)
-    lw $s1, 4($gp)
-    lw $s2, 8($gp)
-    lw $s3, 12($gp)
-    lw $s4, 16($gp)
-    lw $s5, 20($gp)
-    lw $s6, 24($gp)
-    lw $s7, 28($gp)
-    move $t7, $v0
-    sw $t7, 117($sp)
-    sw $ra, 32($gp)
-    sw $s0, 0($gp)
-    sw $s1, 4($gp)
-    sw $s2, 8($gp)
-    sw $s3, 12($gp)
-    sw $s4, 16($gp)
-    sw $s5, 20($gp)
-    sw $s6, 24($gp)
-    sw $s7, 28($gp)
+    lw $ra, 0($sp)
+    lw $s0, 4($sp)
+    lw $s1, 8($sp)
+    lw $s2, 12($sp)
+    lw $s3, 16($sp)
+    lw $s4, 20($sp)
+    lw $s5, 24($sp)
+    lw $s6, 28($sp)
+    lw $s7, 32($sp)
+    addi $sp, $sp, 36
+    sw $v0, 352($sp)
+    lw $v0, 352($sp)
+    sw $v0, 220($sp)
+    addi $sp, $sp, -36
+    sw $ra, 0($sp)
+    sw $s0, 4($sp)
+    sw $s1, 8($sp)
+    sw $s2, 12($sp)
+    sw $s3, 16($sp)
+    sw $s4, 20($sp)
+    sw $s5, 24($sp)
+    sw $s6, 28($sp)
+    sw $s7, 32($sp)
     jal fuc1
-    lw $ra, 32($gp)
-    lw $s0, 0($gp)
-    lw $s1, 4($gp)
-    lw $s2, 8($gp)
-    lw $s3, 12($gp)
-    lw $s4, 16($gp)
-    lw $s5, 20($gp)
-    lw $s6, 24($gp)
-    lw $s7, 28($gp)
-    move $t7, $v0
-    sw $t7, 117($sp)
-    lw $v1, 117($sp)
-    subu $t7, $zero, $v1
-    sw $t7, 117($sp)
-    lw $v1, 117($sp)
-    subu $t7, $zero, $v1
-    sw $t7, 117($sp)
-    lw $v0, 78($sp)
-    lw $v0, 78($sp)
+    lw $ra, 0($sp)
+    lw $s0, 4($sp)
+    lw $s1, 8($sp)
+    lw $s2, 12($sp)
+    lw $s3, 16($sp)
+    lw $s4, 20($sp)
+    lw $s5, 24($sp)
+    lw $s6, 28($sp)
+    lw $s7, 32($sp)
+    addi $sp, $sp, 36
+    sw $v0, 356($sp)
+    lw $v0, 356($sp)
+    sw $v0, 220($sp)
+    lw $v1, 220($sp)
+    subu $t0, $zero, $v1
+    sw $t0, 360($sp)
+    lw $v0, 360($sp)
+    sw $v0, 220($sp)
+    lw $v1, 220($sp)
+    subu $t0, $zero, $v1
+    sw $t0, 364($sp)
+    lw $v0, 364($sp)
+    sw $v0, 220($sp)
+    addi $v0, $sp, 112
+    addi $t0, $v0, 0
+    sw $t0, 368($sp)
     li $v1, 1
+    sw $v1, 0($t0)
     j .b0
 
 
 .b0:
-    lw $v1, 133($sp)
+    lw $v1, 276($sp)
     li $v1, 1
     seq $t0, $v1, $v1
     sne $t0, $zero, $t0
@@ -332,7 +478,7 @@ main:
 
 
 .b3:
-    lw $v1, 137($sp)
+    lw $v1, 280($sp)
     seq $t0, $v1, $zero
     sne $t0, $zero, $t0
     bnez $t0, .b4
@@ -348,12 +494,12 @@ main:
 
 .b6:
     li $v1, 1
-    sw $v1, 117($sp)
+    sw $v1, 220($sp)
     j .b7
 
 
 .b7:
-    lw $v1, 117($sp)
+    lw $v1, 220($sp)
     li $v1, 10
     slt $t0, $v1, $v1
     sne $t0, $zero, $t0
@@ -365,20 +511,20 @@ main:
 
 
 .b9:
-    lw $v0, 117($sp)
+    lw $v0, 220($sp)
     addi $t9, $v0, 1
-    sw $t9, 117($sp)
+    sw $t9, 220($sp)
     j .b7
 
 
 .b10:
     li $v1, 1
-    sw $v1, 117($sp)
+    sw $v1, 220($sp)
     j .b11
 
 
 .b11:
-    lw $v1, 117($sp)
+    lw $v1, 220($sp)
     li $v1, 10
     slt $t0, $v1, $v1
     sne $t0, $zero, $t0
@@ -390,17 +536,17 @@ main:
 
 
 .b13:
-    lw $v0, 117($sp)
+    lw $v0, 220($sp)
     addi $t9, $v0, 1
-    sw $t9, 117($sp)
+    sw $t9, 220($sp)
     j .b11
 
 
 .b14:
     li $v1, 1
-    sw $v1, 117($sp)
+    sw $v1, 220($sp)
     li $v1, 1
-    sw $v1, 117($sp)
+    sw $v1, 220($sp)
     j .b15
 
 
@@ -409,7 +555,7 @@ main:
 
 
 .b16:
-    lw $v1, 117($sp)
+    lw $v1, 220($sp)
     li $v1, 10
     seq $t0, $v1, $v1
     sne $t0, $zero, $t0
@@ -425,20 +571,20 @@ main:
 
 
 .b19:
-    lw $v0, 117($sp)
+    lw $v0, 220($sp)
     addi $t9, $v0, 1
-    sw $t9, 117($sp)
+    sw $t9, 220($sp)
     j .b15
 
 
 .b20:
     li $v1, 1
-    sw $v1, 117($sp)
+    sw $v1, 220($sp)
     j .b21
 
 
 .b21:
-    lw $v1, 117($sp)
+    lw $v1, 220($sp)
     li $v1, 10
     slt $t0, $v1, $v1
     sne $t0, $zero, $t0
@@ -450,20 +596,20 @@ main:
 
 
 .b23:
-    lw $v0, 117($sp)
+    lw $v0, 220($sp)
     addi $t9, $v0, 1
-    sw $t9, 117($sp)
+    sw $t9, 220($sp)
     j .b21
 
 
 .b24:
     li $v1, 1
-    sw $v1, 117($sp)
+    sw $v1, 220($sp)
     j .b25
 
 
 .b25:
-    lw $v1, 117($sp)
+    lw $v1, 220($sp)
     li $v1, 10
     slt $t0, $v1, $v1
     sne $t0, $zero, $t0
@@ -471,29 +617,29 @@ main:
     beqz $t0, .b27
 
 .b26:
-    lw $v0, 117($sp)
+    lw $v0, 220($sp)
     addi $t9, $v0, 1
-    sw $t9, 117($sp)
+    sw $t9, 220($sp)
     j .b25
 
 
 .b27:
     li $v1, 1
-    sw $v1, 117($sp)
+    sw $v1, 220($sp)
     li $v1, 1
-    sw $v1, 117($sp)
+    sw $v1, 220($sp)
     j .b28
 
 
 .b28:
-    lw $v0, 117($sp)
+    lw $v0, 220($sp)
     addi $t9, $v0, 1
-    sw $t9, 117($sp)
+    sw $t9, 220($sp)
     j .b29
 
 
 .b29:
-    lw $v1, 117($sp)
+    lw $v1, 220($sp)
     li $v1, 10
     seq $t0, $v1, $v1
     sne $t0, $zero, $t0
@@ -514,7 +660,7 @@ main:
 
 .b33:
     li $v1, 1
-    sw $v1, 117($sp)
+    sw $v1, 220($sp)
     j .b34
 
 
@@ -523,7 +669,7 @@ main:
 
 
 .b35:
-    lw $v1, 117($sp)
+    lw $v1, 220($sp)
     li $v1, 10
     seq $t0, $v1, $v1
     sne $t0, $zero, $t0
@@ -539,27 +685,27 @@ main:
 
 
 .b38:
-    lw $v0, 117($sp)
+    lw $v0, 220($sp)
     addi $t9, $v0, 1
-    sw $t9, 117($sp)
+    sw $t9, 220($sp)
     j .b34
 
 
 .b39:
     li $v1, 1
-    sw $v1, 117($sp)
+    sw $v1, 220($sp)
     j .b40
 
 
 .b40:
-    lw $v0, 117($sp)
+    lw $v0, 220($sp)
     addi $t9, $v0, 1
-    sw $t9, 117($sp)
+    sw $t9, 220($sp)
     j .b41
 
 
 .b41:
-    lw $v1, 117($sp)
+    lw $v1, 220($sp)
     li $v1, 10
     seq $t0, $v1, $v1
     sne $t0, $zero, $t0
@@ -576,14 +722,14 @@ main:
 
 .b44:
     li $v1, 1
-    sw $v1, 117($sp)
+    sw $v1, 220($sp)
     li $v1, 1
-    sw $v1, 117($sp)
+    sw $v1, 220($sp)
     j .b45
 
 
 .b45:
-    lw $v1, 117($sp)
+    lw $v1, 220($sp)
     li $v1, 10
     slt $t0, $v1, $v1
     sne $t0, $zero, $t0
@@ -591,16 +737,17 @@ main:
     beqz $t0, .b47
 
 .b46:
-    lw $v0, 117($sp)
+    lw $v0, 220($sp)
     addi $t9, $v0, 1
-    sw $t9, 117($sp)
+    sw $t9, 220($sp)
     j .b45
 
 
 .b47:
-    lw $v0, 117($sp)
-    lw $v1, 121($sp)
+    lw $v0, 220($sp)
+    lw $v1, 232($sp)
     addu $t9, $v0, $v1
+    addi $sp, $sp, 372
     li $v0, 10
     syscall
 

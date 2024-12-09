@@ -4,12 +4,15 @@ package backend.reg;
 import backend.Instruction.Memory.Lw;
 import backend.Instruction.Memory.Sw;
 import backend.Instruction.MipsInstruction;
+import backend.Instruction.Operate.Addi;
 import backend.MipsGenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+
+import static backend.MipsGenerator.updateSp;
 
 /**
  * @className: GlobalRegister
@@ -27,8 +30,8 @@ public class GlobalRegister {
     public static Map<String,Integer> registerAlready=new HashMap<>();
 
     static {
-        registerAlready.put("$s0",0);
-        registerAlready.put("$s1",4);
+        registerAlready.put("$s0",4);
+        registerAlready.put("$s1",8);
         registerAlready.put("$s2",8);
         registerAlready.put("$s3",12);
         registerAlready.put("$s4",16);
@@ -50,19 +53,17 @@ public class GlobalRegister {
         registerStack.add("$s7");
     }
 
-    public MipsMem getEmptyReg(Boolean isChar){
+    public MipsMem getEmptyReg(Boolean isChar,int sp){
         if(registerStack.isEmpty()){
-            int sp=MipsGenerator.spNum;
-            MipsGenerator.spNum+=isChar?1:4;
+            updateSp(4);
             return new MipsMem(sp);
         }else{
             return new MipsMem(registerStack.pop());
         }
     }
 
-    public MipsMem getArrayMem(Boolean isChar,int elementNum){
-        int sp=MipsGenerator.spNum;
-        MipsGenerator.spNum+=isChar?elementNum:4*elementNum;
+    public MipsMem getArrayMem(Boolean isChar,int elementNum,int sp){
+        updateSp(isChar?(int) Math.ceil(elementNum / 4.0) * 4:4*elementNum);
         return new MipsMem(sp,elementNum);
     }
 
@@ -90,23 +91,32 @@ public class GlobalRegister {
 
     public ArrayList<MipsInstruction> storeGlobal(){
         ArrayList<MipsInstruction> temp=new ArrayList<>();
+        int spNum=1;
+        temp.add(new Sw("$ra",0,"$sp"));
         for (String key : registerAlready.keySet()) {
             if (!registerStack.contains(key)) {
-                Integer value = registerAlready.get(key);
-                temp.add(new Sw(key,value,"$gp"));
+                Integer value = spNum*4;
+                temp.add(new Sw(key,value,"$sp"));
+                spNum++;
             }
         }
+        temp.add(0,new Addi("$sp","$sp",Integer.toString(-spNum*4)));
         return temp;
     }
 
     public ArrayList<MipsInstruction> loadGlobal() {
         ArrayList<MipsInstruction> temp=new ArrayList<>();
+        int spNum=1;
+        temp.add(new Lw("$ra",0,"$sp"));
         for (String key : registerAlready.keySet()) {
             if (!registerStack.contains(key)) {
-                Integer value = registerAlready.get(key);
-                temp.add(new Lw(key,value,"$gp"));
+
+                Integer value = spNum*4;
+                temp.add(new Lw(key,value,"$sp"));
+                spNum++;
             }
         }
+        temp.add(new Addi("$sp","$sp",Integer.toString(spNum*4)));
         return temp;
     }
 }

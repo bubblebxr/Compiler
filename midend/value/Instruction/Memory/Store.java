@@ -92,13 +92,22 @@ public class Store extends Instruction {
         }
         MipsMem mipsMem=MipsGenerator.getRel(operators.get(1).getName());
         if(mipsMem!=null){
-            if(mipsMem.isInReg){
-                temp.add(new Move(mipsMem.RegName,reg));
-            }else{
+            // 如果是存储到数组中，需要进行内存存储，同时可以释放用于存储内存的临时变量
+            if(mipsMem.isPointer!=null&& mipsMem.isPointer){
                 if(type instanceof CharType){
-                    temp.add(new Sb(reg,mipsMem.offset,"$sp"));
+                    temp.add(new Sb(reg,0,mipsMem.RegName));
                 }else{
-                    temp.add(new Sw(reg,mipsMem.offset,"$sp"));
+                    temp.add(new Sw(reg,0,mipsMem.RegName));
+                }
+            }else{
+                if(mipsMem.isInReg){
+                    temp.add(new Move(mipsMem.RegName,reg));
+                }else{
+                    if(type instanceof CharType){
+                        temp.add(new Sb(reg,mipsMem.offset,"$sp"));
+                    }else{
+                        temp.add(new Sw(reg,mipsMem.offset,"$sp"));
+                    }
                 }
             }
         }else{

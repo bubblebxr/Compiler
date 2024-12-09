@@ -13,6 +13,7 @@ public class MipsMem {
     public String RegName;
     public int offset;
     public int elementNum;
+    public Boolean isPointer; // 如果true则需要通过0($t0)类似存储
 
     /**
      * @description: 存储在寄存器中

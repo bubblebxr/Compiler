@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import static backend.MipsGenerator.updateSp;
+
 /**
  * @className: Register
  * @author: bxr
@@ -53,10 +55,9 @@ public class LocalRegister {
         registerStack.add("$t9");
     }
 
-    public MipsMem getEmptyReg(Boolean isChar){
+    public MipsMem getEmptyReg(Boolean isChar,int sp){
         if(registerStack.isEmpty()){
-            int sp= MipsGenerator.spNum;
-            MipsGenerator.spNum+=isChar?1:4;
+            updateSp(4);
             return new MipsMem(sp);
         }else{
             return new MipsMem(registerStack.pop());

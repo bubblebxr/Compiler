@@ -26,8 +26,7 @@ public class MipsGenerator {
     public static MipsModule mipsModule=new MipsModule();
     public static int curFuncIndex;
     public static int curBlockIndex;
-    public static int spNum=0;
-    public static int gpNum=32;
+//    public static int spNum=0;
 
     public MipsGenerator(Module irModule){
         this.irModule=irModule;
@@ -73,21 +72,8 @@ public class MipsGenerator {
 
         // 通过function中的ir生成mips
         genMipsFromIr();
-
-        //  增加对sp整体栈减少的控制
-        addSpControl();
     }
 
-    /**
-     * @description: 增加对sp整体栈减少的控制
-     * @date: 2024/12/6 13:36
-     **/
-    public void addSpControl() {
-        if(spNum!=0){
-            MipsInstruction instruction=new Addi("$sp","$sp",String.valueOf(-spNum));
-            mipsModule.addInstruction(instruction);
-        }
-    }
 
     /**
      * @description: 根据生成的llvm代码翻译为mips
@@ -213,7 +199,7 @@ public class MipsGenerator {
      * @date: 2024/12/5 11:09
      **/
     public static Boolean checkAtMain(){
-        return mipsModule.chekcAtMain();
+        return mipsModule.checkAtMain();
     }
 
     public static Integer getConstGlobalValue(String name){
@@ -242,5 +228,13 @@ public class MipsGenerator {
      **/
     public static ArrayList<MipsInstruction> loadGlobal(){
         return mipsModule.loadGlobal();
+    }
+
+    /**
+     * @description: 更新当前函数的sp指针
+     * @date: 2024/12/8 21:36
+     **/
+    public static void updateSp(int offset){
+        mipsModule.updateSp(offset);
     }
 }

@@ -102,7 +102,6 @@ public class Call extends Instruction {
             list.add(new Li(11,true));
         }else{
             // 调用自己定义的函数
-            list.add(new Sw("$ra",32,"$gp"));
             ArrayList<String> regList=new ArrayList<>();
             regList.add("$a0");
             regList.add("$a1");
@@ -138,7 +137,6 @@ public class Call extends Instruction {
             }
             list.addAll(storeGlobal());
             list.add(new Jal(functionName));
-            list.add(new Lw("$ra",32,"$gp"));
             list.addAll(loadGlobal());
 ;            if(name!=null){
                 MipsMem mipsMem=getEmptyLocalReg(type instanceof CharType);

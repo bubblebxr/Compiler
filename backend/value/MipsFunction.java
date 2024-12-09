@@ -1,6 +1,7 @@
 package backend.value;
 
 
+import backend.Instruction.Operate.Addi;
 import backend.MipsGenerator;
 import backend.reg.GlobalRegister;
 import midend.value.BasicBlock;
@@ -21,6 +22,8 @@ public class MipsFunction {
     protected Boolean isMain;
     protected GlobalRegister reg;
     protected ArrayList<MipsBasicBlock> blockList;
+    // 存储每次需要在开始提前开辟的栈空间
+    public int spNumForFunc;
 
     public MipsFunction(Function irFunction){
         this.reg=new GlobalRegister();
@@ -31,6 +34,7 @@ public class MipsFunction {
         for(BasicBlock block:irFunction.getBasicBlockList()){
             blockList.add(new MipsBasicBlock(block));
         }
+        this.spNumForFunc=0;
     }
 
     @Override
@@ -60,11 +64,17 @@ public class MipsFunction {
             MipsGenerator.curBlockIndex=i++;
             block.genMipsFromIr();
         }
+        if(spNumForFunc!=0){
+            blockList.get(0).getInstructionList().add(0,(new Addi("$sp","$sp",Integer.toString(-spNumForFunc))));
+            blockList.get(blockList.size()-1).getInstructionList().add(blockList.get(blockList.size()-1).getInstructionList().size()-1,(new Addi("$sp","$sp",Integer.toString(spNumForFunc))));
+        }
     }
 
     public ArrayList<MipsBasicBlock> getBlockList() {
         return blockList;
     }
 
-
+    public void updateSp(int offset){
+        spNumForFunc+=offset;
+    }
 }
