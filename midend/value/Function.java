@@ -104,4 +104,12 @@ public class Function extends Value {
             }
         }
     }
+
+    /**
+     * @description: 获取函数参数的个数
+     * @date: 2024/12/13 20:51
+     **/
+    public int getArgumentCnt(){
+        return argumentList.size();
+    }
 }

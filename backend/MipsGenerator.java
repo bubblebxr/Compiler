@@ -11,6 +11,8 @@ import midend.value.Function;
 import midend.value.GlobalVariable;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Stack;
 
 
 /**
@@ -26,7 +28,6 @@ public class MipsGenerator {
     public static MipsModule mipsModule=new MipsModule();
     public static int curFuncIndex;
     public static int curBlockIndex;
-//    public static int spNum=0;
 
     public MipsGenerator(Module irModule){
         this.irModule=irModule;
@@ -144,6 +145,14 @@ public class MipsGenerator {
      **/
     public static MipsMem getEmptyLocalReg(Boolean isChar){
         return mipsModule.getEmptyLocalReg(isChar);
+    }
+
+    /**
+     * @description: 获取栈从而存储函数的传参
+     * @date: 2024/12/13 20:16
+     **/
+    public static MipsMem getSpToSaveParams(){
+        return mipsModule.getSpToSaveParams();
     }
 
     /**

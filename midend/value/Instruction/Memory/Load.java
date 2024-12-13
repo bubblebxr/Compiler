@@ -9,6 +9,7 @@ import backend.reg.MipsMem;
 import midend.Type;
 import midend.Value;
 import midend.type.CharType;
+import midend.type.PointerType;
 import midend.value.Instruction.Instruction;
 
 import java.util.ArrayList;
@@ -47,9 +48,44 @@ public class Load extends Instruction {
     @Override
     public ArrayList<MipsInstruction> genMips() {
         ArrayList<MipsInstruction> temp=new ArrayList<>();
+        // 如果是要load出来数组传参
+        if(operators.get(00).getType().getType() instanceof PointerType){
+            MipsMem mipsMem=getRel(operators.get(0).getName());
+            if(mipsMem!=null){
+                putLocalRel(name,mipsMem);
+            }
+            return temp;
+        }
         MipsMem mipsMem=getRel(operators.get(0).getName());
         if(mipsMem!=null){
-            putLocalRel(name,mipsMem);
+            // 如果是数组指针则需要从地址中load出来
+            if(mipsMem.isPointer!=null&&mipsMem.isPointer){
+                // 先获取数组的指针，并取出需要load的元素
+                if(!mipsMem.isInReg){
+                    // 指向数组的指针不在内存中，需要先load出来
+                    temp.add(new Lw("$t0",mipsMem.offset,"$sp"));
+                    mipsMem.RegName="$t0";
+                }
+                if(type instanceof CharType){
+                    temp.add(new Lb("$t0",0,mipsMem.RegName));
+                }else{
+                    temp.add(new Lw("$t0",0,mipsMem.RegName));
+                }
+                // 为临时变量分配可用的空间并存入其中
+                MipsMem reg=getEmptyLocalReg(type instanceof CharType);
+                if(reg.isInReg){
+                    temp.add(new Move(reg.RegName,"$t0"));
+                }else{
+                    if(type instanceof CharType){
+                        temp.add(new Sb("$t0", reg.offset,"$sp"));
+                    }else{
+                        temp.add(new Sw("$t0", reg.offset,"$sp"));
+                    }
+                }
+                putLocalRel(name,reg);
+            }else{
+                putLocalRel(name,mipsMem);
+            }
         }else{
             if(getConstGlobalValue(operators.get(0).getName())!=null){
                 temp.add(new Li(getConstGlobalValue(operators.get(0).getName()),false));

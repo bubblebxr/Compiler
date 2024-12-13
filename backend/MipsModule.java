@@ -2,6 +2,7 @@ package backend;
 
 
 import backend.Instruction.MipsInstruction;
+import backend.Instruction.Operate.Addi;
 import backend.reg.MipsMem;
 import backend.value.MipsConstGlobalVariable;
 import backend.value.MipsFunction;
@@ -19,7 +20,7 @@ import static backend.MipsGenerator.curFuncIndex;
  * @className: MipsModule
  * @author: bxr
  * @date: 2024/11/30 20:03
- * @description:
+ * @description: mips module -- ir module
  */
 
 public class MipsModule {
@@ -32,6 +33,8 @@ public class MipsModule {
     protected Map<String, MipsConstGlobalVariable> constGlobalList;
     //  存储在所有函数之前需要输出对sp指令等
     protected ArrayList<MipsInstruction> instructionList;
+    // 用于确定在调用函数之前需要开辟多少sp存储全部的全局变量,没有使用的局部变量在LocalRegister中处理
+    public static int spNumToCall=0;
 
     public MipsModule(){
         this.functionList=new ArrayList<>();
@@ -50,11 +53,14 @@ public class MipsModule {
     public String toString(){
         StringBuilder a=new StringBuilder();
         a.append(".data:\n");
-        for(MipsStr str:printStrList){
-            a.append("    ").append(str.toString()).append("\n");
-        }
         for(MipsGlobalVariable variable:varList){
             a.append("    ").append(variable.toString()).append("\n");
+        }
+        for(MipsConstGlobalVariable variable:constGlobalList.values()){
+            a.append("    ").append(variable.toString()).append("\n");
+        }
+        for(MipsStr str:printStrList){
+            a.append("    ").append(str.toString()).append("\n");
         }
         a.append(".text:\n");
         for(MipsInstruction mipsInstruction:instructionList){
@@ -84,6 +90,14 @@ public class MipsModule {
      **/
     public MipsMem getEmptyLocalReg(Boolean isChar){
         return functionList.get(curFuncIndex).getBlockList().get(curBlockIndex).getReg().getEmptyReg(isChar,functionList.get(curFuncIndex).spNumForFunc);
+    }
+
+    /**
+     * @description: 获取栈从而存储函数的传参
+     * @date: 2024/12/13 20:14
+     **/
+    public MipsMem getSpToSaveParams(){
+        return functionList.get(curFuncIndex).getBlockList().get(curBlockIndex).getReg().getSpToSaveParams(functionList.get(curFuncIndex).spNumForFunc);
     }
 
     /**
@@ -132,7 +146,11 @@ public class MipsModule {
     }
 
     public ArrayList<MipsInstruction> storeGlobal(){
-        return functionList.get(curFuncIndex).getReg().storeGlobal();
+        ArrayList<MipsInstruction> temp=new ArrayList<>();
+        temp.addAll(functionList.get(curFuncIndex).getReg().storeGlobal());
+        temp.addAll(functionList.get(curFuncIndex).getBlockList().get(curBlockIndex).getReg().storeGlobal());
+        temp.add(0,new Addi("$sp","$sp",Integer.toString(-spNumToCall)));
+        return temp;
     }
 
     public void returnReg(String name){
@@ -166,7 +184,10 @@ public class MipsModule {
     }
 
     public ArrayList<MipsInstruction> loadGlobal() {
-        return functionList.get(curFuncIndex).getReg().loadGlobal();
+        ArrayList<MipsInstruction> temp=new ArrayList<>();
+        temp.addAll(functionList.get(curFuncIndex).getReg().loadGlobal());
+        temp.addAll(functionList.get(curFuncIndex).getBlockList().get(curBlockIndex).getReg().loadGlobal());
+        return temp;
     }
 
     public void updateSp(int offset){

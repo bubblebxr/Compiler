@@ -45,4 +45,22 @@ public class Lw extends MipsInstruction {
             return "lw "+register+", "+reg;
         }
     }
+
+    /**
+     * @description: 用于获取存在栈中的参数的索引
+     * @date: 2024/12/13 20:48
+     **/
+    @Override
+    public int getOffset(){
+        return offset;
+    }
+
+    /**
+     * @description: 用于填充存在栈中的参数
+     * @date: 2024/12/13 20:53
+     **/
+    @Override
+    public void setOffset(int offset){
+        this.offset=offset;
+    }
 }

@@ -94,7 +94,7 @@ public class GlobalVariable extends User {
     }
 
     public MipsConstGlobalVariable genMipsConstGlobal() {
-        if(isConst&&!name.substring(0,name.length()-1).equals("@.str.")){
+        if(isConst&&!name.startsWith("@.str.")){
             if(isArray){
                 // 全局常量数组
                 return new MipsConstGlobalVariable(name, true,valueList,type.getType() instanceof CharType,dimensions);

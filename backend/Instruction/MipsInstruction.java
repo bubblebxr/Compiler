@@ -14,4 +14,12 @@ public class MipsInstruction {
     public String toString(){
         return "";
     }
+
+    public int getOffset(){
+        return 0;
+    }
+
+    public void setOffset(int offset){
+
+    }
 }

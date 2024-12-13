@@ -6,6 +6,7 @@ import backend.Instruction.Memory.Sw;
 import backend.Instruction.MipsInstruction;
 import backend.Instruction.Operate.Addi;
 import backend.MipsGenerator;
+import backend.MipsModule;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,7 +101,7 @@ public class GlobalRegister {
                 spNum++;
             }
         }
-        temp.add(0,new Addi("$sp","$sp",Integer.toString(-spNum*4)));
+        MipsModule.spNumToCall=spNum*4;
         return temp;
     }
 
@@ -110,13 +111,12 @@ public class GlobalRegister {
         temp.add(new Lw("$ra",0,"$sp"));
         for (String key : registerAlready.keySet()) {
             if (!registerStack.contains(key)) {
-
                 Integer value = spNum*4;
                 temp.add(new Lw(key,value,"$sp"));
                 spNum++;
             }
         }
-        temp.add(new Addi("$sp","$sp",Integer.toString(spNum*4)));
+        MipsModule.spNumToCall=spNum*4;
         return temp;
     }
 }

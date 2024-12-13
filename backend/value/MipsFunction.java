@@ -1,6 +1,9 @@
 package backend.value;
 
 
+import backend.Instruction.Memory.Lb;
+import backend.Instruction.Memory.Lw;
+import backend.Instruction.MipsInstruction;
 import backend.Instruction.Operate.Addi;
 import backend.MipsGenerator;
 import backend.reg.GlobalRegister;
@@ -22,6 +25,7 @@ public class MipsFunction {
     protected Boolean isMain;
     protected GlobalRegister reg;
     protected ArrayList<MipsBasicBlock> blockList;
+    protected int argumentCnt;
     // 存储每次需要在开始提前开辟的栈空间
     public int spNumForFunc;
 
@@ -34,6 +38,7 @@ public class MipsFunction {
         for(BasicBlock block:irFunction.getBasicBlockList()){
             blockList.add(new MipsBasicBlock(block));
         }
+        argumentCnt=irFunction.getArgumentCnt();
         this.spNumForFunc=0;
     }
 
@@ -67,6 +72,16 @@ public class MipsFunction {
         if(spNumForFunc!=0){
             blockList.get(0).getInstructionList().add(0,(new Addi("$sp","$sp",Integer.toString(-spNumForFunc))));
             blockList.get(blockList.size()-1).getInstructionList().add(blockList.get(blockList.size()-1).getInstructionList().size()-1,(new Addi("$sp","$sp",Integer.toString(spNumForFunc))));
+        }
+        if(!isMain){
+            for(MipsInstruction instruction:blockList.get(0).getInstructionList()){
+                if(instruction instanceof Lb ||instruction instanceof Lw){
+                    int offset=instruction.getOffset();
+                    if(offset<0){
+                        instruction.setOffset(-(argumentCnt+offset)*4+spNumForFunc);
+                    }
+                }
+            }
         }
     }
 

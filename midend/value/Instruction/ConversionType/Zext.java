@@ -1,7 +1,11 @@
 package midend.value.Instruction.ConversionType;
 
 
+import backend.Instruction.Memory.Li;
+import backend.Instruction.Memory.Sb;
+import backend.Instruction.Memory.Sw;
 import backend.Instruction.MipsInstruction;
+import backend.Instruction.Operate.Move;
 import backend.MipsGenerator;
 import backend.reg.MipsMem;
 import midend.Type;
@@ -10,7 +14,7 @@ import midend.value.Instruction.Instruction;
 
 import java.util.ArrayList;
 
-import static backend.MipsGenerator.putGlobalRel;
+import static backend.MipsGenerator.*;
 
 /**
  * @className: Zext
@@ -46,6 +50,16 @@ public class Zext extends Instruction {
         MipsMem mipsMem= MipsGenerator.getRel(operators.get(0).getName());
         if(mipsMem!=null){
             putGlobalRel(name,mipsMem);
+        }else{
+            // 需要进行类型转换的是常数
+            temp.add(new Li(Integer.parseInt(operators.get(0).getName()),false));
+            MipsMem reg=getEmptyLocalReg(false);
+            if(reg.isInReg){
+                temp.add(new Move(reg.RegName,"$v1"));
+            }else{
+                temp.add(new Sw("$v1",reg.offset,"$sp"));
+            }
+            putLocalRel(name,reg);
         }
         return temp;
     }

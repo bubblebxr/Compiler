@@ -69,7 +69,13 @@ public class Getelementptr extends Instruction {
                     label1=mipsMem1.RegName;
                 }else{
                     if(mipsMem1.offset!=0){
-                        list.add(new Addi("$v0","$sp",String.valueOf(mipsMem1.offset)));
+                        if(operators.size()==2){
+                            // 不是第一个index，需要从地址中load出索引
+                            list.add(new Lw("$v0",mipsMem1.offset,"$sp"));
+                        }else{
+                            // 是第一个index，就是他的位置
+                            list.add(new Addi("$v0","$sp",String.valueOf(mipsMem1.offset)));
+                        }
                         label1="$v0";
                     }else{
                         label1="$sp";
@@ -85,12 +91,19 @@ public class Getelementptr extends Instruction {
             reg.isPointer=true;
             if(!reg.isInReg)reg.RegName="$t0";
             String temp=operators.get(1).getName();
-            if(temp.equals("0")){
+            if(temp.equals("0")&&operators.size()==3){
                 temp=operators.get(2).getName();
             }
             if(temp.charAt(0)!='%'){
                 //offset是数字
-                list.add(new Addi(reg.RegName,label1,temp));
+                // 计算出数组的地址，如果是int，需要现将offset*4
+                if(!(type.getType() instanceof CharType)){
+                    list.add(new Li(Integer.parseInt(temp),false));
+                    list.add(new Sll("$v1","$v1","2"));
+                    list.add(new Addu(reg.RegName,label1,"$v1"));
+                }else{
+                    list.add(new Addi(reg.RegName,label1,temp));
+                }
             }else{
                 MipsMem mipsMem2=getRel(temp);
                 if(mipsMem2!=null){
@@ -105,18 +118,21 @@ public class Getelementptr extends Instruction {
                         label2="$v1";
                     }
                     // 计算出数组的地址，如果是int，需要现将offset*4
-                    if(!(type.getType() instanceof CharType)){
-                        list.add(new Sll(label2,label2,"2"));
+                    if(!(type.getType() instanceof CharType)&&!(type instanceof CharType)){
+                        list.add(new Sll("$v1",label2,"2"));
+                        label2="$v1";
                     }
                     list.add(new Addu(reg.RegName,label1,label2));
                 }
             }
             if(!reg.isInReg){
-                if(type.getType() instanceof CharType){
-                    list.add(new Sb(reg.RegName,reg.offset,"$sp"));
-                }else{
-                    list.add(new Sw(reg.RegName,reg.offset,"$sp"));
-                }
+//                if(type.getType() instanceof CharType){
+//                    list.add(new Sb(reg.RegName,reg.offset,"$sp"));
+//                }else{
+//                    list.add(new Sw(reg.RegName,reg.offset,"$sp"));
+//                }
+                // 无论是什么，索引值都是int
+                list.add(new Sw(reg.RegName,reg.offset,"$sp"));
             }
             putLocalRel(name,reg);
         }

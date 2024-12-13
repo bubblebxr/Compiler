@@ -30,8 +30,14 @@ public class MipsGlobalVariable {
         if(elementNum!=0){
             if(valueList.isEmpty()){
                 //.space 12
-                int spaceNum=isChar?1:4*elementNum;
+                int spaceNum=isChar?elementNum:4*elementNum;
                 a.append(".space ").append(spaceNum);
+                if(isChar){
+                    int result=(spaceNum % 4 == 0) ? 0 : 4 - (spaceNum % 4);
+                    if(result!=0){
+                        a.append("\n    .align ").append(result);
+                    }
+                }
             }else{
                 a.append(isChar?".byte ":".word ");
                 for(int i=0;i<valueList.size();i++){
@@ -43,9 +49,18 @@ public class MipsGlobalVariable {
                 for(int i=valueList.size();i<elementNum;i++){
                     a.append(",0");
                 }
+                if(isChar){
+                    int result=(elementNum % 4 == 0) ? 0 : 4 - (elementNum % 4);
+                    if(result!=0){
+                        a.append("\n    .align ").append(result);
+                    }
+                }
             }
         }else{
             a.append(isChar?".byte ":".word ").append(valueList.get(0));
+            if(isChar){
+                a.append("\n    .align 3");
+            }
         }
         return a.toString();
     }

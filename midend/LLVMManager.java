@@ -1203,6 +1203,7 @@ public class LLVMManager {
             if(symbol.getType()==SymbolType.Int||symbol.getType()==SymbolType.ConstInt){
                 type=new IntegerType();
             }else if(!(symbol instanceof FuncParamSymbol) &&(symbol.getType()==SymbolType.IntArray||symbol.getType()==SymbolType.ConstIntArray)){
+                // int array
                 type=new ArrayType(new IntegerType(), symbol.getElementNum());
                 ArrayList<Value> temp=new ArrayList<>();
                 temp.add(new Value(id,new PointerType(type)));
@@ -1212,6 +1213,7 @@ public class LLVMManager {
                 id="%"+(variableId-1);
                 type=new PointerType(new IntegerType());
             }else if(!(symbol instanceof FuncParamSymbol) &&(symbol.getType()==SymbolType.CharArray||symbol.getType()==SymbolType.ConstCharArray)){
+                // char array
                 type=new ArrayType(new CharType(), symbol.getElementNum());
                 ArrayList<Value> temp=new ArrayList<>();
                 temp.add(new Value(id,new PointerType(type)));
@@ -1221,6 +1223,7 @@ public class LLVMManager {
                 id="%"+(variableId-1);
                 type=new PointerType(new CharType());
             }else if(symbol.getType()==SymbolType.Char||symbol.getType()==SymbolType.ConstChar){
+                // char
                 type=new CharType();
             }else{
                 if(symbol.getDimension()==1){

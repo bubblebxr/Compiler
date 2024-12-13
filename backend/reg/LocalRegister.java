@@ -1,12 +1,14 @@
 package backend.reg;
 
 
+import backend.Instruction.Memory.Lw;
+import backend.Instruction.Memory.Sw;
+import backend.Instruction.MipsInstruction;
+import backend.Instruction.Operate.Addi;
 import backend.MipsGenerator;
+import backend.MipsModule;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 import static backend.MipsGenerator.updateSp;
 
@@ -64,6 +66,11 @@ public class LocalRegister {
         }
     }
 
+    public MipsMem getSpToSaveParams(int sp){
+        updateSp(4);
+        return new MipsMem(sp);
+    }
+
     public void returnReg(String name){
         if(registerAlready.contains(name)){
             registerStack.add(name);
@@ -84,5 +91,33 @@ public class LocalRegister {
         }else{
             return null;
         }
+    }
+
+    public ArrayList<MipsInstruction> storeGlobal(){
+        ArrayList<MipsInstruction> temp=new ArrayList<>();
+        int spNum= MipsModule.spNumToCall/4;
+        for (String key : registerAlready) {
+            if (!registerStack.contains(key)) {
+                Integer value = spNum*4;
+                temp.add(new Sw(key,value,"$sp"));
+                spNum++;
+            }
+        }
+        MipsModule.spNumToCall=spNum*4;
+        return temp;
+    }
+
+    public ArrayList<MipsInstruction> loadGlobal() {
+        ArrayList<MipsInstruction> temp=new ArrayList<>();
+        int spNum=MipsModule.spNumToCall/4;
+        for (String key : registerAlready) {
+            if (!registerStack.contains(key)) {
+                Integer value = spNum*4;
+                temp.add(new Lw(key,value,"$sp"));
+                spNum++;
+            }
+        }
+        temp.add(new Addi("$sp","$sp",Integer.toString(spNum*4)));
+        return temp;
     }
 }

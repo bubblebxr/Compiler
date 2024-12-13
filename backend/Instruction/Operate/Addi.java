@@ -23,6 +23,11 @@ public class Addi extends MipsInstruction {
 
     @Override
     public String toString(){
-        return "addi "+register+", "+label1+", "+label2;
+        return "addiu "+register+", "+label1+", "+label2;
+    }
+
+    @Override
+    public int getOffset(){
+        return Integer.parseInt(label2);
     }
 }

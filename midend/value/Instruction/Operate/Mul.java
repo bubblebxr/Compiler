@@ -75,7 +75,8 @@ public class Mul extends Instruction {
                 label1= String.valueOf(getPowerOfTwo(Integer.parseInt(operators.get(0).getName())));
             }else{
                 list.add(new Li(Integer.parseInt(operators.get(0).getName()),false));
-                label1= "$v1";
+                list.add(new Move("$v0","$v1"));
+                label1= "$v0";
             }
         }else{
             MipsMem mipsMem=getRel(operators.get(0).getName());
