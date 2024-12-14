@@ -64,9 +64,15 @@ public class Store extends Instruction {
             }else if(operators.get(0).getName().equals("%3")){
                 reg="$a3";
             }else{
-                //TODO:从栈中取出
-                int paramsIndex=Integer.parseInt(operators.get(0).getName().substring(1));
-
+                //从栈中取出
+                int paramIndex=Integer.parseInt(operators.get(0).getName().substring(1));
+                // 其实存的是索引，直接lw即可
+                if(type instanceof CharType){
+                    temp.add(new Lb("$t0",-paramIndex,"$gp"));
+                }else{
+                    temp.add(new Lw("$t0",-paramIndex,"$gp"));
+                }
+                reg="$t0";
             }
             // 获取函数参数存储的位置
             MipsMem mipsMem= MipsGenerator.getRel(operators.get(1).getName());
@@ -89,7 +95,7 @@ public class Store extends Instruction {
             //如果是立即数，0就直接使用寄存器，非0就li出来
             reg="$zero";
             if(!operators.get(0).getName().equals("0")){
-                temp.add(new Li(Integer.parseInt(operators.get(0).getName()),false));
+                temp.add(new Li(Long.parseLong(operators.get(0).getName()),false));
                 reg="$v1";
             }
         }else{
@@ -118,7 +124,7 @@ public class Store extends Instruction {
                 }else if(operators.get(0).getName().equals("%3")){
                     reg="$a3";
                 }else{
-                    //TODO:从栈中取出
+                    //从栈中取出
                     int paramIndex=Integer.parseInt(operators.get(0).getName().substring(1));
                     if(type instanceof CharType){
                         temp.add(new Lb("$t0",-paramIndex,"$gp"));
@@ -133,7 +139,7 @@ public class Store extends Instruction {
         if(mipsMem!=null){
             // 如果是存储到数组中，需要进行内存存储，同时可以释放用于存储内存的临时变量
             if(mipsMem.isPointer!=null&& mipsMem.isPointer&&mipsMem.isInReg){
-                if(type instanceof CharType){
+                if(operators.get(0).getType() instanceof CharType){
                     temp.add(new Sb(reg,0,mipsMem.RegName));
                 }else{
                     temp.add(new Sw(reg,0,mipsMem.RegName));
@@ -141,7 +147,7 @@ public class Store extends Instruction {
             }else if(mipsMem.isPointer != null && mipsMem.isPointer){
                 // 先将索引从内存中load出来
                 temp.add(new Lw("$t0",mipsMem.offset,"$sp"));
-                if(type instanceof CharType){
+                if(operators.get(0).getType() instanceof CharType){
                     temp.add(new Sb(reg,0,"$t0"));
                 }else{
                     temp.add(new Sw(reg,0,"$t0"));

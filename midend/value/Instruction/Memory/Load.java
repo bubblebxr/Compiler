@@ -88,9 +88,17 @@ public class Load extends Instruction {
             }
         }else{
             if(getConstGlobalValue(operators.get(0).getName())!=null){
-                temp.add(new Li(getConstGlobalValue(operators.get(0).getName()),false));
+                temp.add(new Li((long)getConstGlobalValue(operators.get(0).getName()),false));
                 MipsMem reg=getEmptyLocalReg(type instanceof CharType);
-                temp.add(new Move(reg.RegName,"$v1"));
+                if(reg.isInReg){
+                    temp.add(new Move(reg.RegName,"$v1"));
+                }else{
+                    if(type instanceof CharType){
+                        temp.add(new Sb("$v1", reg.offset,"$sp"));
+                    }else{
+                        temp.add(new Sw("$v1", reg.offset,"$sp"));
+                    }
+                }
                 putLocalRel(name,reg);
             }
             if(getGlobalVariableValue(operators.get(0).getName(),0)!=null){

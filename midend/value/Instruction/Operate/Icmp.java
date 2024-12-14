@@ -7,6 +7,7 @@ import backend.Instruction.Memory.Lw;
 import backend.Instruction.MipsInstruction;
 import backend.Instruction.Operate.Compare;
 import backend.Instruction.Operate.CompareType;
+import backend.Instruction.Operate.Move;
 import backend.MipsGenerator;
 import backend.reg.MipsMem;
 import midend.Type;
@@ -60,8 +61,9 @@ public class Icmp extends Instruction {
         if(operators.get(0).getName().equals("0")){
             label1="$zero";
         }else if(operators.get(0).getName().charAt(0)!='%'){
-            list.add(new Li(Integer.parseInt(operators.get(0).getName()),false));
-            label1="$v1";
+            list.add(new Li(Long.parseLong(operators.get(0).getName()),false));
+            list.add(new Move("$v0","$v1"));
+            label1="$v0";
         }else{
             MipsMem mipsMem= MipsGenerator.getRel(operators.get(0).getName());
             if(mipsMem!=null){
@@ -69,18 +71,18 @@ public class Icmp extends Instruction {
                     label1=mipsMem.RegName;
                 }else{
                     if(type instanceof CharType){
-                        list.add(new Lb("$v1",mipsMem.offset,"$sp"));
+                        list.add(new Lb("$v0",mipsMem.offset,"$sp"));
                     }else{
-                        list.add(new Lw("$v1",mipsMem.offset,"$sp"));
+                        list.add(new Lw("$v0",mipsMem.offset,"$sp"));
                     }
-                    label1="$v1";
+                    label1="$v0";
                 }
             }
         }
         if(operators.get(1).getName().equals("0")){
             label2="$zero";
         }else if(operators.get(1).getName().charAt(0)!='%'){
-            list.add(new Li(Integer.parseInt(operators.get(1).getName()),false));
+            list.add(new Li(Long.parseLong(operators.get(1).getName()),false));
             label2="$v1";
         }else{
             MipsMem mipsMem= MipsGenerator.getRel(operators.get(1).getName());
@@ -89,11 +91,11 @@ public class Icmp extends Instruction {
                     label2=mipsMem.RegName;
                 }else{
                     if(type instanceof CharType){
-                        list.add(new Lb("$v0",mipsMem.offset,"$sp"));
+                        list.add(new Lb("$v1",mipsMem.offset,"$sp"));
                     }else{
-                        list.add(new Lw("$v0",mipsMem.offset,"$sp"));
+                        list.add(new Lw("$v1",mipsMem.offset,"$sp"));
                     }
-                    label2="$v0";
+                    label2="$v1";
                 }
             }
         }

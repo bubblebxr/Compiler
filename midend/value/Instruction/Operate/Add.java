@@ -79,7 +79,7 @@ public class Add extends Instruction {
             label2="$zero";
         }else if(operators.get(1).getName().charAt(0)!='%'){
             if(isImmediate==1){
-                list.add(new Li(Integer.parseInt(operators.get(1).getName()),false));
+                list.add(new Li(Long.parseLong(operators.get(1).getName()),false));
                 label2="$v1";
             }else{
                 label2= operators.get(1).getName();

@@ -60,7 +60,7 @@ public class Sub extends Instruction {
         if(operators.get(0).getName().equals("0")){
             label1="$zero";
         }else if(operators.get(0).getName().charAt(0)!='%'){
-            list.add(new Li(Integer.parseInt(operators.get(0).getName()),false));
+            list.add(new Li(Long.parseLong(operators.get(0).getName()),false));
             list.add(new Move("$v0","$v1"));
             label1="$v0";
         }else{
@@ -81,7 +81,7 @@ public class Sub extends Instruction {
         if(operators.get(1).getName().equals("0")){
             label2="$zero";
         }else if(operators.get(1).getName().charAt(0)!='%'){
-            list.add(new Li(Integer.parseInt(operators.get(1).getName()),false));
+            list.add(new Li(Long.parseLong(operators.get(1).getName()),false));
             label2="$v1";
         }else{
             MipsMem mipsMem= MipsGenerator.getRel(operators.get(1).getName());

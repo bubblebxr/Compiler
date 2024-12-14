@@ -54,8 +54,8 @@ public class Alloca extends Instruction {
                 MipsMem reg=getArrayMem(type.getType() instanceof CharType,elementNum);
                 putGlobalRel(name,reg);
             }else{
-                // TODO是传的数组型参数
-                MipsMem reg= getEmptyGlobalReg(type instanceof CharType);
+                // 传的数组型参数
+                MipsMem reg= getEmptyGlobalReg(false);
                 reg.isPointer=true;
                 putGlobalRel(name,reg);
             }

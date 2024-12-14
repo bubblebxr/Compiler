@@ -52,7 +52,7 @@ public class Zext extends Instruction {
             putGlobalRel(name,mipsMem);
         }else{
             // 需要进行类型转换的是常数
-            temp.add(new Li(Integer.parseInt(operators.get(0).getName()),false));
+            temp.add(new Li(Long.parseLong(operators.get(0).getName()),false));
             MipsMem reg=getEmptyLocalReg(false);
             if(reg.isInReg){
                 temp.add(new Move(reg.RegName,"$v1"));

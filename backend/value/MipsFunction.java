@@ -78,7 +78,7 @@ public class MipsFunction {
                 if(instruction instanceof Lb ||instruction instanceof Lw){
                     int offset=instruction.getOffset();
                     if(offset<0){
-                        instruction.setOffset(-(argumentCnt+offset)*4+spNumForFunc);
+                        instruction.setOffset(-(argumentCnt+offset)*4);
                     }
                 }
             }

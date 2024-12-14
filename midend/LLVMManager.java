@@ -235,6 +235,33 @@ public class LLVMManager {
             if(name.charAt(i)=='\\'&&i<name.length()-1&&name.charAt(i+1)=='n'){
                 temp.add((int)'\n');
                 i++;
+            }else if(name.charAt(i)=='\\'&&i<name.length()-1&&name.charAt(i+1)=='a'){
+                temp.add(7);
+                i++;
+            }else if(name.charAt(i)=='\\'&&i<name.length()-1&&name.charAt(i+1)=='b'){
+                temp.add(8);
+                i++;
+            }else if(name.charAt(i)=='\\'&&i<name.length()-1&&name.charAt(i+1)=='t'){
+                temp.add(9);
+                i++;
+            }else if(name.charAt(i)=='\\'&&i<name.length()-1&&name.charAt(i+1)=='v'){
+                temp.add(11);
+                i++;
+            }else if(name.charAt(i)=='\\'&&i<name.length()-1&&name.charAt(i+1)=='f'){
+                temp.add(12);
+                i++;
+            }else if(name.charAt(i)=='\\'&&i<name.length()-1&&name.charAt(i+1)=='"'){
+                temp.add(34);
+                i++;
+            }else if(name.charAt(i)=='\\'&&i<name.length()-1&&name.charAt(i+1)=='\''){
+                temp.add(39);
+                i++;
+            }else if(name.charAt(i)=='\\'&&i<name.length()-1&&name.charAt(i+1)=='\\'){
+                temp.add(92);
+                i++;
+            }else if(name.charAt(i)=='\\'&&i<name.length()-1&&name.charAt(i+1)=='0'){
+                temp.add(0);
+                i++;
             }else{
                 temp.add((int) name.charAt(i));
             }
@@ -559,7 +586,7 @@ public class LLVMManager {
             // Ident '(' [FuncRParams] ')'
             ArrayList<Value> temp=new ArrayList<>();
             if(unaryExp.getFuncRParams()!=null){
-                temp=FuncRParamsToLLVM(unaryExp.getFuncRParams());
+                temp=FuncRParamsToLLVM("@"+unaryExp.getIdent().getName(),unaryExp.getFuncRParams());
             }
             Type type=getFuncType(unaryExp.getIdent().getName(),presentId);
             getCurBasicBlock().addInstruction(new Call(type instanceof VoidType?null:"%"+variableId,type,"@"+unaryExp.getIdent().getName(),temp));
@@ -585,10 +612,15 @@ public class LLVMManager {
         }
     }
 
-    public ArrayList<Value> FuncRParamsToLLVM(FuncRParams funcRParams){
+    public ArrayList<Value> FuncRParamsToLLVM(String name,FuncRParams funcRParams){
         ArrayList<Value> temp=new ArrayList<>();
-        for(Exp exp:funcRParams.getExpList()){
-            Pair pair=ExpToLLVM(exp);
+        List<Argument> arguments=module.getFunction(name).getArgumentList();
+        for(int i=0;i<funcRParams.getExpList().size();i++){
+            Type argumentsType=arguments.get(i).getType();
+            Pair pair=ExpToLLVM(funcRParams.getExpList().get(i));
+            if(typeConversion(pair.type,pair.id,argumentsType)){
+                pair.id="%"+(variableId-1);
+            }
             temp.add(new Value(pair.id,pair.type));
         }
         return temp;
@@ -1399,9 +1431,5 @@ public class LLVMManager {
 
     public String outputLLVM() {
         return module.toString();
-    }
-
-    public void optimize() {
-        module.optimize();
     }
 }

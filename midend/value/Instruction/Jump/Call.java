@@ -66,9 +66,9 @@ public class Call extends Instruction {
     public ArrayList<MipsInstruction> genMips() {
         ArrayList<MipsInstruction> list=new ArrayList<>();
         if(functionName.equals("@putstr")){
-            list.add(new Li(4,true));
+            list.add(new Li(4L,true));
         }else if(functionName.equals("@getint")){
-            list.add(new Li(5,true));
+            list.add(new Li(5L,true));
             MipsMem mipsMem=getEmptyLocalReg(false);
             if(mipsMem.isInReg){
                 list.add(new Move(mipsMem.RegName,"$v0"));
@@ -77,7 +77,7 @@ public class Call extends Instruction {
             }
             putLocalRel(name,mipsMem);
         }else if(functionName.equals("@getchar")){
-            list.add(new Li(12,true));
+            list.add(new Li(12L,true));
             MipsMem mipsMem=getEmptyLocalReg(true);
             if(mipsMem.isInReg){
                 list.add(new Move(mipsMem.RegName,"$v0"));
@@ -87,9 +87,9 @@ public class Call extends Instruction {
             putLocalRel(name,mipsMem);
         }else if(functionName.equals("@putint")){
             if(operators.get(0).getName().charAt(0)!='%'){
-                list.add(new Li(Integer.parseInt(operators.get(0).getName()),false));
+                list.add(new Li(Long.parseLong(operators.get(0).getName()),false));
                 list.add(new Move("$a0","$v1"));
-                list.add(new Li(1,true));
+                list.add(new Li(1L,true));
             }else{
                 MipsMem mipsMem=getRel(operators.get(0).getName());
                 if(mipsMem!=null){
@@ -98,7 +98,7 @@ public class Call extends Instruction {
                     }else{
                         list.add(new Lw("$a0",mipsMem.offset,"$sp"));
                     }
-                    list.add( new Li(1,true));
+                    list.add( new Li(1L,true));
                     returnReg(mipsMem.RegName);
                 }
             }
@@ -110,7 +110,7 @@ public class Call extends Instruction {
                 list.add(new Lb("$a0",mipsMem.offset,"$sp"));
             }
             returnReg(mipsMem.RegName);
-            list.add(new Li(11,true));
+            list.add(new Li(11L,true));
         }else{
             // 调用自己定义的函数
             ArrayList<String> regList=new ArrayList<>();
@@ -121,20 +121,20 @@ public class Call extends Instruction {
             int gpNum=0;
             for(int i=0;i<operators.size();i++){
                 if(i>=4){
-                    //TODO:使用栈
+                    //使用栈
                     String label1 = "";
                     if(operators.get(i).getName().equals("0")){
                         label1="$zero";
-                        if((operators.get(i).getType()) instanceof CharType||((operators.get(i).getType().getType()!=null&&operators.get(i).getType().getType() instanceof CharType))){
+                        if((operators.get(i).getType()) instanceof CharType){
                             list.add(new Sb(label1,gpNum,"$gp"));
                         }else{
                             list.add(new Sw(label1,gpNum,"$gp"));
                         }
                         gpNum+=4;
                     }else if(operators.get(i).getName().charAt(0)!='%'){
-                        list.add(new Li(Integer.parseInt(operators.get(i).getName()),false));
+                        list.add(new Li(Long.parseLong(operators.get(i).getName()),false));
                         label1= "$v1";
-                        if((operators.get(i).getType()) instanceof CharType||((operators.get(i).getType().getType()!=null&&operators.get(i).getType().getType() instanceof CharType))){
+                        if((operators.get(i).getType()) instanceof CharType){
                             list.add(new Sb(label1,gpNum,"$gp"));
                         }else{
                             list.add(new Sw(label1,gpNum,"$gp"));
@@ -145,14 +145,14 @@ public class Call extends Instruction {
                         if(mipsMem!=null){
                             if(mipsMem.isInReg){
                                 label1=mipsMem.RegName;
-                                if((operators.get(i).getType()) instanceof CharType||((operators.get(i).getType().getType()!=null&&operators.get(i).getType().getType() instanceof CharType))){
+                                if((operators.get(i).getType()) instanceof CharType){
                                     list.add(new Sb(label1,gpNum,"$gp"));
                                 }else{
                                     list.add(new Sw(label1,gpNum,"$gp"));
                                 }
                                 gpNum+=4;
                             }else{
-                                if((operators.get(i).getType()) instanceof CharType||((operators.get(i).getType().getType()!=null&&operators.get(i).getType().getType() instanceof CharType))){
+                                if((operators.get(i).getType()) instanceof CharType){
                                     list.add(new Lb("$t0",mipsMem.offset,"$sp"));
                                     list.add(new Sb("$t0",gpNum,"$gp"));
                                 }else{
@@ -170,7 +170,7 @@ public class Call extends Instruction {
                         label1="$zero";
                         list.add(new Move(regList.get(i),label1));
                     }else if(operators.get(i).getName().charAt(0)!='%'){
-                        list.add(new Li(Integer.parseInt(operators.get(i).getName()),false));
+                        list.add(new Li(Long.parseLong(operators.get(i).getName()),false));
                         label1= "$v1";
                         list.add(new Move(regList.get(i),label1));
                     }else{
@@ -201,6 +201,7 @@ public class Call extends Instruction {
             }
             list.addAll(loadGlobal());
             if(name!=null){
+                //  如果需要保存函数的返回值
                 MipsMem mipsMem=getEmptyLocalReg(type instanceof CharType);
                 if(mipsMem.isInReg){
                     list.add(new Move(mipsMem.RegName,"$v0"));
@@ -217,80 +218,3 @@ public class Call extends Instruction {
         return list;
     }
 }
-
-
-/*
-//            List<MipsInstruction> storeGlobal=storeGlobal();
-//            int spNum=-storeGlobal.get(0).getOffset();
-            ArrayList<String> regList=new ArrayList<>();
-            regList.add("$a0");
-            regList.add("$a1");
-            regList.add("$a2");
-            regList.add("$a3");
-            for(int i=0;i<operators.size();i++){
-                String label1 = "";
-                if(operators.get(i).getName().equals("0")){
-                    label1="$zero";
-                    if (i >= 4) {
-//                        if((operators.get(i).getType()) instanceof CharType||((operators.get(i).getType().getType()!=null&&operators.get(i).getType().getType() instanceof CharType))){
-//                            list.add(new Sb(label1,spNum,"$sp"));
-//                        }else{
-//                            list.add(new Sw(label1,spNum,"$sp"));
-//                        }
-//                        spNum+=4;
-                    }else{
-                        list.add(new Move(regList.get(i),label1));
-                    }
-                }else if(operators.get(i).getName().charAt(0)!='%'){
-                    list.add(new Li(Integer.parseInt(operators.get(i).getName()),false));
-                    label1= "$v1";
-                    if(i>=4){
-//                        MipsMem mipsMem=getSpToSaveParams();
-//                        if((operators.get(i).getType()) instanceof CharType||((operators.get(i).getType().getType()!=null&&operators.get(i).getType().getType() instanceof CharType))){
-//                            list.add(new Sb(label1,spNum,"$sp"));
-//                        }else{
-//                            list.add(new Sw(label1,spNum,"$sp"));
-//                        }
-//                        spNum+=4;
-                    }else{
-                        list.add(new Move(regList.get(i),label1));
-                    }
-                }else{
-                    MipsMem mipsMem=getRel(operators.get(i).getName());
-                    if(mipsMem!=null){
-                        if(mipsMem.isInReg){
-                            label1=mipsMem.RegName;
-                            if(i>=4){
-//                                MipsMem param=getSpToSaveParams();
-//                                if((operators.get(i).getType()) instanceof CharType||((operators.get(i).getType().getType()!=null&&operators.get(i).getType().getType() instanceof CharType))){
-//                                    list.add(new Sb(label1,spNum,"$sp"));
-//                                }else{
-//                                    list.add(new Sw(label1,spNum,"$sp"));
-//                                }
-//                                spNum+=4;
-                            }else{
-                                list.add(new Move(regList.get(i),label1));
-                            }
-                        }else{
-                            if(i>=4){
-//                                if((operators.get(i).getType()) instanceof CharType||((operators.get(i).getType().getType()!=null&&operators.get(i).getType().getType() instanceof CharType))){
-//                                    list.add(new Lb("$t0",mipsMem.offset,"$sp"));
-//                                    list.add(new Sb("$t0",spNum,"$sp"));
-//                                }else{
-//                                    list.add(new Lw("$t0",mipsMem.offset,"$sp"));
-//                                    list.add(new Sw("$t0",spNum,"$sp"));
-//                                }
-//                                spNum+=4;
-                            }else{
-                                if((operators.get(i).getType()) instanceof CharType||((operators.get(i).getType().getType()!=null&&operators.get(i).getType().getType() instanceof CharType))){
-                                    list.add(new Lb(regList.get(i),mipsMem.offset,"$sp"));
-                                }else{
-                                    list.add(new Lw(regList.get(i),mipsMem.offset,"$sp"));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-//            storeGlobal.get(0).setOffset(-spNum);
-*/

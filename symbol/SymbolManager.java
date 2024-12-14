@@ -124,6 +124,21 @@ public class SymbolManager {
             if(unaryExp.getFuncRParams()!=null){
                 isValidFunc(unaryExp,presentId);
                 FuncRParamsError(unaryExp.getFuncRParams());
+            }else{
+                // 也有可能是本来有定义确没传任何值
+                if(!ErrorLineNumber.contains(unaryExp.getIdent().getLineNumber())){
+                    for(Symbol symbol:SymbolTables.get(0).getDirectory().values()) {
+                        if (symbol instanceof FunctionSymbol && symbol.getIdent().equals(unaryExp.getIdent().getName())) {
+                            if (!symbol.getFuncParams().isEmpty()) {
+                                //ERROR:函数参数个数不匹配
+                                ErrorToken errorToken = new ErrorToken(unaryExp.getIdent().getLineNumber(), ErrorType.d);
+                                errorList.add(errorToken);
+                                ErrorLineNumber.add(unaryExp.getIdent().getLineNumber());
+                                return;
+                            }
+                        }
+                    }
+                }
             }
 
         }else if(unaryExp.getUnaryExp()!=null){

@@ -63,19 +63,20 @@ public class Module {
         return FunctionList.get(FunctionList.size()-1);
     }
 
-    /**
-     * @description: 优化LLVM
-     * @date: 2024/12/3 16:41
-     **/
-    public void optimize() {
-        //TODO
-    }
-
     public List<GlobalVariable> getGlobalVariableList() {
         return GlobalVariableList;
     }
 
     public List<Function> getFunctionList() {
         return FunctionList;
+    }
+
+    public Function getFunction(String name) {
+        for(Function function:FunctionList){
+            if(function.getName().equals(name)){
+                return function;
+            }
+        }
+        return null;
     }
 }

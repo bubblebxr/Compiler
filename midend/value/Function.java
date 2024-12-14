@@ -112,4 +112,8 @@ public class Function extends Value {
     public int getArgumentCnt(){
         return argumentList.size();
     }
+
+    public ArrayList<Argument> getArgumentList() {
+        return argumentList;
+    }
 }

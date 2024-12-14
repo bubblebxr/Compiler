@@ -74,7 +74,7 @@ public class Mul extends Instruction {
                 isSll=1;
                 label1= String.valueOf(getPowerOfTwo(Integer.parseInt(operators.get(0).getName())));
             }else{
-                list.add(new Li(Integer.parseInt(operators.get(0).getName()),false));
+                list.add(new Li(Long.parseLong(operators.get(0).getName()),false));
                 list.add(new Move("$v0","$v1"));
                 label1= "$v0";
             }
@@ -112,7 +112,7 @@ public class Mul extends Instruction {
                 label2= String.valueOf(getPowerOfTwo(Integer.parseInt(operators.get(1).getName())));
                 isSll=2;
             }else{
-                list.add(new Li(Integer.parseInt(operators.get(1).getName()),false));
+                list.add(new Li(Long.parseLong(operators.get(1).getName()),false));
                 label2="$v1";
             }
         }else{

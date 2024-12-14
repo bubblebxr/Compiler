@@ -19,10 +19,10 @@ public class Li extends MipsInstruction {
      * 8:read char
      * 10:exit system
      **/
-    protected int type;
+    protected Long type;
     protected Boolean isOI;
 
-    public Li(int type,Boolean isOI){
+    public Li(Long type,Boolean isOI){
         this.type=type;
         this.isOI=isOI;
     }

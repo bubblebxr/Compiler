@@ -1,88 +1,46 @@
 .data:
-    chArr: .space 100
-    .str.0: .asciiz "chArr[4] is :"
-    .str.1: .asciiz "\n"
-    .str.2: .asciiz "charAtIndex is :"
-    .str.3: .asciiz "\n"
+    .str.0: .asciiz "\n"
 .text:
 main:
-    move $s7, $zero
+    li $v1, 10
+    move $s7, $v1
     j .b0
 
 
 .b0:
-    li $v1, 5
+    li $v1, 50
     slt $t0, $s7, $v1
     sne $t0, $zero, $t0
     bnez $t0, .b1
-    beqz $t0, .b3
+    beqz $t0, .b2
 
 .b1:
-    li $v1, 65
-    move $t9, $v1
-    addu $t8, $t9, $s7
-    la $v0, chArr
-    addu $t9, $v0, $s7
-    sb $t8, 0($t9)
-    j .b2
-
+    li $v1, 10
+    seq $t0, $s7, $v1
+    sne $t0, $zero, $t0
+    bnez $t0, .b3
+    beqz $t0, .b2
 
 .b2:
-    addiu $t9, $s7, 1
-    move $s7, $t9
-    j .b0
-
+    li $v1, 10
+    slt $t0, $s7, $v1
+    sne $t0, $zero, $t0
+    bnez $t0, .b3
+    beqz $t0, .b4
 
 .b3:
+    li $v1, 15
+    move $s7, $v1
+    j .b4
+
+
+.b4:
+    move $a0, $s7
+    li $v0, 1
+    syscall
     la $a0, .str.0
-    li $v0, 4
-    syscall
-    la $v0, chArr
-    addiu $t9, $v0, 4
-    lbu $t0, 0($t9)
-    move $t8, $t0
-    move $a0, $t8
-    li $v0, 11
-    syscall
-    la $a0, .str.1
-    li $v0, 4
-    syscall
-    la $a0, .str.2
-    li $v0, 4
-    syscall
-    la $v0, chArr
-    addiu $t8, $v0, 0
-    move $a0, $t8
-    li $v1, 4
-    move $a1, $v1
-    addiu $sp, $sp, -16
-    sw $ra, 0($sp)
-    sw $s7, 4($sp)
-    sw $t8, 8($sp)
-    sw $t9, 12($sp)
-    jal charAtIndex
-    lw $ra, 0($sp)
-    lw $s7, 4($sp)
-    lw $t8, 8($sp)
-    lw $t9, 12($sp)
-    addiu $sp, $sp, 16
-    move $t7, $v0
-    move $a0, $t7
-    li $v0, 11
-    syscall
-    la $a0, .str.3
     li $v0, 4
     syscall
     li $v0, 10
     syscall
-
-charAtIndex:
-    move $s7, $a0
-    move $s6, $a1
-    addu $t9, $s7, $s6
-    lbu $t0, 0($t9)
-    move $t8, $t0
-    move $v0, $t8
-    jr $ra
-
 

@@ -82,7 +82,7 @@ public class Getelementptr extends Instruction {
                     }
                 }
             }else{
-                //TODO: 如果是全局常量数组
+                //如果是全局常量数组
                 // 是全局数组
                 list.add(new La("$v0",operators.get(0).getName().substring(1)));
                 label1="$v0";
@@ -97,8 +97,8 @@ public class Getelementptr extends Instruction {
             if(temp.charAt(0)!='%'){
                 //offset是数字
                 // 计算出数组的地址，如果是int，需要现将offset*4
-                if(!(type.getType() instanceof CharType)){
-                    list.add(new Li(Integer.parseInt(temp),false));
+                if(!(type.getType() instanceof CharType)&&!(type instanceof CharType)){
+                    list.add(new Li(Long.parseLong(temp),false));
                     list.add(new Sll("$v1","$v1","2"));
                     list.add(new Addu(reg.RegName,label1,"$v1"));
                 }else{

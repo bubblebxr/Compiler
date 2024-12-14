@@ -55,7 +55,7 @@ public class Ret extends Instruction {
         ArrayList<MipsInstruction> temp=new ArrayList<>();
         if(checkAtMain()){
             //如果是main函数，不处理返回值，直接增加syscall
-            temp.add(new Li(10,true));
+            temp.add(new Li(10L,true));
             return temp;
         }
         if(!operators.isEmpty()){
@@ -64,7 +64,7 @@ public class Ret extends Instruction {
                 reg="$zero";
                 temp.add(new Move("$v0",reg));
             }else if(operators.get(0).getName().charAt(0)!='%'){
-                temp.add(new Li(Integer.parseInt(operators.get(0).getName()),false));
+                temp.add(new Li(Long.parseLong(operators.get(0).getName()),false));
                 reg="$v1";
                 temp.add(new Move("$v0",reg));
             }else{
