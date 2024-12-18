@@ -100,4 +100,22 @@ public class PrimaryExp {
     public TrueToken getCharacterToken() {
         return CharacterToken;
     }
+
+    public Integer tryToGetValue() {
+        if(LPARENT!=null){
+            return exp.tryToGetValue();
+        }else if(lVal!=null){
+//            return lVal.tryToGetValue();
+            return null;
+        }else if(NumberToken!=null){
+            return Integer.parseInt(NumberToken.getName());
+        }else{
+            if(CharacterToken.getName().length()==3){
+                return (int) CharacterToken.getName().charAt(1);
+            }else{
+                return Integer.parseInt(CharacterToAscii(CharacterToken.getName().substring(1,CharacterToken.getName().length()-1)));
+            }
+
+        }
+    }
 }

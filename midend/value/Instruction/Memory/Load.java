@@ -78,8 +78,10 @@ public class Load extends Instruction {
                     temp.add(new Move(reg.RegName,"$t0"));
                 }else{
                     if(type instanceof CharType){
-                        temp.add(new Sw("$zero",reg.offset,"$sp"));
-                        temp.add(new Sb("$t0", reg.offset,"$sp"));
+//                        temp.add(new Sw("$zero",reg.offset,"$sp"));
+//                        temp.add(new Sb("$t0", reg.offset,"$sp"));
+                        //TODO:这是我修改的地方，不要忘记，涉及到sb存取的覆盖问题
+                        temp.add(new Sw("$t0", reg.offset,"$sp"));
                     }else{
                         temp.add(new Sw("$t0", reg.offset,"$sp"));
                     }

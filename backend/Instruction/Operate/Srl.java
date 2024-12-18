@@ -4,18 +4,18 @@ package backend.Instruction.Operate;
 import backend.Instruction.MipsInstruction;
 
 /**
- * @className: Subu
+ * @className: Srl
  * @author: bxr
- * @date: 2024/11/22 22:21
+ * @date: 2024/12/18 23:57
  * @description:
  */
 
-public class Subu extends MipsInstruction {
+public class Srl extends MipsInstruction {
     protected String register;
     protected String label1;
     protected String label2;
 
-    public Subu(String register,String label1,String label2){
+    public Srl(String register,String label1,String label2){
         this.register=register;
         this.label1=label1;
         this.label2=label2;
@@ -23,6 +23,6 @@ public class Subu extends MipsInstruction {
 
     @Override
     public String toString(){
-        return "subu "+register+", "+label1+", "+label2;
+        return "srl "+register+", "+label1+", "+label2;
     }
 }

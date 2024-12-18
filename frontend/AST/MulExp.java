@@ -70,4 +70,37 @@ public class MulExp {
     public List<TrueToken> getTokenList() {
         return tokenList;
     }
+
+    public Integer tryToGetValue() {
+        Integer temp=unaryExpList.get(0).tryToGetValue();
+        if(temp==null){
+            return null;
+        }
+        for(int i=1;i<unaryExpList.size();i++){
+            TrueType type=tokenList.get(i-1).getType();
+            if(type==TrueType.MULT){
+                //*
+                Integer value=unaryExpList.get(i).tryToGetValue();
+                if(value==null){
+                    return null;
+                }
+                temp*=value;
+            }else if(type==TrueType.DIV){
+                // /
+                Integer value=unaryExpList.get(i).tryToGetValue();
+                if(value==null){
+                    return null;
+                }
+                temp/=value;
+            }else{
+                // %
+                Integer value=unaryExpList.get(i).tryToGetValue();
+                if(value==null){
+                    return null;
+                }
+                temp%=value;
+            }
+        }
+        return temp;
+    }
 }

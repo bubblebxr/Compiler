@@ -67,5 +67,31 @@ public class AddExp {
     public List<TrueToken> getTokenList() {
         return tokenList;
     }
+
+    public Integer tryToGetValue() {
+        Integer temp=mulExpList.get(0).tryToGetValue();
+        if(temp==null){
+            return null;
+        }
+        for(int i=1;i<mulExpList.size();i++){
+            TrueType type=tokenList.get(i-1).getType();
+            if(type==TrueType.PLUS){
+                //+
+                Integer value=mulExpList.get(i).tryToGetValue();
+                if(value==null){
+                    return null;
+                }
+                temp+=value;
+            }else{
+                //-
+                Integer value=mulExpList.get(i).tryToGetValue();
+                if(value==null){
+                    return null;
+                }
+                temp-=value;
+            }
+        }
+        return temp;
+    }
 }
 //addExp +mulExp +mulExp

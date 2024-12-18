@@ -56,6 +56,26 @@ public class Sub extends Instruction {
     @Override
     public ArrayList<MipsInstruction> genMips() {
         ArrayList<MipsInstruction> list = new ArrayList<>();
+        // 两个都是整数的时候优化
+        if(operators.get(0).getName().charAt(0)!='%'&&operators.get(1).getName().charAt(0)!='%'){
+            //用于看是不是两个除数都是整数
+            Long op1=Long.parseLong(operators.get(0).getName());
+            Long op2=Long.parseLong(operators.get(1).getName());
+            Long result=op1-op2;
+            MipsMem reg=getEmptyLocalReg(type instanceof CharType);
+            list.add(new Li(result,false));
+            if(reg.isInReg){
+                list.add(new Move(reg.RegName,"$v1"));
+            }else{
+                if(type instanceof CharType){
+                    list.add(new Sb("$v1",reg.offset,"$sp"));
+                }else{
+                    list.add(new Sw("$v1",reg.offset,"$sp"));
+                }
+            }
+            putLocalRel(name,reg);
+            return list;
+        }
         String label1="",label2="";
         if(operators.get(0).getName().equals("0")){
             label1="$zero";

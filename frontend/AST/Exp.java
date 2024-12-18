@@ -21,4 +21,12 @@ public class Exp {
     public int getExpValue(){
         return addExp.getAddExpValue();
     }
+
+    /**
+     * @description: 优化代码，如果能计算出来的话就计算出来，不能就返回null
+     * @date: 2024/12/18 18:03
+     **/
+    public Integer tryToGetValue(){
+        return addExp.tryToGetValue();
+    }
 }

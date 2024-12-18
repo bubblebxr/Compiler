@@ -95,4 +95,18 @@ public class UnaryExp {
     public TrueToken getUnaryOp() {
         return UnaryOp;
     }
+
+    public Integer tryToGetValue() {
+        if(primaryExp!=null){
+            return primaryExp.tryToGetValue();
+        }else if(unaryExp!=null){
+            TrueType type=UnaryOp.getType();
+            if(type==TrueType.PLUS){
+                return unaryExp.tryToGetValue();
+            }else if(type==TrueType.MINU){
+                return -unaryExp.tryToGetValue();
+            }
+        }
+        return 0;
+    }
 }

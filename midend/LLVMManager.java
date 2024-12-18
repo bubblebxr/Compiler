@@ -417,6 +417,15 @@ public class LLVMManager {
     public void addVariable(Exp exp,Type type){
         String name="%"+(variableId++);
         getCurBasicBlock().addInstruction(new Alloca(name,type));
+        // 优化：试图求出exp，如果能求出，直接给变量赋初始值
+//        Integer tryToGetValue=exp.tryToGetValue();
+//        if(tryToGetValue!=null){
+//            ArrayList<Value> temp=new ArrayList<>();
+//            temp.add(new Value(String.valueOf(tryToGetValue),type));
+//            temp.add(new Value(name,new PointerType(type)));
+//            getCurBasicBlock().addInstruction(new Store(null,type,temp));
+//            return;
+//        }
         Pair pair=ExpToLLVM(exp);
         if(typeConversion(pair.type,pair.id,type)){
             pair.id="%"+(variableId-1);
