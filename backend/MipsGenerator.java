@@ -246,4 +246,12 @@ public class MipsGenerator {
     public static void updateSp(int offset){
         mipsModule.updateSp(offset);
     }
+
+    /**
+     * @description: 获取下一个block的标签
+     * @date: 2024/12/18 17:42
+     **/
+    public static String getNextLabel(){
+        return mipsModule.getNextLabel();
+    }
 }

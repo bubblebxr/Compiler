@@ -105,15 +105,18 @@ public class Compiler {
             }
 
             // 优化llvm
+            Optimize optimize=new Optimize(llvmManager.getModule());
             if(isOptimise){
-                Optimize optimize=new Optimize(llvmManager.getModule());
                 optimize.optimizer();
-                BufferedWriter writerOP = new BufferedWriter(new FileWriter(llvmAfterOptimizePath));
-                writerOP.write(optimize.outputOptimize());
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(llvmAfterOptimizePath))) {
+                    writer.write(optimize.outputOptimize());
+                } catch (IOException e) {
+                    System.out.println(e);
+                }
             }
 
             //生成mips
-            MipsGenerator mipsGenerator=new MipsGenerator(llvmManager.getModule());
+            MipsGenerator mipsGenerator=new MipsGenerator(optimize.getModule());
             mipsGenerator.generateMipsModule();
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(mipsPath))) {
                 writer.write(mipsGenerator.outputMips());

@@ -12,6 +12,8 @@ import midend.value.Instruction.Instruction;
 
 import java.util.ArrayList;
 
+import static backend.MipsGenerator.getNextLabel;
+
 /**
  * @className: Br
  * @author: bxr
@@ -89,13 +91,22 @@ public class Br extends Instruction {
         label2=name;
     }
 
+    public String getCond() {
+        return cond;
+    }
+
     @Override
     public ArrayList<MipsInstruction> genMips() {
         ArrayList<MipsInstruction> temp=new ArrayList<>();
         if(cond!=null){
-            //TODO有条件跳转：酌情可省去一条
-            temp.add(new Compare(CompareType.bnez,"$t0",label1));
-            temp.add(new Compare(CompareType.beqz,"$t0",label2));
+            //有条件跳转：酌情可省去一条
+            String nextLabel=getNextLabel();
+            if(!nextLabel.equals(label1.substring(1))){
+                temp.add(new Compare(CompareType.bnez,"$t0",label1));
+            }
+            if(!nextLabel.equals(label2.substring(1))){
+                temp.add(new Compare(CompareType.beqz,"$t0",label2));
+            }
         }else{
             // 无条件跳转
             temp.add(new J(label1));

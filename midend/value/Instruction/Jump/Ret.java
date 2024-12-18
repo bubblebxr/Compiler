@@ -73,7 +73,7 @@ public class Ret extends Instruction {
                     if(mipsMem.isInReg){
                         temp.add(new Move("$v0",mipsMem.RegName));
                     }else{
-                        if(type instanceof CharType){
+                        if(operators.get(0).getType() instanceof CharType){
                             temp.add(new Lb("$v0",mipsMem.offset,"$sp"));
                         }else{
                             temp.add(new Lw("$v0",mipsMem.offset,"$sp"));

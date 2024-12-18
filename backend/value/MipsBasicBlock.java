@@ -64,4 +64,8 @@ public class MipsBasicBlock {
             addInstruction(instruction.genMips());
         }
     }
+
+    public String getName() {
+        return name;
+    }
 }

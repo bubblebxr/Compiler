@@ -14,6 +14,7 @@ public class MipsMem {
     public int offset;
     public int elementNum;
     public Boolean isPointer; // 如果true则需要通过0($t0)类似存储
+    public Boolean isArrayParam;// 是数组传参
 
     /**
      * @description: 存储在寄存器中

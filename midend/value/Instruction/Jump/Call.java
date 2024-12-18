@@ -180,7 +180,7 @@ public class Call extends Instruction {
                                 label1=mipsMem.RegName;
                                 list.add(new Move(regList.get(i),label1));
                             }else{
-                                if(type instanceof CharType){
+                                if(operators.get(i).getType() instanceof CharType){
                                     list.add(new Lb(regList.get(i),mipsMem.offset,"$sp"));
                                 }else{
                                     list.add(new Lw(regList.get(i),mipsMem.offset,"$sp"));

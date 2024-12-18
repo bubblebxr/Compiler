@@ -49,9 +49,10 @@ public class Load extends Instruction {
     public ArrayList<MipsInstruction> genMips() {
         ArrayList<MipsInstruction> temp=new ArrayList<>();
         // 如果是要load出来数组传参
-        if(operators.get(00).getType().getType() instanceof PointerType){
+        if(operators.get(0).getType().getType() instanceof PointerType){
             MipsMem mipsMem=getRel(operators.get(0).getName());
             if(mipsMem!=null){
+                mipsMem.isArrayParam=true;
                 putLocalRel(name,mipsMem);
             }
             return temp;
@@ -87,6 +88,7 @@ public class Load extends Instruction {
                 putLocalRel(name,mipsMem);
             }
         }else{
+            // 从常量中获取
             if(getConstGlobalValue(operators.get(0).getName())!=null){
                 temp.add(new Li((long)getConstGlobalValue(operators.get(0).getName()),false));
                 MipsMem reg=getEmptyLocalReg(type instanceof CharType);
@@ -101,6 +103,7 @@ public class Load extends Instruction {
                 }
                 putLocalRel(name,reg);
             }
+            // 从全局变量中获取
             if(getGlobalVariableValue(operators.get(0).getName(),0)!=null){
                 temp.add(new La("$t0",operators.get(0).getName().substring(1)));
                 MipsMem reg=getEmptyLocalReg(type instanceof CharType);

@@ -468,7 +468,8 @@ public class LLVMManager {
                 getCurBasicBlock().addInstruction(new Store(null,null,temp));
             }
         }else{
-            for (int i=1;i<StringConst.length()-1;i++) {
+            int hasNum=0;
+            for (int i=1;i<StringConst.length()-1;i++,hasNum++) {
                 if(i!=1){
                     ArrayList<Value> temp=new ArrayList<>();
                     temp.add(new Value(lastElementId,new PointerType(type.getType())));
@@ -476,12 +477,46 @@ public class LLVMManager {
                     getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type.getType(),temp));
                     lastElementId="%"+(variableId-1);
                 }
+                int charASCII;
+                if(StringConst.charAt(i)=='\\'&&i+1<StringConst.length()-1&&StringConst.charAt(i+1)=='a'){
+                    charASCII=7;
+                    i++;
+                }else if(StringConst.charAt(i)=='\\'&&i+1<StringConst.length()-1&&StringConst.charAt(i+1)=='b'){
+                    charASCII=8;
+                    i++;
+                }else if(StringConst.charAt(i)=='\\'&&i+1<StringConst.length()-1&&StringConst.charAt(i+1)=='t'){
+                    charASCII=9;
+                    i++;
+                }else if(StringConst.charAt(i)=='\\'&&i+1<StringConst.length()-1&&StringConst.charAt(i+1)=='n'){
+                    charASCII=10;
+                    i++;
+                }else if(StringConst.charAt(i)=='\\'&&i+1<StringConst.length()-1&&StringConst.charAt(i+1)=='v'){
+                    charASCII=11;
+                    i++;
+                }else if(StringConst.charAt(i)=='\\'&&i+1<StringConst.length()-1&&StringConst.charAt(i+1)=='f'){
+                    charASCII=12;
+                    i++;
+                }else if(StringConst.charAt(i)=='\\'&&i+1<StringConst.length()-1&&StringConst.charAt(i+1)=='\"'){
+                    charASCII=34;
+                    i++;
+                }else if(StringConst.charAt(i)=='\\'&&i+1<StringConst.length()-1&&StringConst.charAt(i+1)=='\''){
+                    charASCII=39;
+                    i++;
+                }else if(StringConst.charAt(i)=='\\'&&i+1<StringConst.length()-1&&StringConst.charAt(i+1)=='\\'){
+                    charASCII=92;
+                    i++;
+                }else if(StringConst.charAt(i)=='\\'&&i+1<StringConst.length()-1&&StringConst.charAt(i+1)=='0'){
+                    charASCII=0;
+                    i++;
+                }else{
+                    charASCII=StringConst.charAt(i);
+                }
                 ArrayList<Value> temp=new ArrayList<>();
-                temp.add(new Value(String.format("%d",(int)StringConst.charAt(i)),type.getType()));
+                temp.add(new Value(String.format("%d",charASCII),type.getType()));
                 temp.add(new Value(lastElementId,new PointerType(type.getType())));
                 getCurBasicBlock().addInstruction(new Store(null,null,temp));
             }
-            for(int i=StringConst.length()-2;i<elementNum;i++){
+            for(int i=hasNum;i<elementNum;i++){
                 ArrayList<Value> temp=new ArrayList<>();
                 temp.add(new Value(lastElementId,new PointerType(type.getType())));
                 temp.add(new Value("1",new IntegerType()));
@@ -1302,6 +1337,9 @@ public class LLVMManager {
                 loadPointer(id,new PointerType(type));
                 temp = new ArrayList<>();
                 temp.add(new Value("%"+(variableId-1),new PointerType(type)));
+                if(typeConversion(pair.type,pair.id,new IntegerType())){
+                    pair.id="%"+(variableId-1);
+                }
                 temp.add(new Value(pair.id,new IntegerType()));
                 getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++), type, temp));
                 temp=new ArrayList<>();
@@ -1314,6 +1352,9 @@ public class LLVMManager {
                 getCurBasicBlock().addInstruction(new Load("%"+(variableId++),new PointerType(type),temp));
                 temp=new ArrayList<>();
                 temp.add(new Value("%"+(variableId-1),new PointerType(type)));
+                if(typeConversion(pair.type,pair.id,new IntegerType())){
+                    pair.id="%"+(variableId-1);
+                }
                 temp.add(new Value(pair.id,new IntegerType()));
                 getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),type,temp));
                 if(isRight){
@@ -1326,6 +1367,9 @@ public class LLVMManager {
             ArrayList<Value> temp=new ArrayList<>();
             temp.add(new Value(symbol.getId(),new PointerType(new ArrayType(type,symbol.getElementNum()))));
             temp.add(new Value("0",new IntegerType()));
+            if(typeConversion(pair.type,pair.id,new IntegerType())){
+                pair.id="%"+(variableId-1);
+            }
             temp.add(new Value(pair.id,new IntegerType()));
             getCurBasicBlock().addInstruction(new Getelementptr("%"+(variableId++),
                     new ArrayType(type,symbol.getElementNum()),

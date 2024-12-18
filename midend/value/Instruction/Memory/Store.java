@@ -67,11 +67,12 @@ public class Store extends Instruction {
                 //从栈中取出
                 int paramIndex=Integer.parseInt(operators.get(0).getName().substring(1));
                 // 其实存的是索引，直接lw即可
-                if(type instanceof CharType){
-                    temp.add(new Lb("$t0",-paramIndex,"$gp"));
-                }else{
-                    temp.add(new Lw("$t0",-paramIndex,"$gp"));
-                }
+//                if(type instanceof CharType){
+//                    temp.add(new Lb("$t0",-paramIndex,"$gp"));
+//                }else{
+//                    temp.add(new Lw("$t0",-paramIndex,"$gp"));
+//                }
+                temp.add(new Lw("$t0",-paramIndex,"$gp"));
                 reg="$t0";
             }
             // 获取函数参数存储的位置
@@ -80,11 +81,12 @@ public class Store extends Instruction {
                 if(mipsMem.isInReg){
                     temp.add(new Move(mipsMem.RegName,reg));
                 }else{
-                    if(operators.get(0).getType().getType() instanceof CharType){
-                        temp.add(new Sb(reg,mipsMem.offset,"$sp"));
-                    }else{
-                        temp.add(new Sw(reg,mipsMem.offset,"$sp"));
-                    }
+//                    if(operators.get(0).getType() instanceof CharType){
+//                        temp.add(new Sb(reg,mipsMem.offset,"$sp"));
+//                    }else{
+//                        temp.add(new Sw(reg,mipsMem.offset,"$sp"));
+//                    }
+                    temp.add(new Sw(reg,mipsMem.offset,"$sp"));
                 }
             }
             return temp;
@@ -96,7 +98,8 @@ public class Store extends Instruction {
             reg="$zero";
             if(!operators.get(0).getName().equals("0")){
                 temp.add(new Li(Long.parseLong(operators.get(0).getName()),false));
-                reg="$v1";
+                temp.add(new Move("$v0","$v1"));
+                reg="$v0";
             }
         }else{
             //不是常量，从关系中找到他
@@ -107,7 +110,7 @@ public class Store extends Instruction {
                     reg=mipsMem.RegName;
                 }else{
                     //在栈中，需要先load出来
-                    if(type instanceof CharType){
+                    if(operators.get(0).getType() instanceof CharType){
                         temp.add(new Lb("$v0",mipsMem.offset,"$sp"));
                     }else{
                         temp.add(new Lw("$v0",mipsMem.offset,"$sp"));
@@ -126,12 +129,12 @@ public class Store extends Instruction {
                 }else{
                     //从栈中取出
                     int paramIndex=Integer.parseInt(operators.get(0).getName().substring(1));
-                    if(type instanceof CharType){
-                        temp.add(new Lb("$t0",-paramIndex,"$gp"));
+                    if(operators.get(0).getType() instanceof CharType){
+                        temp.add(new Lb("$v0",-paramIndex,"$gp"));
                     }else{
-                        temp.add(new Lw("$t0",-paramIndex,"$gp"));
+                        temp.add(new Lw("$v0",-paramIndex,"$gp"));
                     }
-                    reg="$t0";
+                    reg="$v0";
                 }
             }
         }
@@ -156,7 +159,7 @@ public class Store extends Instruction {
                 if(mipsMem.isInReg){
                     temp.add(new Move(mipsMem.RegName,reg));
                 }else{
-                    if(type instanceof CharType){
+                    if(operators.get(0).getType() instanceof CharType){
                         temp.add(new Sb(reg,mipsMem.offset,"$sp"));
                     }else{
                         temp.add(new Sw(reg,mipsMem.offset,"$sp"));
@@ -166,7 +169,7 @@ public class Store extends Instruction {
         }else{
             if(operators.get(1).getName().charAt(0)=='@'){
                 temp.add(new La("$t0",operators.get(1).getName().substring(1)));
-                if(type instanceof CharType){
+                if(operators.get(0).getType() instanceof CharType){
                     temp.add(new Sb(reg,0,"$t0"));
                 }else{
                     temp.add(new Sw(reg,0,"$t0"));

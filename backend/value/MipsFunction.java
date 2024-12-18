@@ -1,6 +1,7 @@
 package backend.value;
 
 
+import backend.Instruction.Jump.Jr;
 import backend.Instruction.Memory.Lb;
 import backend.Instruction.Memory.Lw;
 import backend.Instruction.MipsInstruction;
@@ -71,7 +72,8 @@ public class MipsFunction {
         }
         if(spNumForFunc!=0){
             blockList.get(0).getInstructionList().add(0,(new Addi("$sp","$sp",Integer.toString(-spNumForFunc))));
-            blockList.get(blockList.size()-1).getInstructionList().add(blockList.get(blockList.size()-1).getInstructionList().size()-1,(new Addi("$sp","$sp",Integer.toString(spNumForFunc))));
+//            blockList.get(blockList.size()-1).getInstructionList().add(blockList.get(blockList.size()-1).getInstructionList().size()-1,(new Addi("$sp","$sp",Integer.toString(spNumForFunc))));
+            addAddiForSp();
         }
         if(!isMain){
             for(MipsInstruction instruction:blockList.get(0).getInstructionList()){
@@ -80,6 +82,21 @@ public class MipsFunction {
                     if(offset<0){
                         instruction.setOffset(-(argumentCnt+offset)*4);
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * @description: 在每次函数返回之前增加将sp栈增长回来
+     * @date: 2024/12/15 13:42
+     **/
+    public void addAddiForSp() {
+        for(MipsBasicBlock block:blockList){
+            for(int i=0;i<block.getInstructionList().size();i++){
+                if(block.getInstructionList().get(i) instanceof Jr){
+                    block.getInstructionList().add(i,new Addi("$sp","$sp",Integer.toString(spNumForFunc)));
+                    i++;
                 }
             }
         }

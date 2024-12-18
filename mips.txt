@@ -1,46 +1,9 @@
 .data:
-    .str.0: .asciiz "\n"
 .text:
 main:
-    li $v1, 10
-    move $s7, $v1
-    j .b0
-
-
-.b0:
-    li $v1, 50
-    slt $t0, $s7, $v1
-    sne $t0, $zero, $t0
-    bnez $t0, .b1
-    beqz $t0, .b2
-
-.b1:
-    li $v1, 10
-    seq $t0, $s7, $v1
-    sne $t0, $zero, $t0
-    bnez $t0, .b3
-    beqz $t0, .b2
-
-.b2:
-    li $v1, 10
-    slt $t0, $s7, $v1
-    sne $t0, $zero, $t0
-    bnez $t0, .b3
-    beqz $t0, .b4
-
-.b3:
-    li $v1, 15
-    move $s7, $v1
-    j .b4
-
-
-.b4:
-    move $a0, $s7
-    li $v0, 1
-    syscall
-    la $a0, .str.0
-    li $v0, 4
-    syscall
+    li $v1, 2
+    addiu $t9, $v1, 1
+    move $s7, $t9
     li $v0, 10
     syscall
 

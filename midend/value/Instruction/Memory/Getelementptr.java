@@ -9,6 +9,7 @@ import backend.Instruction.Operate.Sll;
 import backend.reg.MipsMem;
 import midend.Type;
 import midend.Value;
+import midend.type.ArrayType;
 import midend.type.CharType;
 import midend.value.Instruction.Instruction;
 
@@ -68,18 +69,14 @@ public class Getelementptr extends Instruction {
                 if(mipsMem1.isInReg){
                     label1=mipsMem1.RegName;
                 }else{
-                    if(mipsMem1.offset!=0){
-                        if(operators.size()==2){
-                            // 不是第一个index，需要从地址中load出索引
-                            list.add(new Lw("$v0",mipsMem1.offset,"$sp"));
-                        }else{
-                            // 是第一个index，就是他的位置
-                            list.add(new Addi("$v0","$sp",String.valueOf(mipsMem1.offset)));
-                        }
-                        label1="$v0";
+                    if(type instanceof ArrayType){
+                        // 是第一个index，就是他的位置
+                        list.add(new Addi("$v0","$sp",String.valueOf(mipsMem1.offset)));
                     }else{
-                        label1="$sp";
+                        // 不是第一个index，需要从地址中load出索引
+                        list.add(new Lw("$v0",mipsMem1.offset,"$sp"));
                     }
+                    label1="$v0";
                 }
             }else{
                 //如果是全局常量数组
@@ -87,7 +84,7 @@ public class Getelementptr extends Instruction {
                 list.add(new La("$v0",operators.get(0).getName().substring(1)));
                 label1="$v0";
             }
-            MipsMem reg=getEmptyLocalReg(type.getType() instanceof CharType);
+            MipsMem reg=getEmptyLocalReg(false);
             reg.isPointer=true;
             if(!reg.isInReg)reg.RegName="$t0";
             String temp=operators.get(1).getName();
@@ -105,16 +102,18 @@ public class Getelementptr extends Instruction {
                     list.add(new Addi(reg.RegName,label1,temp));
                 }
             }else{
+                //offset是寄存器
                 MipsMem mipsMem2=getRel(temp);
                 if(mipsMem2!=null){
                     if(mipsMem2.isInReg){
                         label2=mipsMem2.RegName;
                     }else{
-                        if(type.getType() instanceof CharType){
-                            list.add(new Lb("$v1",mipsMem2.offset,"$sp"));
-                        }else{
-                            list.add(new Lw("$v1",mipsMem2.offset,"$sp"));
-                        }
+//                        if(type.getType() instanceof CharType){
+//                            list.add(new Lb("$v1",mipsMem2.offset,"$sp"));
+//                        }else{
+//                            list.add(new Lw("$v1",mipsMem2.offset,"$sp"));
+//                        }
+                        list.add(new Lw("$v1",mipsMem2.offset,"$sp"));
                         label2="$v1";
                     }
                     // 计算出数组的地址，如果是int，需要现将offset*4
@@ -135,6 +134,7 @@ public class Getelementptr extends Instruction {
                 list.add(new Sw(reg.RegName,reg.offset,"$sp"));
             }
             putLocalRel(name,reg);
+            returnReg(label1);
         }
         return list;
     }

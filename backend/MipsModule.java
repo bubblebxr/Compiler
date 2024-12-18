@@ -193,4 +193,12 @@ public class MipsModule {
     public void updateSp(int offset){
         functionList.get(curFuncIndex).updateSp(offset);
     }
+
+    public String getNextLabel() {
+        if(curBlockIndex<functionList.get(curFuncIndex).getBlockList().size()-1){
+            return functionList.get(curFuncIndex).getBlockList().get(curBlockIndex+1).getName();
+        }else{
+            return "";
+        }
+    }
 }
