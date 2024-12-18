@@ -108,12 +108,12 @@ public class Getelementptr extends Instruction {
                     if(mipsMem2.isInReg){
                         label2=mipsMem2.RegName;
                     }else{
-//                        if(type.getType() instanceof CharType){
-//                            list.add(new Lb("$v1",mipsMem2.offset,"$sp"));
-//                        }else{
-//                            list.add(new Lw("$v1",mipsMem2.offset,"$sp"));
-//                        }
-                        list.add(new Lw("$v1",mipsMem2.offset,"$sp"));
+                        if(type.getType() instanceof CharType){
+                            list.add(new Lb("$v1",mipsMem2.offset,"$sp"));
+                        }else{
+                            list.add(new Lw("$v1",mipsMem2.offset,"$sp"));
+                        }
+//                        list.add(new Lw("$v1",mipsMem2.offset,"$sp"));
                         label2="$v1";
                     }
                     // 计算出数组的地址，如果是int，需要现将offset*4

@@ -1,9 +1,442 @@
 .data:
+    .str.0: .asciiz "\n"
 .text:
 main:
-    li $v1, 2
-    addiu $t9, $v1, 1
-    move $s7, $t9
+    addiu $sp, $sp, -200
+    addiu $v0, $sp, 0
+    addiu $t9, $v0, 0
+    li $v1, 104
+    move $v0, $v1
+    sb $v0, 0($t9)
+    addiu $t8, $t9, 1
+    li $v1, 101
+    move $v0, $v1
+    sb $v0, 0($t8)
+    addiu $t9, $t8, 1
+    li $v1, 108
+    move $v0, $v1
+    sb $v0, 0($t9)
+    addiu $t8, $t9, 1
+    li $v1, 108
+    move $v0, $v1
+    sb $v0, 0($t8)
+    addiu $t9, $t8, 1
+    li $v1, 111
+    move $v0, $v1
+    sb $v0, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $v0, $sp, 0
+    addiu $t9, $v0, 2
+    lbu $t0, 0($t9)
+    move $t7, $t0
+    addiu $v0, $sp, 0
+    addu $t6, $v0, $t7
+    li $v1, 53
+    move $v0, $v1
+    sb $v0, 0($t6)
+    addiu $v0, $sp, 0
+    addiu $t5, $v0, 2
+    lbu $t0, 0($t5)
+    move $t4, $t0
+    addiu $v0, $sp, 0
+    addu $t3, $v0, $t4
+    lbu $t0, 0($t3)
+    move $t2, $t0
+    move $a0, $t2
+    li $v0, 11
+    syscall
+    la $a0, .str.0
+    li $v0, 4
+    syscall
     li $v0, 10
     syscall
 

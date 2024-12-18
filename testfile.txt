@@ -1,5 +1,6 @@
-
 int main(){
-    int a=1+2;
+    char c[200]="hello";
+    c[c[2]]='5';
+    printf("%c\n",c[c[2]]);
     return 0;
 }
