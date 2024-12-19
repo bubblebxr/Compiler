@@ -23,7 +23,7 @@ import static backend.MipsGenerator.returnReg;
  * @className: Srem
  * @author: bxr
  * @date: 2024/11/11 18:53
- * @description: 取余
+ * @description: 取余a % b = a - a / b * a
  */
 
 public class Srem extends Instruction {

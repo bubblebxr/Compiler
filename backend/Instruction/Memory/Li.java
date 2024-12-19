@@ -21,10 +21,17 @@ public class Li extends MipsInstruction {
      **/
     protected Long type;
     protected Boolean isOI;
+    protected String register;
 
     public Li(Long type,Boolean isOI){
         this.type=type;
         this.isOI=isOI;
+    }
+
+    public Li(Long type,String register){
+        this.type=type;
+        this.isOI=false;
+        this.register=register;
     }
 
     @Override

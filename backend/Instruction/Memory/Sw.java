@@ -25,4 +25,17 @@ public class Sw extends MipsInstruction {
     public String toString(){
         return "sw "+register+", "+offset+"("+reg+")";
     }
+
+    @Override
+    public int getOffset() {
+        return offset;
+    }
+
+    public String getReg() {
+        return reg;
+    }
+
+    public String getRegister() {
+        return register;
+    }
 }

@@ -33,7 +33,7 @@ public class LLVMManager {
     public static int labelId;   //标签id
     protected Stack<Integer> stackId=new Stack<>();
     protected int strId;
-    protected Set<String> pointerSet;
+    protected Set<String> pointerSet;  // 是指针的变量，需要先load出来
     protected static Boolean breakOrContinue=false;
 
     public Module getModule() {
@@ -582,6 +582,10 @@ public class LLVMManager {
     }
 
     public Pair MulExpToLLVM(MulExp mulExp){
+        Integer value=mulExp.tryToGetValue();
+        if(value!=null){
+            return new Pair(String.valueOf(value),new IntegerType());
+        }
         if(mulExp.getUnaryExpList().size()==1){
             return UnaryExpToLLVM(mulExp.getUnaryExpList().get(0));
         }
@@ -623,6 +627,10 @@ public class LLVMManager {
     }
 
     public Pair UnaryExpToLLVM(UnaryExp unaryExp){
+        Integer value=unaryExp.tryToGetValue();
+        if(value!=null){
+            return new Pair(String.valueOf(value),new IntegerType());
+        }
         if(unaryExp.getPrimaryExp()!=null){
             //PrimaryExp
             return PrimaryExpToLLVM(unaryExp.getPrimaryExp());

@@ -1,13 +1,13 @@
 package backend;
 
 
+import backend.Instruction.Memory.Lw;
+import backend.Instruction.Memory.Sw;
 import backend.Instruction.MipsInstruction;
 import backend.Instruction.Operate.Addi;
+import backend.Instruction.Operate.Move;
 import backend.reg.MipsMem;
-import backend.value.MipsConstGlobalVariable;
-import backend.value.MipsFunction;
-import backend.value.MipsGlobalVariable;
-import backend.value.MipsStr;
+import backend.value.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -203,5 +203,24 @@ public class MipsModule {
     }
 
     public void deleteNeedlessLw() {
+        for(MipsFunction function:functionList){
+            for(MipsBasicBlock block:function.getBlockList()){
+                for(int i=0;i<block.getInstructionList().size();i++){
+                    if(block.getInstructionList().get(i) instanceof Sw
+                    &&i<block.getInstructionList().size()-1
+                    &&block.getInstructionList().get(i+1) instanceof Lw){
+                        if(block.getInstructionList().get(i).getOffset()==block.getInstructionList().get(i+1).getOffset()
+                        &&((Sw) block.getInstructionList().get(i)).getReg().equals(((Lw) block.getInstructionList().get(i+1)).getReg())){
+                            if(!((Sw) block.getInstructionList().get(i)).getRegister().equals(((Lw) block.getInstructionList().get(i+1)).getRegister())){
+                                block.getInstructionList().add(i+1,new Move(((Lw) block.getInstructionList().get(i+1)).getRegister(),((Sw) block.getInstructionList().get(i)).getRegister()));
+                                block.getInstructionList().remove(i+2);
+                            }else{
+                                block.getInstructionList().remove(i+1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

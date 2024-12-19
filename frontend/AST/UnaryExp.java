@@ -104,9 +104,14 @@ public class UnaryExp {
             if(type==TrueType.PLUS){
                 return unaryExp.tryToGetValue();
             }else if(type==TrueType.MINU){
-                return -unaryExp.tryToGetValue();
+                Integer temp=unaryExp.tryToGetValue();
+                if(temp!=null){
+                    return -temp;
+                }else{
+                    return null;
+                }
             }
         }
-        return 0;
+        return null;
     }
 }

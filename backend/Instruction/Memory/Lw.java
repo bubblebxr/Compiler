@@ -63,4 +63,12 @@ public class Lw extends MipsInstruction {
     public void setOffset(int offset){
         this.offset=offset;
     }
+
+    public String getReg() {
+        return reg;
+    }
+
+    public String getRegister() {
+        return register;
+    }
 }
