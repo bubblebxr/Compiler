@@ -8,6 +8,7 @@ import backend.Instruction.MipsInstruction;
 import backend.Instruction.Operate.Compare;
 import backend.Instruction.Operate.CompareType;
 import backend.Instruction.Operate.Move;
+import backend.Instruction.Operate.Xori;
 import backend.MipsGenerator;
 import backend.reg.MipsMem;
 import midend.Type;
@@ -61,8 +62,7 @@ public class Icmp extends Instruction {
         if(operators.get(0).getName().equals("0")){
             label1="$zero";
         }else if(operators.get(0).getName().charAt(0)!='%'){
-            list.add(new Li(Long.parseLong(operators.get(0).getName()),false));
-            list.add(new Move("$v0","$v1"));
+            list.add(new Li(Long.parseLong(operators.get(0).getName()),"$v0"));
             label1="$v0";
         }else{
             MipsMem mipsMem= MipsGenerator.getRel(operators.get(0).getName());
@@ -82,7 +82,7 @@ public class Icmp extends Instruction {
         if(operators.get(1).getName().equals("0")){
             label2="$zero";
         }else if(operators.get(1).getName().charAt(0)!='%'){
-            list.add(new Li(Long.parseLong(operators.get(1).getName()),false));
+            list.add(new Li(Long.parseLong(operators.get(1).getName()),"$v1"));
             label2="$v1";
         }else{
             MipsMem mipsMem= MipsGenerator.getRel(operators.get(1).getName());
@@ -110,13 +110,26 @@ public class Icmp extends Instruction {
             list.add(new Compare(CompareType.sgt,"$t0",label1,label2));
         }else if(icmpType==IcmpType.sge){
             // >=
-            list.add(new Compare(CompareType.sge,"$t0",label1,label2));
+            /*
+             sge $t0, $s0, $s1:
+             sgt $t0,$s1,$s0
+             xori $t0,$t0,1
+             **/
+//            list.add(new Compare(CompareType.sge,"$t0",label1,label2));
+            list.add(new Compare(CompareType.sgt,"$t0",label2,label1));
+            list.add(new Xori("$t0","$t0","1"));
         }else if(icmpType==IcmpType.slt){
             // <
             list.add(new Compare(CompareType.slt,"$t0",label1,label2));
         }else{
             // <=
-            list.add(new Compare(CompareType.sle,"$t0",label1,label2));
+            /*
+             sle $t0, $s0, $s1:
+             slt $t0,$s1,$s0
+             xori $t0,$t0,1
+             **/
+            list.add(new Compare(CompareType.slt,"$t0",label2,label1));
+            list.add(new Xori("$t0","$t0","1"));
         }
         MipsMem reg=new MipsMem("$t0");
         putGlobalRel(name,reg);

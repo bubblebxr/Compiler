@@ -64,9 +64,7 @@ public class Ret extends Instruction {
                 reg="$zero";
                 temp.add(new Move("$v0",reg));
             }else if(operators.get(0).getName().charAt(0)!='%'){
-                temp.add(new Li(Long.parseLong(operators.get(0).getName()),false));
-                reg="$v1";
-                temp.add(new Move("$v0",reg));
+                temp.add(new Li(Long.parseLong(operators.get(0).getName()),"$v0"));
             }else{
                 MipsMem mipsMem= MipsGenerator.getRel(operators.get(0).getName());
                 if(mipsMem!=null){

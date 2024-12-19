@@ -53,11 +53,9 @@ public class Trunc extends Instruction {
             putGlobalRel(name,mipsMem);
         }else{
             // 需要进行类型转换的是常数
-            temp.add(new Li(Long.parseLong(operators.get(0).getName()),false));
             MipsMem reg=getEmptyLocalReg(true);
-            if(reg.isInReg){
-                temp.add(new Move(reg.RegName,"$v1"));
-            }else{
+            temp.add(new Li(Long.parseLong(operators.get(0).getName()),reg.isInReg?reg.RegName:"$v1"));
+            if(!reg.isInReg){
                 temp.add(new Sb("$v1",reg.offset,"$sp"));
             }
             putLocalRel(name,reg);

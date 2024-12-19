@@ -95,7 +95,7 @@ public class Getelementptr extends Instruction {
                 //offset是数字
                 // 计算出数组的地址，如果是int，需要现将offset*4
                 if(!(type.getType() instanceof CharType)&&!(type instanceof CharType)){
-                    list.add(new Li(Long.parseLong(temp),false));
+                    list.add(new Li(Long.parseLong(temp),"$v1"));
                     list.add(new Sll("$v1","$v1","2"));
                     list.add(new Addu(reg.RegName,label1,"$v1"));
                 }else{

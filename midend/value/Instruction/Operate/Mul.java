@@ -61,10 +61,8 @@ public class Mul extends Instruction {
             Long op2=Long.parseLong(operators.get(1).getName());
             Long result=op1*op2;
             MipsMem reg=getEmptyLocalReg(type instanceof CharType);
-            list.add(new Li(result,false));
-            if(reg.isInReg){
-                list.add(new Move(reg.RegName,"$v1"));
-            }else{
+            list.add(new Li(result,reg.isInReg?reg.RegName:"$v1"));
+            if(!reg.isInReg){
                 if(type instanceof CharType){
                     list.add(new Sb("$v1",reg.offset,"$sp"));
                 }else{
@@ -94,8 +92,7 @@ public class Mul extends Instruction {
                 isSll=1;
                 label1= String.valueOf(getPowerOfTwo(Integer.parseInt(operators.get(0).getName())));
             }else{
-                list.add(new Li(Long.parseLong(operators.get(0).getName()),false));
-                list.add(new Move("$v0","$v1"));
+                list.add(new Li(Long.parseLong(operators.get(0).getName()),"$v0"));
                 label1= "$v0";
             }
         }else{
@@ -132,7 +129,7 @@ public class Mul extends Instruction {
                 label2= String.valueOf(getPowerOfTwo(Integer.parseInt(operators.get(1).getName())));
                 isSll=2;
             }else{
-                list.add(new Li(Long.parseLong(operators.get(1).getName()),false));
+                list.add(new Li(Long.parseLong(operators.get(1).getName()),"$v1"));
                 label2="$v1";
             }
         }else{

@@ -97,8 +97,7 @@ public class Store extends Instruction {
             //如果是立即数，0就直接使用寄存器，非0就li出来
             reg="$zero";
             if(!operators.get(0).getName().equals("0")){
-                temp.add(new Li(Long.parseLong(operators.get(0).getName()),false));
-                temp.add(new Move("$v0","$v1"));
+                temp.add(new Li(Long.parseLong(operators.get(0).getName()),"$v0"));
                 reg="$v0";
             }
         }else{

@@ -60,10 +60,8 @@ public class Add extends Instruction {
             Long op2=Long.parseLong(operators.get(1).getName());
             Long result=op1+op2;
             MipsMem reg=getEmptyLocalReg(type instanceof CharType);
-            list.add(new Li(result,false));
-            if(reg.isInReg){
-                list.add(new Move(reg.RegName,"$v1"));
-            }else{
+            list.add(new Li(result,reg.isInReg?reg.RegName:"$v1"));
+            if(!reg.isInReg){
                 if(type instanceof CharType){
                     list.add(new Sb("$v1",reg.offset,"$sp"));
                 }else{
@@ -99,7 +97,7 @@ public class Add extends Instruction {
             label2="$zero";
         }else if(operators.get(1).getName().charAt(0)!='%'){
             if(isImmediate==1){
-                list.add(new Li(Long.parseLong(operators.get(1).getName()),false));
+                list.add(new Li(Long.parseLong(operators.get(1).getName()),"$v1"));
                 label2="$v1";
             }else{
                 label2= operators.get(1).getName();

@@ -87,8 +87,8 @@ public class Call extends Instruction {
             putLocalRel(name,mipsMem);
         }else if(functionName.equals("@putint")){
             if(operators.get(0).getName().charAt(0)!='%'){
-                list.add(new Li(Long.parseLong(operators.get(0).getName()),false));
-                list.add(new Move("$a0","$v1"));
+                list.add(new Li(Long.parseLong(operators.get(0).getName()),"$a0"));
+//                list.add(new Move("$a0","$v1"));
                 list.add(new Li(1L,true));
             }else{
                 MipsMem mipsMem=getRel(operators.get(0).getName());
@@ -132,7 +132,7 @@ public class Call extends Instruction {
                         }
                         gpNum+=4;
                     }else if(operators.get(i).getName().charAt(0)!='%'){
-                        list.add(new Li(Long.parseLong(operators.get(i).getName()),false));
+                        list.add(new Li(Long.parseLong(operators.get(i).getName()),"$v1"));
                         label1= "$v1";
                         if((operators.get(i).getType()) instanceof CharType){
                             list.add(new Sb(label1,gpNum,"$gp"));
@@ -170,9 +170,7 @@ public class Call extends Instruction {
                         label1="$zero";
                         list.add(new Move(regList.get(i),label1));
                     }else if(operators.get(i).getName().charAt(0)!='%'){
-                        list.add(new Li(Long.parseLong(operators.get(i).getName()),false));
-                        label1= "$v1";
-                        list.add(new Move(regList.get(i),label1));
+                        list.add(new Li(Long.parseLong(operators.get(i).getName()),regList.get(i)));
                     }else{
                         MipsMem mipsMem=getRel(operators.get(i).getName());
                         if(mipsMem!=null){

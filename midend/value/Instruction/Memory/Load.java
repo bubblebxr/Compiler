@@ -93,11 +93,9 @@ public class Load extends Instruction {
         }else{
             // 从常量中获取
             if(getConstGlobalValue(operators.get(0).getName())!=null){
-                temp.add(new Li((long)getConstGlobalValue(operators.get(0).getName()),false));
                 MipsMem reg=getEmptyLocalReg(type instanceof CharType);
-                if(reg.isInReg){
-                    temp.add(new Move(reg.RegName,"$v1"));
-                }else{
+                temp.add(new Li((long)getConstGlobalValue(operators.get(0).getName()),reg.isInReg?reg.RegName:"$v1"));
+                if(!reg.isInReg){
                     if(type instanceof CharType){
                         temp.add(new Sb("$v1", reg.offset,"$sp"));
                     }else{

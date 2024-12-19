@@ -39,7 +39,7 @@ public class Li extends MipsInstruction {
         if(isOI){
             return "li $v0, " + type +"\n    syscall";
         }else{
-            return "li $v1, " + type;
+            return "li "+register+", " + type;
         }
     }
 }
