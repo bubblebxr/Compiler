@@ -21,12 +21,22 @@ import static backend.MipsGenerator.*;
 public class Alloca extends Instruction {
     protected int id; //局部变量的id
     protected int elementNum; //如果是数组，那么数组的元素个数
+    public Boolean isConst;
 
     /*普通变量*/
     public Alloca(String name, Type type) {
         super(name, type);
         this.id=Integer.parseInt(name.substring(1));
         elementNum=0;
+        this.isConst=false;
+    }
+
+    /*普通const变量*/
+    public Alloca(String name, Type type,Boolean isConst) {
+        super(name, type);
+        this.id=Integer.parseInt(name.substring(1));
+        elementNum=0;
+        this.isConst=true;
     }
 
     /*数组*/

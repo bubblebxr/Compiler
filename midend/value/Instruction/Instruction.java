@@ -16,6 +16,7 @@ import java.util.ArrayList;
  */
 
 public class Instruction extends User {
+    public Boolean isUse;
     public Instruction(String name, Type type) {
         super(name, type);
     }

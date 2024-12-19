@@ -103,14 +103,19 @@ public class Call extends Instruction {
                 }
             }
         }else if(functionName.equals("@putch")){
-            MipsMem mipsMem=getRel(operators.get(0).getName());
-            if(mipsMem.isInReg){
-                list.add(new Move("$a0",mipsMem.RegName));
+            if(operators.get(0).getName().charAt(0)!='%'){
+                list.add(new Li(Long.parseLong(operators.get(0).getName()),"$a0"));
+                list.add(new Li(11L,true));
             }else{
-                list.add(new Lb("$a0",mipsMem.offset,"$sp"));
+                MipsMem mipsMem=getRel(operators.get(0).getName());
+                if(mipsMem.isInReg){
+                    list.add(new Move("$a0",mipsMem.RegName));
+                }else{
+                    list.add(new Lb("$a0",mipsMem.offset,"$sp"));
+                }
+                returnReg(mipsMem.RegName);
+                list.add(new Li(11L,true));
             }
-            returnReg(mipsMem.RegName);
-            list.add(new Li(11L,true));
         }else{
             // 调用自己定义的函数
             ArrayList<String> regList=new ArrayList<>();

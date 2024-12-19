@@ -35,6 +35,13 @@ public class LLVMManager {
     protected int strId;
     protected Set<String> pointerSet;  // 是指针的变量，需要先load出来
     protected static Boolean breakOrContinue=false;
+    protected Map<String,Map<String,Long>> constMaps;
+    protected Map<String,Long> constMapForFunction; //用于存储所有的常量和计算出来的常量用于常量优化
+    protected String curFunctionName="Global";
+
+    public Map<String,Map<String,Long>> getConstMaps() {
+        return constMaps;
+    }
 
     public Module getModule() {
         return module;
@@ -48,6 +55,8 @@ public class LLVMManager {
         strId=0;
         labelId=0;
         this.pointerSet=new HashSet<>();
+        this.constMaps=new HashMap<>();
+        this.constMapForFunction=new HashMap<>();
     }
 
     public Boolean loadPointer(String name,Type type){
@@ -73,10 +82,17 @@ public class LLVMManager {
         for(Decl decl:AST.getDeclList()){
             DeclToLLVM(decl);
         }
+        constMaps.put(curFunctionName,constMapForFunction);
+        constMapForFunction=new HashMap<>();
         for(FuncDef funcDef:AST.getFuncDefList()){
             FuncToLLVM(funcDef);
+            constMaps.put(curFunctionName,constMapForFunction);
+            constMapForFunction=new HashMap<>();
         }
         MainFuncDefToLLVM(AST.getMainFuncDef());
+        curFunctionName="@main";
+        constMaps.put(curFunctionName,constMapForFunction);
+        constMapForFunction=new HashMap<>();
     }
 
     public void addDeclareFunction() {
@@ -134,9 +150,11 @@ public class LLVMManager {
                 addSymbol(constDef.getIdent().getName(),symbol);
                 if(presentId==1){
                     module.addGlobalVariableList(new GlobalVariable("@"+constDef.getIdent().getName(),new IntegerType(),constDef.getConstInitVal().getConstExpList().get(0).getValue(),true));
+                    constMapForFunction.put("@"+constDef.getIdent().getName(),(long)constDef.getConstInitVal().getConstExpList().get(0).getValue());
                 }else{
                     pointerSet.add(presentId+"%"+variableId);
                     addConstVariable(constDef.getConstInitVal().getConstExpList().get(0).getValue(),new IntegerType());
+                    constMapForFunction.put("%"+(variableId-1),(long)constDef.getConstInitVal().getConstExpList().get(0).getValue());
                 }
             }
         }else{
@@ -167,9 +185,11 @@ public class LLVMManager {
                 addSymbol(constDef.getIdent().getName(),symbol);
                 if(presentId==1){
                     module.addGlobalVariableList(new GlobalVariable("@"+constDef.getIdent().getName(),new CharType(),constDef.getConstInitVal().getConstExpList().get(0).getValue(),true));
+                    constMapForFunction.put("@"+constDef.getIdent().getName(),(long)constDef.getConstInitVal().getConstExpList().get(0).getValue());
                 }else{
                     pointerSet.add(presentId+"%"+variableId);
                     addConstVariable(constDef.getConstInitVal().getConstExpList().get(0).getValue(),new CharType());
+                    constMapForFunction.put("%"+(variableId-1),(long)constDef.getConstInitVal().getConstExpList().get(0).getValue());
                 }
             }
         }
@@ -221,7 +241,7 @@ public class LLVMManager {
     }
 
     public void addConstVariable(Integer value,Type type){
-        getCurBasicBlock().addInstruction(new Alloca("%"+variableId,type));
+        getCurBasicBlock().addInstruction(new Alloca("%"+variableId,type,true));
         ArrayList<Value> temp=new ArrayList<>();
         temp.add(new Value(String.valueOf(value),type));
         temp.add(new Value("%"+variableId,new PointerType(type)));
@@ -642,6 +662,11 @@ public class LLVMManager {
             }
             Type type=getFuncType(unaryExp.getIdent().getName(),presentId);
             getCurBasicBlock().addInstruction(new Call(type instanceof VoidType?null:"%"+variableId,type,"@"+unaryExp.getIdent().getName(),temp));
+            // 用于删除死函数
+            Function function=getFunctionByName("@"+unaryExp.getIdent().getName());
+            if(function!=null){
+                getCurFunction().addCallFunction(function);
+            }
             return new Pair(type instanceof VoidType?null:"%"+(variableId++),getFuncType(unaryExp.getIdent().getName(),presentId));
         }else{
             //UnaryOp UnaryExp
@@ -782,6 +807,7 @@ public class LLVMManager {
         int temp=stackId.pop();
         addSymbolFunc(funcDef.getIdent().getName(),symbol,stackId.peek());
         Function function=new Function("@"+funcDef.getIdent().getName(),new FunctionType(getFuncParamsType(symbol.getFuncParams()),returnType,false),getArgumentList(symbol.getFuncParams()));
+        curFunctionName="@"+funcDef.getIdent().getName();
         module.addFunctionList(function);
         function.addBasicBlock(new BasicBlock(null,null));
         stackId.add(temp);
@@ -1065,6 +1091,7 @@ public class LLVMManager {
             if(typeConversion(pair.type,pair.id,new IntegerType())){
                 pair.id="%"+(variableId-1);
             }
+            //TODO 删除了无意义的与0比较：其实是有意义的，如果发现了的错误即使添加回来
             ArrayList<Value> temp=new ArrayList<>();
             temp.add(new Value("0",new IntegerType()));
             temp.add(new Value(pair.id,new IntegerType()));
@@ -1189,6 +1216,14 @@ public class LLVMManager {
             }
         }
         return null;
+    }
+
+    public Function getFunctionByName(String name){
+        return module.getFunctionByName(name);
+    }
+
+    public Function getCurFunction(){
+        return module.getCurFunction();
     }
 
 

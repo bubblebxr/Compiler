@@ -105,7 +105,7 @@ public class Compiler {
             }
 
             // 优化llvm
-            Optimize optimize=new Optimize(llvmManager.getModule());
+            Optimize optimize=new Optimize(llvmManager.getModule(),llvmManager.getConstMaps());
             if(isOptimise){
                 optimize.optimizer();
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(llvmAfterOptimizePath))) {

@@ -27,4 +27,8 @@ public class User extends Value{
 
     public void setLabel2(String name){
     }
+
+    public ArrayList<Value> getOperators() {
+        return operators;
+    }
 }

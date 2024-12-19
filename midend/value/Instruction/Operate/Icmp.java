@@ -40,6 +40,10 @@ public class Icmp extends Instruction {
         this.icmpType=icmpType;
     }
 
+    public IcmpType getIcmpType() {
+        return icmpType;
+    }
+
     @Override
     public String toString(){
         return name +

@@ -55,6 +55,15 @@ public class Module {
         return FunctionList.get(FunctionList.size()-1).getName().substring(1);
     }
 
+    public Function getFunctionByName(String name){
+        for(Function function:FunctionList){
+            if(function.getName().equals(name)){
+                return function;
+            }
+        }
+        return null;
+    }
+
     public Instruction getLastInstruction(){
         return getCurBasicBlock().getLastInstruction();
     }

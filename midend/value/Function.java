@@ -6,11 +6,14 @@ import midend.value.Instruction.Jump.Br;
 import midend.value.Instruction.Jump.Ret;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Function extends Value {
     protected ArrayList<Argument> argumentList;
     protected ArrayList<BasicBlock> basicBlockList;
     protected Boolean isDeclare;
+    protected Set<Function> callFunctions;
 
     /* declare function */
     public Function(String name, Type type){
@@ -19,12 +22,17 @@ public class Function extends Value {
         this.isDeclare=true;
     }
 
+    public Set<Function> getCallFunctions() {
+        return callFunctions;
+    }
+
     /* define function */
     public Function(String name, Type type,ArrayList<Argument> argumentList){
         super(name,type);
         this.argumentList=argumentList;
         this.basicBlockList=new ArrayList<>();
         this.isDeclare=false;
+        this.callFunctions=new HashSet<>();
     }
 
     @Override
@@ -39,6 +47,10 @@ public class Function extends Value {
             a.append("}\n");
         }
         return a.toString();
+    }
+
+    public void addCallFunction(Function function){
+        callFunctions.add(function);
     }
 
     public Boolean getDeclare() {

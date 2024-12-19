@@ -2,16 +2,15 @@ declare i32 @getint()
 declare i32 @getchar()
 declare void @putint(i32)
 declare void @putch(i32)
-declare void @putstr(i8*)
 define dso_local i32 @main(){
 b0:
-    %1 = icmp sge i32 2,1
-    %2 = zext i1 %1 to i32
-    %3 = icmp ne i32 0,%2
-    br i1 %3,label %b1,label %b2
+    %2 = zext i1 1 to i32
+    br i1 %2,label %b1,label %b2
 b1:
-    call void @putint(i32 1)
+    %3 = getelementptr inbounds [2 x i8],[2 x i8]* @.str.0,i32 0,i32 0
+    call void @putstr(i8* %3)
 b2:
     ret i32 0
 }
 
+@.str.0=dso_local constant [2 x i8][i8 49,i8 0]
