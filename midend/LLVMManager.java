@@ -698,7 +698,7 @@ public class LLVMManager {
             if(typeConversion(pair.type,pair.id,argumentsType)){
                 pair.id="%"+(variableId-1);
             }
-            temp.add(new Value(pair.id,pair.type));
+            temp.add(new Value(pair.id,argumentsType));
         }
         return temp;
     }

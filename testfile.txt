@@ -1,9 +1,8 @@
-void foo(){
+void foo(int c){
     const int a=1;
 }
 int main(){
-    if(1==1){
-        printf("1");
-    }
+    char a[10]="hello";
+    foo(a[a[0]]);
     return 0;
 }
