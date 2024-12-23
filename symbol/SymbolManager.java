@@ -204,7 +204,7 @@ public class SymbolManager {
                         }
                     }else{
                         //传递变量
-                        if(ExpType==SymbolType.CharArray||ExpType==SymbolType.IntArray||ExpType==SymbolType.ConstCharArray||ExpType==SymbolType.ConstIntArray){
+                        if(ExpType==SymbolType.CharArray||ExpType==SymbolType.IntArray||ExpType==SymbolType.ConstCharArray||ExpType==SymbolType.ConstIntArray||ExpType==SymbolType.None){
                             ErrorToken errorToken=new ErrorToken(unaryExp.getIdent().getLineNumber(),ErrorType.e);
                             errorList.add(errorToken);
                             ErrorLineNumber.add(unaryExp.getIdent().getLineNumber());
@@ -522,6 +522,9 @@ public class SymbolManager {
     }
 
     public void LValError(LVal lVal){
+        if(lVal.getExp()!=null){
+            ExpError(lVal.getExp());
+        }
         if(isNotDefine(lVal.getIdent().getName(), presentId)&&!ErrorLineNumber.contains(lVal.getIdent().getLineNumber())){
             ErrorToken errorToken=new ErrorToken(lVal.getIdent().getLineNumber(),ErrorType.c);
             errorList.add(errorToken);

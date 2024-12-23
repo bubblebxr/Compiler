@@ -1,8 +1,6 @@
-void foo(int c){
-    const int a=1;
-}
-int main(){
-    char a[10]="hello";
-    foo(a[a[0]]);
+integer main() {
+    integer arr[10];
+    arr[a] = 1; // c
+    arr[fun()] = 1; // c
     return 0;
 }

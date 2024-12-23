@@ -1,9 +1,6 @@
-void foo(){
-    const int a=1;
-}
-int main(){
-    if(1==1){
-        printf("1");
-    }
+integer main() {
+    integer arr[10];
+    arr[a] = 1; // c
+    arr[fun()] = 1; // c
     return 0;
 }

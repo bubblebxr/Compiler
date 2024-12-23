@@ -1,18 +1,63 @@
 .data:
-    .str.0: .asciiz "1"
 .text:
 main:
-
-.b0:
-    li $t9, 1
-    beqz $t0, .b2
-
-.b1:
-    la $a0, .str.0
-    li $v0, 4
-    syscall
-
-.b2:
+    addiu $sp, $sp, -12
+    addiu $v0, $sp, 0
+    addiu $t9, $v0, 0
+    li $v0, 104
+    sb $v0, 0($t9)
+    addiu $t8, $t9, 1
+    li $v0, 101
+    sb $v0, 0($t8)
+    addiu $t9, $t8, 1
+    li $v0, 108
+    sb $v0, 0($t9)
+    addiu $t8, $t9, 1
+    li $v0, 108
+    sb $v0, 0($t8)
+    addiu $t9, $t8, 1
+    li $v0, 111
+    sb $v0, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $t9, $t8, 1
+    sb $zero, 0($t9)
+    addiu $t8, $t9, 1
+    sb $zero, 0($t8)
+    addiu $v0, $sp, 0
+    addiu $t9, $v0, 0
+    lbu $t0, 0($t9)
+    move $t7, $t0
+    addiu $v0, $sp, 0
+    addu $t6, $v0, $t7
+    lbu $t0, 0($t6)
+    move $t5, $t0
+    move $a0, $t5
+    addiu $sp, $sp, -24
+    sw $ra, 0($sp)
+    sw $t5, 4($sp)
+    sw $t6, 8($sp)
+    sw $t7, 12($sp)
+    sw $t8, 16($sp)
+    sw $t9, 20($sp)
+    jal foo
+    lw $ra, 0($sp)
+    lw $t5, 4($sp)
+    lw $t6, 8($sp)
+    lw $t7, 12($sp)
+    lw $t8, 16($sp)
+    lw $t9, 20($sp)
+    addiu $sp, $sp, 24
     li $v0, 10
     syscall
+
+foo:
+    move $s7, $a0
+    li $v0, 1
+    jr $ra
+
 
