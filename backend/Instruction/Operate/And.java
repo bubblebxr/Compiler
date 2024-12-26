@@ -4,18 +4,18 @@ package backend.Instruction.Operate;
 import backend.Instruction.MipsInstruction;
 
 /**
- * @className: Srl
+ * @className: And
  * @author: bxr
- * @date: 2024/12/18 23:57
- * @description: 算术右移操作
+ * @date: 2024/12/26 17:13
+ * @description: 按位与
  */
 
-public class Srl extends MipsInstruction {
+public class And extends MipsInstruction {
     protected String register;
     protected String label1;
     protected String label2;
 
-    public Srl(String register,String label1,String label2){
+    public And(String register,String label1,String label2){
         this.register=register;
         this.label1=label1;
         this.label2=label2;
@@ -23,6 +23,6 @@ public class Srl extends MipsInstruction {
 
     @Override
     public String toString(){
-        return "srl "+register+", "+label1+", "+label2;
+        return "and "+register+", "+label1+", "+label2;
     }
 }
