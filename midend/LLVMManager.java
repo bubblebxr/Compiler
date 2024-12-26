@@ -38,6 +38,7 @@ public class LLVMManager {
     protected Map<String,Map<String,Long>> constMaps;
     protected Map<String,Long> constMapForFunction; //用于存储所有的常量和计算出来的常量用于常量优化
     protected String curFunctionName="Global";
+    protected Boolean isOptimise;
 
     public Map<String,Map<String,Long>> getConstMaps() {
         return constMaps;
@@ -47,7 +48,7 @@ public class LLVMManager {
         return module;
     }
 
-    public LLVMManager(ASTNode AST){
+    public LLVMManager(ASTNode AST,Boolean isOptimise){
         this.AST=AST;
         this.module=new Module();
         presentId=1;
@@ -57,6 +58,7 @@ public class LLVMManager {
         this.pointerSet=new HashSet<>();
         this.constMaps=new HashMap<>();
         this.constMapForFunction=new HashMap<>();
+        this.isOptimise=isOptimise;
     }
 
     public Boolean loadPointer(String name,Type type){
@@ -602,9 +604,11 @@ public class LLVMManager {
     }
 
     public Pair MulExpToLLVM(MulExp mulExp){
-        Integer value=mulExp.tryToGetValue();
-        if(value!=null){
-            return new Pair(String.valueOf(value),new IntegerType());
+        if(isOptimise){
+            Integer value=mulExp.tryToGetValue();
+            if(value!=null){
+                return new Pair(String.valueOf(value),new IntegerType());
+            }
         }
         if(mulExp.getUnaryExpList().size()==1){
             return UnaryExpToLLVM(mulExp.getUnaryExpList().get(0));
@@ -647,9 +651,11 @@ public class LLVMManager {
     }
 
     public Pair UnaryExpToLLVM(UnaryExp unaryExp){
-        Integer value=unaryExp.tryToGetValue();
-        if(value!=null){
-            return new Pair(String.valueOf(value),new IntegerType());
+        if(isOptimise){
+            Integer value=unaryExp.tryToGetValue();
+            if(value!=null){
+                return new Pair(String.valueOf(value),new IntegerType());
+            }
         }
         if(unaryExp.getPrimaryExp()!=null){
             //PrimaryExp

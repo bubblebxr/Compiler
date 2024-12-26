@@ -9,6 +9,10 @@ import java.io.*;
 import static frontend.Lexer.*;
 
 public class Compiler {
+    public static Boolean outputLexer=false;
+    public static Boolean outputParser=false;
+    public static Boolean outputSymbol=false;
+    public static Boolean isOptimise=true;
     public static void main(String[] args) throws IOException {
         String filePath = "testfile.txt";
         String lexerPath="lexer.txt";
@@ -19,11 +23,6 @@ public class Compiler {
         String mipsPath="mips.txt";
         String ErrorResultPath="error.txt";
         String TrueAnswer="ans.txt";
-
-        Boolean outputLexer=false;
-        Boolean outputParser=false;
-        Boolean outputSymbol=false;
-        Boolean isOptimise=true;
 
         int lineCount=1; //记录行数
         boolean isError=false; //是否存在错误
@@ -96,7 +95,7 @@ public class Compiler {
                 }
             }
             //生成llvm
-            LLVMManager llvmManager=new LLVMManager(parser.getASTNode());
+            LLVMManager llvmManager=new LLVMManager(parser.getASTNode(),isOptimise);
             llvmManager.CompUnitToLLVM();
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(llvmPath))) {
                 writer.write(llvmManager.outputLLVM());

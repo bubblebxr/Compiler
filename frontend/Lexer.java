@@ -69,6 +69,7 @@ public class Lexer{
                     errorList.add(token);
                     TrueToken token1=new TrueToken("&&", TrueType.AND,lineNumber);
                     TokenList.add(token1);
+                    //TODO:为什么注掉这行代码就不会出现RuntimeError了呢，我也不懂，反正如果出现了验证一下就是了
                     ErrorLineNumber.add(lineNumber);
                 }
             }else if(temp=='|'){
